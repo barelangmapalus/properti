@@ -178,7 +178,7 @@
     .sidebar-logo {
       width: 45px;
       height: 40px;
-      background: rgb(255, 255, 255);
+      background: white;
       border-radius: 12px;
       display: flex;
       align-items: center;
@@ -191,12 +191,6 @@
       width: 70%;
       height: 70%;
       object-fit: cover;
-    }
-
-    .sidebar-logo span {
-      font-size: 20px;
-      font-weight: 700;
-      color: var(--primary);
     }
 
     .sidebar-header h3 {
@@ -743,14 +737,14 @@
       position: fixed;
       top: 0; left: 0; right: 0; bottom: 0;
       background: #f8f9fa;
-      z-index: 5000;
+      z-index: 99999 !important;
       transform: translateY(100%);
       transition: transform 0.3s ease;
       overflow-y: auto;
     }
 
     .detail-modal.active {
-      transform: translateY(0);
+      transform: translateY(0) !important;
     }
 
     .detail-header {
@@ -1300,7 +1294,7 @@
 
   <script>
     // ========== KONFIGURASI OPENSHEET ==========
-    const SHEET_ID = '1helcyWMk5kVpcFKX351vLhn7RKvJ6dDQmjbxU_jmtt4';
+    const SHEET_ID = '1e0-mHb2GCI-eVq8CrrxF3UlAz62CGQEAGlgmGRYBtPA';
     const OPENSHEET_BASE = `https://opensheet.elk.sh/${SHEET_ID}`;
 
     // ========== HAMBURGER MENU ==========
@@ -1347,7 +1341,6 @@
 
     // ========== STATE MANAGEMENT ==========
     const searchModal = document.getElementById('searchModal');
-    const detailModal = document.getElementById('detailModal');
     const filterSheet = document.getElementById('filterSheet');
     const filterSheetOverlay = document.getElementById('filterSheetOverlay');
 
@@ -1363,6 +1356,28 @@
       if (num >= 1000000000) return `Rp ${(num / 1000000000).toFixed(1)} M`;
       if (num >= 1000000) return `Rp ${(num / 1000000).toFixed(0)} Jt`;
       return `Rp ${num.toLocaleString('id-ID')}`;
+    }
+
+    // ========== KONVERSI URL GOOGLE DRIVE ==========
+    function convertDriveUrl(url) {
+      if (!url) return '';
+      if (url.includes('lh3.googleusercontent.com')) return url;
+      
+      const fileIdMatch = url.match(/\/d\/([a-zA-Z0-9_-]+)/);
+      if (fileIdMatch) {
+        return `https://lh3.googleusercontent.com/d/${fileIdMatch[1]}=w400`;
+      }
+      
+      const ucIdMatch = url.match(/[?&]id=([a-zA-Z0-9_-]+)/);
+      if (ucIdMatch) {
+        return `https://lh3.googleusercontent.com/d/${ucIdMatch[1]}=w400`;
+      }
+      
+      if (url.match(/^[a-zA-Z0-9_-]{25,}$/)) {
+        return `https://lh3.googleusercontent.com/d/${url}=w400`;
+      }
+      
+      return url;
     }
 
     // ========== OPENSHEET FETCH ==========
@@ -1384,13 +1399,18 @@
         const properties = primaryData.slice(0, 3).map(item => ({
           ...item,
           _tab: 'primary',
-          'nama property': item['Nama Properti'],
-          'harga': item['Rp'],
-          'lokasi': item['Lokasi'],
-          'kt': item['KT'],
-          'km': item['KM'],
-          'lt': item['LT'],
-          'gambar utama': item['Gambar']
+          'nama property': item['nama property'] || 'Tanpa Nama',
+          'harga': item['harga'] || '0',
+          'lokasi': item['lokasi'] || '-',
+          'kt': item['kt'] || '0',
+          'km': item['km'] || '0',
+          'lt': item['lt'] || '0',
+          'gambar utama': item['gambar utama'] || '',
+          'gambar2': item['gambar2'] || '',
+          'gambar3': item['gambar3'] || '',
+          'gambar4': item['gambar4'] || '',
+          'gambar5': item['gambar5'] || '',
+          'detail': item['detail'] || ''
         }));
         displayProperties(properties);
       } catch (e) {
@@ -1406,34 +1426,52 @@
         return;
       }
 
-      container.innerHTML = properties.map((p, i) => `
-        <div class="property-card" onclick='showDetail(${JSON.stringify(p).replace(/'/g, "&apos;")})'>
-          <div class="card-image">
-            <img src="${p['gambar utama'] || 'https://images.unsplash.com/photo-1580587771525-78b9dba3b914?w=400'}" 
-                 alt="${p['nama property'] || 'Properti'}"
-                 onerror="this.src='https://images.unsplash.com/photo-1580587771525-78b9dba3b914?w=400'">
-            <span class="card-badge">${i === 0 ? 'HOT' : 'NEW'}</span>
-            <span class="tab-badge">${p._tab}</span>
-            <div class="favorite-btn" onclick="event.stopPropagation(); toggleFavorite(this)">
-              <i class="far fa-heart"></i>
+      container.innerHTML = properties.map((p, i) => {
+        const detailData = {
+          'nama property': p['nama property'] || 'Tanpa Nama',
+          'harga': p['harga'] || '0',
+          'lokasi': p['lokasi'] || '-',
+          'kt': p['kt'] || '0',
+          'km': p['km'] || '0',
+          'lt': p['lt'] || '0',
+          'gambar utama': p['gambar utama'] || '',
+          'gambar2': p['gambar2'] || '',
+          'gambar3': p['gambar3'] || '',
+          'gambar4': p['gambar4'] || '',
+          'gambar5': p['gambar5'] || '',
+          'detail': p['detail'] || '',
+          '_tab': p._tab || 'primary'
+        };
+        
+        return `
+          <div class="property-card" onclick='showDetail(${JSON.stringify(detailData).replace(/'/g, "\\'").replace(/"/g, '&quot;')})'>
+            <div class="card-image">
+              <img src="${convertDriveUrl(p['gambar utama']) || 'https://images.unsplash.com/photo-1580587771525-78b9dba3b914?w=400'}" 
+                   alt="${p['nama property'] || 'Properti'}"
+                   onerror="this.onerror=null; this.src='https://images.unsplash.com/photo-1580587771525-78b9dba3b914?w=400';">
+              <span class="card-badge">${i === 0 ? 'HOT' : 'NEW'}</span>
+              <span class="tab-badge">${p._tab || 'primary'}</span>
+              <div class="favorite-btn" onclick="event.stopPropagation(); toggleFavorite(this)">
+                <i class="far fa-heart"></i>
+              </div>
+            </div>
+            
+            <div class="card-content">
+              <div class="property-price">${formatPrice(p['harga'])}</div>
+              <h3 class="property-title">${p['nama property'] || 'Nama Properti'}</h3>
+              <div class="property-address">
+                <i class="fas fa-map-marker-alt"></i>
+                <span>${p['lokasi'] || 'Alamat tidak tersedia'}</span>
+              </div>
+              <div class="property-features">
+                <span class="feature"><i class="fas fa-bed"></i> ${p['kt'] || '0'} KT</span>
+                <span class="feature"><i class="fas fa-bath"></i> ${p['km'] || '0'} KM</span>
+                <span class="feature"><i class="fas fa-layer-group"></i> ${p['lt'] || '0'} Lt</span>
+              </div>
             </div>
           </div>
-          
-          <div class="card-content">
-            <div class="property-price">${formatPrice(p['harga'])}</div>
-            <h3 class="property-title">${p['nama property'] || 'Nama Properti'}</h3>
-            <div class="property-address">
-              <i class="fas fa-map-marker-alt"></i>
-              <span>${p['lokasi'] || 'Alamat tidak tersedia'}</span>
-            </div>
-            <div class="property-features">
-              <span class="feature"><i class="fas fa-bed"></i> ${p['kt'] || '0'} KT</span>
-              <span class="feature"><i class="fas fa-bath"></i> ${p['km'] || '0'} KM</span>
-              <span class="feature"><i class="fas fa-layer-group"></i> ${p['lt'] || '0'} Lt</span>
-            </div>
-          </div>
-        </div>
-      `).join('');
+        `;
+      }).join('');
     }
 
     // ========== GALLERY ==========
@@ -1508,10 +1546,10 @@
         
         if (searchTerm) {
           allResults = allResults.filter(item => {
-            const nama = (item['Nama Properti'] || '').toLowerCase();
-            const lokasi = (item['Lokasi'] || '').toLowerCase();
-            const jenis = (item['Jenis'] || '').toLowerCase();
-            return nama.includes(searchTerm) || lokasi.includes(searchTerm) || jenis.includes(searchTerm);
+            const nama = (item['nama property'] || '').toLowerCase();
+            const lokasi = (item['lokasi'] || '').toLowerCase();
+            const detail = (item['detail'] || '').toLowerCase();
+            return nama.includes(searchTerm) || lokasi.includes(searchTerm) || detail.includes(searchTerm);
           });
         }
         
@@ -1521,22 +1559,22 @@
         
         if (modalFilters.kt) {
           const minKT = parseInt(modalFilters.kt);
-          allResults = allResults.filter(item => (parseInt(item['KT']) || 0) >= minKT);
+          allResults = allResults.filter(item => (parseInt(item['kt']) || 0) >= minKT);
         }
-        
+
         if (modalFilters.km) {
           const minKM = parseInt(modalFilters.km);
-          allResults = allResults.filter(item => (parseInt(item['KM']) || 0) >= minKM);
+          allResults = allResults.filter(item => (parseInt(item['km']) || 0) >= minKM);
         }
-        
+
         if (modalFilters.lt) {
           const minLT = parseInt(modalFilters.lt);
-          allResults = allResults.filter(item => (parseInt(item['Lantai']) || 0) >= minLT);
+          allResults = allResults.filter(item => (parseInt(item['lt']) || 0) >= minLT);
         }
         
         if (modalFilters.minHarga || modalFilters.maxHarga) {
           allResults = allResults.filter(item => {
-            let harga = parseInt((item['Rp'] || '0').replace(/\D/g, '')) || 0;
+            let harga = parseInt((item['harga'] || '0').toString().replace(/\D/g, '')) || 0;
             if (modalFilters.minHarga && harga < parseInt(modalFilters.minHarga) * 1000000) return false;
             if (modalFilters.maxHarga && harga > parseInt(modalFilters.maxHarga) * 1000000) return false;
             return true;
@@ -1565,27 +1603,43 @@
       }
       
       container.innerHTML = results.map(item => {
+        const detailData = {
+          'nama property': item['nama property'] || 'Tanpa Nama',
+          'harga': item['harga'] || '0',
+          'lokasi': item['lokasi'] || '-',
+          'kt': item['kt'] || '0',
+          'km': item['km'] || '0',
+          'lt': item['lt'] || '0',
+          'gambar utama': item['gambar utama'] || '',
+          'gambar2': item['gambar2'] || '',
+          'gambar3': item['gambar3'] || '',
+          'gambar4': item['gambar4'] || '',
+          'gambar5': item['gambar5'] || '',
+          'detail': item['detail'] || '',
+          '_tab': item._tab || 'primary'
+        };
+        
         return `
-          <div class="property-card" onclick='showDetail(${JSON.stringify(item).replace(/'/g, "&apos;")})'>
+          <div class="property-card" onclick='showDetail(${JSON.stringify(detailData).replace(/'/g, "\\'").replace(/"/g, '&quot;')})'>
             <div class="card-image">
-              <img src="${item['Gambar'] || 'https://images.unsplash.com/photo-1580587771525-78b9dba3b914?w=400'}" 
-                   alt="${item['Nama Properti']}">
+              <img src="${convertDriveUrl(item['gambar utama']) || 'https://images.unsplash.com/photo-1580587771525-78b9dba3b914?w=400'}" 
+                   alt="${item['nama property']}">
               <span class="tab-badge">${item._tab}</span>
               <div class="favorite-btn" onclick="event.stopPropagation(); toggleFavorite(this)">
                 <i class="far fa-heart"></i>
               </div>
             </div>
             <div class="card-content">
-              <div class="property-price">${formatPrice(item['Rp'])}</div>
-              <h3 class="property-title">${item['Nama Properti'] || 'Tanpa Nama'}</h3>
+              <div class="property-price">${formatPrice(item['harga'])}</div>
+              <h3 class="property-title">${item['nama property'] || 'Tanpa Nama'}</h3>
               <div class="property-address">
                 <i class="fas fa-map-marker-alt"></i> 
-                <span>${item['Lokasi'] || '-'}</span>
+                <span>${item['lokasi'] || '-'}</span>
               </div>
               <div class="property-features">
-                <span class="feature"><i class="fas fa-bed"></i> ${item['KT'] || '0'} KT</span>
-                <span class="feature"><i class="fas fa-bath"></i> ${item['KM'] || '0'} KM</span>
-                <span class="feature"><i class="fas fa-layer-group"></i> ${item['Lantai'] || '0'} Lt</span>
+                <span class="feature"><i class="fas fa-bed"></i> ${item['kt'] || '0'} KT</span>
+                <span class="feature"><i class="fas fa-bath"></i> ${item['km'] || '0'} KM</span>
+                <span class="feature"><i class="fas fa-layer-group"></i> ${item['lt'] || '0'} Lt</span>
               </div>
             </div>
           </div>
@@ -1597,26 +1651,42 @@
 
     // ========== DETAIL MODAL ==========
     function showDetail(property) {
-      allImages = [];
-      if (property['Gambar']) allImages.push(property['Gambar']);
-      if (property['gambar utama']) allImages.push(property['gambar utama']);
-      for (let i = 2; i <= 10; i++) {
-        const key = `GambarList${i}`;
-        if (property[key]) allImages.push(property[key]);
+      console.log('showDetail dipanggil', property);
+      
+      const detailModal = document.getElementById('detailModal');
+      if (!detailModal) {
+        console.error('Detail modal tidak ditemukan');
+        return;
       }
+      
+      if (typeof property === 'string') {
+        try {
+          property = JSON.parse(property);
+        } catch (e) {
+          console.error('Gagal parse property:', e);
+          return;
+        }
+      }
+      
+      allImages = [];
+      if (property['gambar utama']) allImages.push(convertDriveUrl(property['gambar utama']));
+      if (property['gambar2']) allImages.push(convertDriveUrl(property['gambar2']));
+      if (property['gambar3']) allImages.push(convertDriveUrl(property['gambar3']));
+      if (property['gambar4']) allImages.push(convertDriveUrl(property['gambar4']));
+      if (property['gambar5']) allImages.push(convertDriveUrl(property['gambar5']));
       
       currentImageIndex = 0;
       
       document.getElementById('detailTitle').textContent = 
-        property['Nama Properti'] || property['nama property'] || 'Detail Properti';
-      
+        property['nama property'] || 'Detail Properti';
+
       const content = document.getElementById('detailContent');
-      const hargaValue = property['Rp'] || property['harga'] || '0';
+      const hargaValue = property['harga'] || '0';
       
       content.innerHTML = `
         <div class="detail-main-image">
           <img src="${allImages[0] || 'https://images.unsplash.com/photo-1580587771525-78b9dba3b914?w=600'}" 
-               alt="${property['Nama Properti']}" id="mainDetailImage">
+               alt="${property['nama property']}" id="mainDetailImage">
           ${allImages.length > 1 ? `<span class="image-counter" id="imageCounter">1/${allImages.length}</span>` : ''}
         </div>
         
@@ -1632,63 +1702,59 @@
         
         <div class="detail-info">
           <div class="detail-price">${formatPrice(hargaValue)}</div>
-          <h2 class="detail-title">${property['Nama Properti'] || property['nama property'] || '-'}</h2>
+          <h2 class="detail-title">${property['nama property'] || '-'}</h2>
           <div class="detail-location">
-            <i class="fas fa-map-marker-alt"></i> ${property['Lokasi'] || property['lokasi'] || '-'}
+            <i class="fas fa-map-marker-alt"></i> ${property['lokasi'] || '-'}
           </div>
           
           <div class="detail-features">
             <div class="detail-feature">
               <i class="fas fa-bed"></i>
-              <div class="value">${property['KT'] || property['kt'] || '0'}</div>
+              <div class="value">${property['kt'] || '0'}</div>
               <div class="label">Kamar Tidur</div>
             </div>
             <div class="detail-feature">
               <i class="fas fa-bath"></i>
-              <div class="value">${property['KM'] || property['km'] || '0'}</div>
+              <div class="value">${property['km'] || '0'}</div>
               <div class="label">Kamar Mandi</div>
             </div>
             <div class="detail-feature">
               <i class="fas fa-layer-group"></i>
-              <div class="value">${property['Lantai'] || property['lt'] || '0'}</div>
+              <div class="value">${property['lt'] || '0'}</div>
               <div class="label">Lantai</div>
             </div>
           </div>
         </div>
         
-        ${property['Spesifikasi'] ? `
+        ${property['detail'] ? `
           <div class="detail-description">
             <h3>Deskripsi</h3>
-            <p>${property['Spesifikasi']}</p>
+            <p>${property['detail']}</p>
           </div>
         ` : ''}
         
         <div class="detail-specs">
           <div class="spec-item">
-            <span class="spec-label">Jenis Properti</span>
-            <span class="spec-value">${property['Jenis'] || '-'}</span>
-          </div>
-          <div class="spec-item">
-            <span class="spec-label">Luas Tanah</span>
-            <span class="spec-value">${property['LT'] ? property['LT'] + ' m²' : '-'}</span>
-          </div>
-          <div class="spec-item">
-            <span class="spec-label">Luas Bangunan</span>
-            <span class="spec-value">${property['LB'] ? property['LB'] + ' m²' : '-'}</span>
-          </div>
-          <div class="spec-item">
             <span class="spec-label">Kategori</span>
-            <span class="spec-value">${property._tab || '-'}</span>
+            <span class="spec-value">${property._tab || 'primary'}</span>
+          </div>
+          <div class="spec-item">
+            <span class="spec-label">Sales</span>
+            <span class="spec-value">${property['sales'] || '-'}</span>
+          </div>
+          <div class="spec-item">
+            <span class="spec-label">Kontak</span>
+            <span class="spec-value">${property['phone'] || '-'}</span>
           </div>
         </div>
         
         <div class="detail-contact">
-          <h3 style="margin-bottom:12px;">Kontak Marketing</h3>
+          <h3 style="margin-bottom:12px;">Hubungi Marketing</h3>
           <div class="contact-buttons">
-            <a href="https://wa.me/6281234567890?text=Halo, saya tertarik dengan properti ${encodeURIComponent(property['Nama Properti'] || '')}" class="btn-wa" target="_blank">
+            <a href="https://wa.me/${(property['phone'] || '081234567890').replace(/\D/g, '')}?text=Halo, saya tertarik dengan properti ${encodeURIComponent(property['nama property'] || '')}" class="btn-wa" target="_blank">
               <i class="fab fa-whatsapp"></i> WhatsApp
             </a>
-            <a href="tel:081234567890" class="btn-call">
+            <a href="tel:${(property['phone'] || '081234567890').replace(/\D/g, '')}" class="btn-call">
               <i class="fas fa-phone"></i> Telepon
             </a>
           </div>
@@ -1701,7 +1767,10 @@
 
     function changeDetailImage(index) {
       currentImageIndex = index;
-      document.getElementById('mainDetailImage').src = allImages[index];
+      const mainImg = document.getElementById('mainDetailImage');
+      if (mainImg && allImages[index]) {
+        mainImg.src = allImages[index];
+      }
       document.querySelectorAll('.thumbnail').forEach((thumb, i) => {
         thumb.classList.toggle('active', i === index);
       });
@@ -1710,8 +1779,11 @@
     }
 
     function closeDetailModal() {
-      detailModal.classList.remove('active');
-      document.body.style.overflow = '';
+      const detailModal = document.getElementById('detailModal');
+      if (detailModal) {
+        detailModal.classList.remove('active');
+        document.body.style.overflow = '';
+      }
     }
 
     // ========== SESSION STORAGE ==========
@@ -1841,9 +1913,39 @@
     // ========== DUMMY DATA ==========
     function getDummyProperties() {
       return [
-        { 'nama property': 'Rumah Minimalis Modern', 'harga': '1250000000', 'lokasi': 'Batam Kota', 'kt': '3', 'km': '2', 'lt': '120', 'gambar utama': 'https://images.unsplash.com/photo-1600585154340-be6161a56a0c?w=400', _tab: 'primary' },
-        { 'nama property': 'Apartemen City View', 'harga': '850000000', 'lokasi': 'Nagoya', 'kt': '2', 'km': '1', 'lt': '65', 'gambar utama': 'https://images.unsplash.com/photo-1600607687939-ce8a6c25118c?w=400', _tab: 'secondary' },
-        { 'nama property': 'Ruko Strategis', 'harga': '2100000000', 'lokasi': 'Batam Center', 'kt': '0', 'km': '1', 'lt': '100', 'gambar utama': 'https://images.unsplash.com/photo-1600566753086-00f18fb6b3ea?w=400', _tab: 'rent' }
+        { 
+          'nama property': 'Ruko Bisnis', 
+          'harga': '99000000', 
+          'lokasi': 'Tiban', 
+          'kt': '4', 
+          'km': '10', 
+          'lt': '2', 
+          'gambar utama': 'https://lh3.googleusercontent.com/d/10mZumMZTUW2piz9af9i4s-cUVm4hLQSA=w400',
+          'detail': 'Ruko ini untuk bisnis',
+          'sales': 'Toni',
+          'phone': '081234567899',
+          _tab: 'primary' 
+        },
+        { 
+          'nama property': 'Apartemen City View', 
+          'harga': '850000000', 
+          'lokasi': 'Nagoya', 
+          'kt': '2', 
+          'km': '1', 
+          'lt': '1', 
+          'gambar utama': 'https://images.unsplash.com/photo-1600607687939-ce8a6c25118c?w=400', 
+          _tab: 'secondary' 
+        },
+        { 
+          'nama property': 'Rumah Minimalis', 
+          'harga': '2100000000', 
+          'lokasi': 'Batam Center', 
+          'kt': '3', 
+          'km': '2', 
+          'lt': '1', 
+          'gambar utama': 'https://images.unsplash.com/photo-1600585154340-be6161a56a0c?w=400', 
+          _tab: 'rent' 
+        }
       ];
     }
 
