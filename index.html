@@ -5,10 +5,11 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=yes, viewport-fit=cover">
   <meta name="theme-color" content="#2c3e50">
   
-  <!-- Font Awesome - Sumber ikon -->
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <title>BMpro - Properti Batam</title>
   
-  <!-- Google Fonts - Poppins -->
+  <!-- Font Awesome -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <!-- Google Fonts -->
   <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
   
   <style>
@@ -64,7 +65,6 @@
       background: linear-gradient(135deg, rgba(44,62,80,0.6) 0%, rgba(52,152,219,0.3) 100%);
     }
 
-    /* Hamburger Button */
     .hamburger-btn {
       position: absolute;
       top: 16px;
@@ -88,7 +88,6 @@
       color: var(--primary);
     }
 
-    /* Header Content */
     .header-content {
       position: absolute;
       bottom: 28px;
@@ -169,12 +168,46 @@
       color: white;
     }
 
+    .sidebar-header-top {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      margin-bottom: 8px;
+    }
+
+    .sidebar-logo {
+      width: 45px;
+      height: 40px;
+      background: rgb(255, 255, 255);
+      border-radius: 12px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      box-shadow: 0 4px 10px rgba(0,0,0,0.15);
+      overflow: hidden;
+    }
+
+    .sidebar-logo img {
+      width: 70%;
+      height: 70%;
+      object-fit: cover;
+    }
+
+    .sidebar-logo span {
+      font-size: 20px;
+      font-weight: 700;
+      color: var(--primary);
+    }
+
     .sidebar-header h3 {
-      font-size: 1.3rem;
+      font-size: 1.2rem;
+      font-weight: 600;
     }
 
     .sidebar-header p {
-      font-size: 0.75rem;
+      font-size: 0.7rem;
+      opacity: 0.9;
+      margin-left: 60px;
     }
 
     .menu-item {
@@ -309,6 +342,12 @@
       overflow: hidden;
       box-shadow: 0 3px 10px rgba(0,0,0,0.06);
       border: 1px solid rgba(0,0,0,0.03);
+      cursor: pointer;
+      transition: transform 0.2s;
+    }
+
+    .property-card:active {
+      transform: scale(0.99);
     }
 
     .card-image {
@@ -337,9 +376,22 @@
       text-transform: uppercase;
     }
 
-    .favorite-btn {
+    .tab-badge {
       position: absolute;
       top: 10px;
+      right: 10px;
+      background: rgba(0,0,0,0.6);
+      color: white;
+      padding: 4px 10px;
+      border-radius: 20px;
+      font-size: 0.6rem;
+      font-weight: 500;
+      text-transform: uppercase;
+    }
+
+    .favorite-btn {
+      position: absolute;
+      bottom: 10px;
       right: 10px;
       background: rgba(255,255,255,0.95);
       width: 32px;
@@ -408,41 +460,6 @@
     .feature i {
       color: var(--secondary);
       font-size: 0.8rem;
-    }
-
-    .card-footer {
-      padding: 10px 14px 14px;
-      display: flex;
-      gap: 8px;
-    }
-
-    .btn-detail {
-      flex: 1;
-      background: var(--primary);
-      color: white;
-      padding: 10px;
-      border-radius: 10px;
-      font-weight: 500;
-      font-size: 0.75rem;
-      text-align: center;
-      text-decoration: none;
-    }
-
-    .btn-contact {
-      flex: 1;
-      background: white;
-      border: 1.5px solid var(--secondary);
-      color: var(--secondary);
-      padding: 10px;
-      border-radius: 10px;
-      font-weight: 500;
-      font-size: 0.75rem;
-      text-align: center;
-      text-decoration: none;
-    }
-
-    .btn-contact i {
-      color: #25D366;
     }
 
     /* ============================================================
@@ -647,7 +664,6 @@
       white-space: nowrap;
     }
 
-    /* Modal Tabs */
     .modal-tabs {
       display: flex;
       padding: 10px 16px;
@@ -674,7 +690,6 @@
       color: white;
     }
 
-    /* Active Filter Chips */
     .modal-filters {
       padding: 10px 16px;
       background: white;
@@ -721,17 +736,244 @@
       gap: 14px;
     }
 
-    .tab-badge {
+    /* ============================================================
+       DETAIL MODAL (POPUP DETAIL PROPERTI)
+       ============================================================ */
+    .detail-modal {
+      position: fixed;
+      top: 0; left: 0; right: 0; bottom: 0;
+      background: #f8f9fa;
+      z-index: 5000;
+      transform: translateY(100%);
+      transition: transform 0.3s ease;
+      overflow-y: auto;
+    }
+
+    .detail-modal.active {
+      transform: translateY(0);
+    }
+
+    .detail-header {
+      position: sticky;
+      top: 0;
+      background: white;
+      padding: 12px 16px;
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+      z-index: 10;
+    }
+
+    .detail-header .back-btn {
+      color: var(--primary);
+      font-size: 1.2rem;
+      cursor: pointer;
+      width: 36px;
+      height: 36px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border-radius: 50%;
+      background: #f0f0f0;
+    }
+
+    .detail-header h2 {
+      font-size: 1rem;
+      font-weight: 600;
+      flex: 1;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    .detail-main-image {
+      width: 100%;
+      height: 280px;
+      position: relative;
+    }
+
+    .detail-main-image img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+
+    .image-counter {
       position: absolute;
-      top: 10px;
-      right: 10px;
+      bottom: 12px;
+      right: 12px;
       background: rgba(0,0,0,0.6);
       color: white;
-      padding: 4px 10px;
+      padding: 4px 12px;
       border-radius: 20px;
-      font-size: 0.6rem;
+      font-size: 0.75rem;
+    }
+
+    .detail-thumbnails {
+      display: flex;
+      gap: 8px;
+      padding: 12px 16px;
+      background: white;
+      overflow-x: auto;
+    }
+
+    .thumbnail {
+      width: 70px;
+      height: 70px;
+      border-radius: 10px;
+      overflow: hidden;
+      flex-shrink: 0;
+      cursor: pointer;
+      border: 2px solid transparent;
+    }
+
+    .thumbnail.active {
+      border-color: var(--secondary);
+    }
+
+    .thumbnail img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+
+    .detail-info {
+      background: white;
+      padding: 20px 16px;
+      margin-top: 8px;
+    }
+
+    .detail-price {
+      font-size: 1.5rem;
+      font-weight: 700;
+      color: var(--primary);
+      margin-bottom: 8px;
+    }
+
+    .detail-title {
+      font-size: 1.1rem;
+      font-weight: 600;
+      margin-bottom: 8px;
+    }
+
+    .detail-location {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      color: var(--gray);
+      font-size: 0.85rem;
+      margin-bottom: 16px;
+    }
+
+    .detail-features {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 16px;
+      padding: 16px 0;
+      border-top: 1px solid #eee;
+      border-bottom: 1px solid #eee;
+      text-align: center;
+    }
+
+    .detail-feature i {
+      font-size: 1.5rem;
+      color: var(--secondary);
+      margin-bottom: 4px;
+    }
+
+    .detail-feature .value {
+      font-size: 1.1rem;
+      font-weight: 600;
+    }
+
+    .detail-feature .label {
+      font-size: 0.7rem;
+      color: var(--gray);
+    }
+
+    .detail-description {
+      background: white;
+      padding: 20px 16px;
+      margin-top: 8px;
+    }
+
+    .detail-description h3 {
+      font-size: 0.95rem;
+      margin-bottom: 12px;
+    }
+
+    .detail-description p {
+      color: #555;
+      font-size: 0.85rem;
+      line-height: 1.6;
+    }
+
+    .detail-specs {
+      background: white;
+      padding: 20px 16px;
+      margin-top: 8px;
+    }
+
+    .spec-item {
+      display: flex;
+      padding: 10px 0;
+      border-bottom: 1px solid #f0f0f0;
+    }
+
+    .spec-label {
+      width: 120px;
+      color: var(--gray);
+      font-size: 0.8rem;
+    }
+
+    .spec-value {
+      flex: 1;
       font-weight: 500;
-      text-transform: uppercase;
+      font-size: 0.85rem;
+    }
+
+    .detail-contact {
+      background: white;
+      padding: 20px 16px;
+      margin-top: 8px;
+      margin-bottom: 20px;
+    }
+
+    .contact-buttons {
+      display: flex;
+      gap: 12px;
+      margin-top: 16px;
+    }
+
+    .btn-wa {
+      flex: 1;
+      background: #25D366;
+      color: white;
+      border: none;
+      padding: 14px;
+      border-radius: 12px;
+      font-weight: 500;
+      text-decoration: none;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+    }
+
+    .btn-call {
+      flex: 1;
+      background: var(--secondary);
+      color: white;
+      border: none;
+      padding: 14px;
+      border-radius: 12px;
+      font-weight: 500;
+      text-decoration: none;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
     }
 
     /* ============================================================
@@ -881,22 +1123,29 @@
   
   <div class="sidebar-menu" id="sidebarMenu">
     <div class="sidebar-header">
-      <h3>🏠 BMpro</h3>
-      <p>Temukan properti impian Anda</p>
+      <div class="sidebar-header-top">
+        <div class="sidebar-logo">
+          <img src="https://drive.google.com/thumbnail?id=1a3cJptxJTSHksm9D7tN3us_7Ii7dQxxG&sz=w100" 
+               alt="BMpro Logo"
+               onerror="this.src='https://via.placeholder.com/100x100/2c3e50/ffffff?text=BM'">
+        </div>
+        <h3>BMpro</h3>
+      </div>
+      <p>Temukan properti impian Anda di Batam</p>
     </div>
     
     <div class="sidebar-nav">
       <a href="#" class="menu-item"><i class="fas fa-home"></i><span>Beranda</span></a>
-      <a href="#" class="menu-item"><i class="fas fa-search"></i><span>Cari Properti</span></a>
+      <a href="#" class="menu-item" onclick="openSearchModal()"><i class="fas fa-search"></i><span>Cari Properti</span></a>
       <a href="#" class="menu-item"><i class="fas fa-heart"></i><span>Favorit Saya</span></a>
-      <a href="#" class="menu-item"><i class="fas fa-history"></i><span>Riwayat</span></a>
-      <a href="#" class="menu-item"><i class="fas fa-user"></i><span>Profil Saya</span></a>
+      <a href="#" class="menu-item"><i class="fas fa-building"></i><span>Primary</span></a>
+      <a href="#" class="menu-item"><i class="fas fa-home"></i><span>Secondary</span></a>
+      <a href="#" class="menu-item"><i class="fas fa-key"></i><span>Rent</span></a>
       <a href="#" class="menu-item"><i class="fas fa-headset"></i><span>Hubungi Kami</span></a>
-      <a href="#" class="menu-item"><i class="fas fa-info-circle"></i><span>Tentang</span></a>
     </div>
     
     <div class="sidebar-footer">
-      <p>© 2025 BMpro • v2.0</p>
+      <p>© 2025 BMpro • Properti Batam</p>
     </div>
   </div>
 
@@ -910,8 +1159,8 @@
     
     <div class="header-content">
       <span class="badge"><i class="fas fa-star"></i> Premium</span>
-      <h1>Temukan Rumah<br>Impian Anda</h1>
-      <p><i class="fas fa-map-pin"></i> Batam, Indonesia <i class="fas fa-circle" style="font-size: 3px; margin: 0 6px;"></i> 150+ Properti</p>
+      <h1>Temukan Properti<br>Impian Anda</h1>
+      <p><i class="fas fa-map-pin"></i> Batam, Kepulauan Riau <i class="fas fa-circle" style="font-size: 3px; margin: 0 6px;"></i> 150+ Properti</p>
     </div>
   </header>
 
@@ -919,7 +1168,7 @@
   <div class="search-section">
     <div class="search-box">
       <i class="fas fa-search"></i>
-      <input type="text" placeholder="Cari lokasi, tipe, harga..." id="searchInput">
+      <input type="text" placeholder="Cari properti, lokasi, atau harga..." id="searchInput">
       <button id="searchBtn">Cari</button>
     </div>
   </div>
@@ -928,7 +1177,7 @@
   <div class="section-container">
     <div class="section-header">
       <h4><i class="fas fa-fire" style="color: #e74c3c;"></i> Properti Unggulan</h4>
-      <a href="#">Lihat Semua <i class="fas fa-chevron-right" style="font-size: 0.6rem;"></i></a>
+      <a href="#" onclick="openSearchModal()">Lihat Semua <i class="fas fa-chevron-right" style="font-size: 0.6rem;"></i></a>
     </div>
     
     <div id="propertyList" class="property-grid">
@@ -951,25 +1200,21 @@
   <!-- ========== BOTTOM NAVIGATION ========== -->
   <nav class="bottom-nav">
     <a href="#" class="nav-item active"><i class="fas fa-home"></i><span>Beranda</span></a>
-    <a href="#" class="nav-item"><i class="fas fa-search"></i><span>Cari</span></a>
+    <a href="#" class="nav-item" onclick="openSearchModal()"><i class="fas fa-search"></i><span>Cari</span></a>
     <a href="#" class="nav-item"><i class="fas fa-heart"></i><span>Favorit</span></a>
     <a href="#" class="nav-item"><i class="fas fa-user"></i><span>Profil</span></a>
   </nav>
 
-  <!-- ========== SEARCH MODAL (POPUP) ========== -->
+  <!-- ========== SEARCH MODAL ========== -->
   <div class="search-modal" id="searchModal">
     <div class="modal-header">
-      <div class="close-btn" onclick="closeSearchModal()">
-        <i class="fas fa-times"></i>
-      </div>
+      <div class="close-btn" onclick="closeSearchModal()"><i class="fas fa-times"></i></div>
       <div class="search-box">
         <i class="fas fa-search"></i>
         <input type="text" placeholder="Cari properti..." id="modalSearchInput">
         <button onclick="doModalSearch()">Cari</button>
       </div>
-      <button class="filter-btn" onclick="openFilterSheet()">
-        <i class="fas fa-sliders-h"></i> Filter
-      </button>
+      <button class="filter-btn" onclick="openFilterSheet()"><i class="fas fa-sliders-h"></i> Filter</button>
     </div>
     
     <div class="modal-tabs" id="modalTabs">
@@ -980,16 +1225,20 @@
     </div>
     
     <div class="modal-filters" id="activeFilters"></div>
-    
-    <div class="modal-result-count" id="modalResultCount">
-      Ketik untuk mencari properti...
+    <div class="modal-result-count" id="modalResultCount">Ketik untuk mencari properti...</div>
+    <div id="modalPropertyList" class="modal-property-list"></div>
+  </div>
+
+  <!-- ========== DETAIL MODAL ========== -->
+  <div class="detail-modal" id="detailModal">
+    <div class="detail-header">
+      <div class="back-btn" onclick="closeDetailModal()"><i class="fas fa-arrow-left"></i></div>
+      <h2 id="detailTitle">Detail Properti</h2>
+      <div style="width: 36px;"></div>
     </div>
     
-    <div id="modalPropertyList" class="modal-property-list">
-      <div class="empty-state" style="margin-top: 40px;">
-        <i class="fas fa-search"></i>
-        <p>Masukkan kata kunci pencarian</p>
-      </div>
+    <div id="detailContent">
+      <div class="loading"><i class="fas fa-spinner"></i><p>Memuat detail...</p></div>
     </div>
   </div>
 
@@ -1049,10 +1298,9 @@
     </div>
   </div>
 
-  <!-- ========== JAVASCRIPT ========== -->
   <script>
     // ========== KONFIGURASI OPENSHEET ==========
-    const SHEET_ID = '1helcyWMk5kVpcFKX351vLhn7RKvJ6dDQmjbxU_jmtt4'; // GANTI dengan Sheet ID Anda
+    const SHEET_ID = '1helcyWMk5kVpcFKX351vLhn7RKvJ6dDQmjbxU_jmtt4';
     const OPENSHEET_BASE = `https://opensheet.elk.sh/${SHEET_ID}`;
 
     // ========== HAMBURGER MENU ==========
@@ -1099,21 +1347,30 @@
 
     // ========== STATE MANAGEMENT ==========
     const searchModal = document.getElementById('searchModal');
+    const detailModal = document.getElementById('detailModal');
     const filterSheet = document.getElementById('filterSheet');
     const filterSheetOverlay = document.getElementById('filterSheetOverlay');
 
     let modalFilters = { kt: '', km: '', lt: '', minHarga: '', maxHarga: '', tab: '' };
-    let modalResults = [];
-    let lastSearchTerm = '';
     let isModalOpen = false;
+    let allImages = [];
+    let currentImageIndex = 0;
+
+    // ========== FORMAT HARGA ==========
+    function formatPrice(price) {
+      if (!price) return 'Hubungi';
+      const num = parseInt(price.toString().replace(/\D/g, '')) || 0;
+      if (num >= 1000000000) return `Rp ${(num / 1000000000).toFixed(1)} M`;
+      if (num >= 1000000) return `Rp ${(num / 1000000).toFixed(0)} Jt`;
+      return `Rp ${num.toLocaleString('id-ID')}`;
+    }
 
     // ========== OPENSHEET FETCH ==========
     async function fetchSheetData(tabName) {
       try {
         const response = await fetch(`${OPENSHEET_BASE}/${tabName}`);
         if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
-        const data = await response.json();
-        return data;
+        return await response.json();
       } catch (error) {
         console.error(`Error fetching ${tabName}:`, error);
         return [];
@@ -1125,8 +1382,10 @@
       try {
         const primaryData = await fetchSheetData('primary');
         const properties = primaryData.slice(0, 3).map(item => ({
+          ...item,
+          _tab: 'primary',
           'nama property': item['Nama Properti'],
-          'harga': 'Rp ' + parseInt((item['Rp'] || '0').replace(/\D/g, '')).toLocaleString('id-ID'),
+          'harga': item['Rp'],
           'lokasi': item['Lokasi'],
           'kt': item['KT'],
           'km': item['KM'],
@@ -1148,19 +1407,20 @@
       }
 
       container.innerHTML = properties.map((p, i) => `
-        <div class="property-card">
+        <div class="property-card" onclick='showDetail(${JSON.stringify(p).replace(/'/g, "&apos;")})'>
           <div class="card-image">
             <img src="${p['gambar utama'] || 'https://images.unsplash.com/photo-1580587771525-78b9dba3b914?w=400'}" 
                  alt="${p['nama property'] || 'Properti'}"
                  onerror="this.src='https://images.unsplash.com/photo-1580587771525-78b9dba3b914?w=400'">
             <span class="card-badge">${i === 0 ? 'HOT' : 'NEW'}</span>
-            <div class="favorite-btn" onclick="toggleFavorite(this)">
+            <span class="tab-badge">${p._tab}</span>
+            <div class="favorite-btn" onclick="event.stopPropagation(); toggleFavorite(this)">
               <i class="far fa-heart"></i>
             </div>
           </div>
           
           <div class="card-content">
-            <div class="property-price">${p['harga'] || 'Hubungi'}</div>
+            <div class="property-price">${formatPrice(p['harga'])}</div>
             <h3 class="property-title">${p['nama property'] || 'Nama Properti'}</h3>
             <div class="property-address">
               <i class="fas fa-map-marker-alt"></i>
@@ -1169,22 +1429,23 @@
             <div class="property-features">
               <span class="feature"><i class="fas fa-bed"></i> ${p['kt'] || '0'} KT</span>
               <span class="feature"><i class="fas fa-bath"></i> ${p['km'] || '0'} KM</span>
-              <span class="feature"><i class="fas fa-ruler-combined"></i> ${p['lt'] || '0'} m²</span>
+              <span class="feature"><i class="fas fa-layer-group"></i> ${p['lt'] || '0'} Lt</span>
             </div>
-          </div>
-          
-          <div class="card-footer">
-            <a href="#" class="btn-detail"><i class="fas fa-eye"></i> Detail</a>
-            <a href="#" class="btn-contact"><i class="fab fa-whatsapp"></i> Chat</a>
           </div>
         </div>
       `).join('');
     }
 
     // ========== GALLERY ==========
-    function displayGallery(images) {
+    function displayGallery() {
       const container = document.getElementById('galleryList');
-      container.innerHTML = getDummyGallery().map((img, i) => `
+      const dummyImages = [
+        { name: 'Interior 1', url: 'https://images.unsplash.com/photo-1600210492493-0946911123ea?w=400' },
+        { name: 'Interior 2', url: 'https://images.unsplash.com/photo-1600607687939-ce8a6c25118c?w=400' },
+        { name: 'Eksterior 1', url: 'https://images.unsplash.com/photo-1600585154340-be6161a56a0c?w=400' },
+        { name: 'Kamar Tidur', url: 'https://images.unsplash.com/photo-1600566753086-00f18fb6b3ea?w=400' }
+      ];
+      container.innerHTML = dummyImages.map((img, i) => `
         <div class="gallery-item">
           <img src="${img.url}" alt="${img.name}">
           <div class="overlay"><i class="fas fa-home"></i> Properti ${i+1}</div>
@@ -1196,7 +1457,6 @@
     function openSearchModal() {
       const searchTerm = document.getElementById('searchInput').value;
       document.getElementById('modalSearchInput').value = searchTerm;
-      lastSearchTerm = searchTerm;
       
       searchModal.classList.add('active');
       document.body.style.overflow = 'hidden';
@@ -1226,10 +1486,8 @@
       filterSheetOverlay.classList.remove('active');
     }
 
-    // ========== MODAL SEARCH (OPENSHEET) ==========
     async function doModalSearch() {
       const searchTerm = document.getElementById('modalSearchInput').value.toLowerCase().trim();
-      lastSearchTerm = searchTerm;
       
       document.getElementById('modalPropertyList').innerHTML = 
         '<div class="loading"><i class="fas fa-spinner"></i><p>Mencari properti...</p></div>';
@@ -1248,7 +1506,6 @@
           ...rentData.map(item => ({ ...item, _tab: 'rent' }))
         ];
         
-        // Filter teks
         if (searchTerm) {
           allResults = allResults.filter(item => {
             const nama = (item['Nama Properti'] || '').toLowerCase();
@@ -1258,30 +1515,25 @@
           });
         }
         
-        // Filter tab
         if (modalFilters.tab) {
           allResults = allResults.filter(item => item._tab === modalFilters.tab);
         }
         
-        // Filter KT
         if (modalFilters.kt) {
           const minKT = parseInt(modalFilters.kt);
           allResults = allResults.filter(item => (parseInt(item['KT']) || 0) >= minKT);
         }
         
-        // Filter KM
         if (modalFilters.km) {
           const minKM = parseInt(modalFilters.km);
           allResults = allResults.filter(item => (parseInt(item['KM']) || 0) >= minKM);
         }
         
-        // Filter Lantai
         if (modalFilters.lt) {
           const minLT = parseInt(modalFilters.lt);
           allResults = allResults.filter(item => (parseInt(item['Lantai']) || 0) >= minLT);
         }
         
-        // Filter Harga
         if (modalFilters.minHarga || modalFilters.maxHarga) {
           allResults = allResults.filter(item => {
             let harga = parseInt((item['Rp'] || '0').replace(/\D/g, '')) || 0;
@@ -1291,8 +1543,7 @@
           });
         }
         
-        modalResults = allResults;
-        displayModalResultsFromData(allResults);
+        displayModalResults(allResults);
         
       } catch (error) {
         document.getElementById('modalPropertyList').innerHTML = 
@@ -1301,7 +1552,7 @@
       }
     }
 
-    function displayModalResultsFromData(results) {
+    function displayModalResults(results) {
       const container = document.getElementById('modalPropertyList');
       
       document.getElementById('modalResultCount').innerHTML = 
@@ -1314,23 +1565,18 @@
       }
       
       container.innerHTML = results.map(item => {
-        const harga = item['Rp'] ? 'Rp ' + parseInt(item['Rp'].replace(/\D/g, '')).toLocaleString('id-ID') : 'Hubungi';
-        const propertyId = item['uid'] || encodeURIComponent(item['Nama Properti'] || '');
-        const detailUrl = `detail.html?id=${propertyId}&tab=${item._tab}`;
-        
         return `
-          <div class="property-card property-card-clickable" data-url="${detailUrl}" style="cursor: pointer;">
+          <div class="property-card" onclick='showDetail(${JSON.stringify(item).replace(/'/g, "&apos;")})'>
             <div class="card-image">
               <img src="${item['Gambar'] || 'https://images.unsplash.com/photo-1580587771525-78b9dba3b914?w=400'}" 
-                   alt="${item['Nama Properti']}"
-                   onerror="this.src='https://images.unsplash.com/photo-1580587771525-78b9dba3b914?w=400'">
+                   alt="${item['Nama Properti']}">
               <span class="tab-badge">${item._tab}</span>
               <div class="favorite-btn" onclick="event.stopPropagation(); toggleFavorite(this)">
                 <i class="far fa-heart"></i>
               </div>
             </div>
             <div class="card-content">
-              <div class="property-price">${harga}</div>
+              <div class="property-price">${formatPrice(item['Rp'])}</div>
               <h3 class="property-title">${item['Nama Properti'] || 'Tanpa Nama'}</h3>
               <div class="property-address">
                 <i class="fas fa-map-marker-alt"></i> 
@@ -1346,21 +1592,126 @@
         `;
       }).join('');
       
-      attachCardClickEvents();
       saveModalState();
     }
 
-    function attachCardClickEvents() {
-      document.querySelectorAll('.property-card-clickable').forEach(card => {
-        card.addEventListener('click', function(e) {
-          if (e.target.closest('.favorite-btn')) return;
-          const url = this.dataset.url;
-          if (url) {
-            saveModalState();
-            window.open(url, '_blank');
-          }
-        });
+    // ========== DETAIL MODAL ==========
+    function showDetail(property) {
+      allImages = [];
+      if (property['Gambar']) allImages.push(property['Gambar']);
+      if (property['gambar utama']) allImages.push(property['gambar utama']);
+      for (let i = 2; i <= 10; i++) {
+        const key = `GambarList${i}`;
+        if (property[key]) allImages.push(property[key]);
+      }
+      
+      currentImageIndex = 0;
+      
+      document.getElementById('detailTitle').textContent = 
+        property['Nama Properti'] || property['nama property'] || 'Detail Properti';
+      
+      const content = document.getElementById('detailContent');
+      const hargaValue = property['Rp'] || property['harga'] || '0';
+      
+      content.innerHTML = `
+        <div class="detail-main-image">
+          <img src="${allImages[0] || 'https://images.unsplash.com/photo-1580587771525-78b9dba3b914?w=600'}" 
+               alt="${property['Nama Properti']}" id="mainDetailImage">
+          ${allImages.length > 1 ? `<span class="image-counter" id="imageCounter">1/${allImages.length}</span>` : ''}
+        </div>
+        
+        ${allImages.length > 1 ? `
+          <div class="detail-thumbnails">
+            ${allImages.map((img, i) => `
+              <div class="thumbnail ${i === 0 ? 'active' : ''}" onclick="changeDetailImage(${i})">
+                <img src="${img}" alt="Thumbnail ${i+1}">
+              </div>
+            `).join('')}
+          </div>
+        ` : ''}
+        
+        <div class="detail-info">
+          <div class="detail-price">${formatPrice(hargaValue)}</div>
+          <h2 class="detail-title">${property['Nama Properti'] || property['nama property'] || '-'}</h2>
+          <div class="detail-location">
+            <i class="fas fa-map-marker-alt"></i> ${property['Lokasi'] || property['lokasi'] || '-'}
+          </div>
+          
+          <div class="detail-features">
+            <div class="detail-feature">
+              <i class="fas fa-bed"></i>
+              <div class="value">${property['KT'] || property['kt'] || '0'}</div>
+              <div class="label">Kamar Tidur</div>
+            </div>
+            <div class="detail-feature">
+              <i class="fas fa-bath"></i>
+              <div class="value">${property['KM'] || property['km'] || '0'}</div>
+              <div class="label">Kamar Mandi</div>
+            </div>
+            <div class="detail-feature">
+              <i class="fas fa-layer-group"></i>
+              <div class="value">${property['Lantai'] || property['lt'] || '0'}</div>
+              <div class="label">Lantai</div>
+            </div>
+          </div>
+        </div>
+        
+        ${property['Spesifikasi'] ? `
+          <div class="detail-description">
+            <h3>Deskripsi</h3>
+            <p>${property['Spesifikasi']}</p>
+          </div>
+        ` : ''}
+        
+        <div class="detail-specs">
+          <div class="spec-item">
+            <span class="spec-label">Jenis Properti</span>
+            <span class="spec-value">${property['Jenis'] || '-'}</span>
+          </div>
+          <div class="spec-item">
+            <span class="spec-label">Luas Tanah</span>
+            <span class="spec-value">${property['LT'] ? property['LT'] + ' m²' : '-'}</span>
+          </div>
+          <div class="spec-item">
+            <span class="spec-label">Luas Bangunan</span>
+            <span class="spec-value">${property['LB'] ? property['LB'] + ' m²' : '-'}</span>
+          </div>
+          <div class="spec-item">
+            <span class="spec-label">Kategori</span>
+            <span class="spec-value">${property._tab || '-'}</span>
+          </div>
+        </div>
+        
+        <div class="detail-contact">
+          <h3 style="margin-bottom:12px;">Kontak Marketing</h3>
+          <div class="contact-buttons">
+            <a href="https://wa.me/6281234567890?text=Halo, saya tertarik dengan properti ${encodeURIComponent(property['Nama Properti'] || '')}" class="btn-wa" target="_blank">
+              <i class="fab fa-whatsapp"></i> WhatsApp
+            </a>
+            <a href="tel:081234567890" class="btn-call">
+              <i class="fas fa-phone"></i> Telepon
+            </a>
+          </div>
+        </div>
+      `;
+      
+      detailModal.classList.add('active');
+      document.body.style.overflow = 'hidden';
+    }
+
+    function changeDetailImage(index) {
+      currentImageIndex = index;
+      document.getElementById('mainDetailImage').src = allImages[index];
+      document.querySelectorAll('.thumbnail').forEach((thumb, i) => {
+        thumb.classList.toggle('active', i === index);
       });
+      const counter = document.getElementById('imageCounter');
+      if (counter) counter.textContent = `${index + 1}/${allImages.length}`;
+    }
+
+    function closeDetailModal() {
+      detailModal.classList.remove('active');
+      document.body.style.overflow = '';
     }
 
     // ========== SESSION STORAGE ==========
@@ -1400,7 +1751,6 @@
             document.getElementById('modalResultCount').innerHTML = state.resultCount;
             document.getElementById('modalPropertyList').innerHTML = state.propertyListHTML;
             
-            attachCardClickEvents();
             updateActiveFilterChips();
             
             searchModal.classList.add('active');
@@ -1491,18 +1841,9 @@
     // ========== DUMMY DATA ==========
     function getDummyProperties() {
       return [
-        { 'nama property': 'Rumah Minimalis Modern', 'harga': 'Rp 1,25 M', 'lokasi': 'Jl. Kenanga Indah 12, Jaksel', 'kt': '3', 'km': '2', 'lt': '120', 'gambar utama': 'https://images.unsplash.com/photo-1600585154340-be6161a56a0c?w=400' },
-        { 'nama property': 'Apartemen City View', 'harga': 'Rp 850 Jt', 'lokasi': 'Sudirman Park A, Jakpus', 'kt': '2', 'km': '1', 'lt': '65', 'gambar utama': 'https://images.unsplash.com/photo-1600607687939-ce8a6c25118c?w=400' },
-        { 'nama property': 'Villa Puncak Sejuk', 'harga': 'Rp 2,1 M', 'lokasi': 'Puncak Resort, Bogor', 'kt': '4', 'km': '3', 'lt': '250', 'gambar utama': 'https://images.unsplash.com/photo-1600566753086-00f18fb6b3ea?w=400' }
-      ];
-    }
-
-    function getDummyGallery() {
-      return [
-        { name: 'Interior 1', url: 'https://images.unsplash.com/photo-1600210492493-0946911123ea?w=400' },
-        { name: 'Interior 2', url: 'https://images.unsplash.com/photo-1600607687939-ce8a6c25118c?w=400' },
-        { name: 'Eksterior 1', url: 'https://images.unsplash.com/photo-1600585154340-be6161a56a0c?w=400' },
-        { name: 'Kamar Tidur', url: 'https://images.unsplash.com/photo-1600566753086-00f18fb6b3ea?w=400' }
+        { 'nama property': 'Rumah Minimalis Modern', 'harga': '1250000000', 'lokasi': 'Batam Kota', 'kt': '3', 'km': '2', 'lt': '120', 'gambar utama': 'https://images.unsplash.com/photo-1600585154340-be6161a56a0c?w=400', _tab: 'primary' },
+        { 'nama property': 'Apartemen City View', 'harga': '850000000', 'lokasi': 'Nagoya', 'kt': '2', 'km': '1', 'lt': '65', 'gambar utama': 'https://images.unsplash.com/photo-1600607687939-ce8a6c25118c?w=400', _tab: 'secondary' },
+        { 'nama property': 'Ruko Strategis', 'harga': '2100000000', 'lokasi': 'Batam Center', 'kt': '0', 'km': '1', 'lt': '100', 'gambar utama': 'https://images.unsplash.com/photo-1600566753086-00f18fb6b3ea?w=400', _tab: 'rent' }
       ];
     }
 
