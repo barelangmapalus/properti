@@ -979,3 +979,37 @@
   font-size: 0.9rem;
   color: var(--primary);
 }
+
+
+/* ============================================================
+   CARD MENGAMBANG DI CAROUSEL
+   ============================================================ */
+   .carousel-slide {
+    padding: 8px 4px 12px 4px;  /* Jarak atas, kanan, bawah, kiri */
+  }
+  
+  .carousel-slide .property-card {
+    box-shadow: 0 8px 20px rgba(0,0,0,0.12);  /* Shadow lebih tebal */
+    border: none;  /* Hilangkan border */
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+  }
+  
+  .carousel-slide .property-card:hover {
+    transform: translateY(-4px);  /* Efek terangkat saat hover */
+    box-shadow: 0 12px 28px rgba(0,0,0,0.18);
+  }
+  
+  /* Container carousel diberi padding agar shadow terlihat */
+  .featured-carousel {
+    padding: 4px 0 8px 0;
+    overflow: visible !important;  /* Biarkan shadow keluar */
+  }
+  
+  .carousel-container {
+    overflow: visible !important;
+  }
+  
+  /* Arrow disesuaikan posisinya */
+  .carousel-arrow {
+    top: calc(50% - 8px);  /* Sesuaikan dengan padding */
+  }
