@@ -72,29 +72,57 @@
     </div>
   </div>
 
-  <!-- ========== PROPERTY LISTINGS ========== -->
-  <div class="section-container">
-    <div class="section-header">
-      <h4><i class="fas fa-fire" style="color: #e74c3c;"></i> Properti Unggulan</h4>
-      <a href="search.html">Lihat Semua <i class="fas fa-chevron-right" style="font-size: 0.6rem;"></i></a>
-    </div>
-    
-    <div id="propertyList" class="property-grid">
+  <!-- ========== PROPERTY LISTINGS (HOME) ========== -->
+  <!-- ========== PRIMARY SECTION (PROPERTI BARU) ========== -->
+<div class="section-container">
+  <div class="section-header">
+    <h4><i class="fas fa-building" style="color: #3498db;"></i> Primary</h4>
+    <a href="search.html?tab=primary">Lihat Semua <i class="fas fa-chevron-right" style="font-size: 0.6rem;"></i></a>
+  </div>
+  
+  <div class="featured-carousel" id="primaryCarousel">
+    <div class="carousel-container" id="primaryContainer">
       <div class="loading"><i class="fas fa-spinner"></i><p>Memuat properti...</p></div>
     </div>
+    <div class="carousel-arrow prev" id="primaryPrev"><i class="fas fa-chevron-left"></i></div>
+    <div class="carousel-arrow next" id="primaryNext"><i class="fas fa-chevron-right"></i></div>
   </div>
+  <div class="carousel-indicators" id="primaryIndicators"></div>
+</div>
 
-  <!-- ========== GALLERY SECTION ========== -->
-  <div class="section-container">
-    <div class="section-header">
-      <h4><i class="fas fa-images"></i> Galeri Terbaru</h4>
-      <a href="#">Lihat Semua <i class="fas fa-chevron-right" style="font-size: 0.6rem;"></i></a>
+<!-- ========== SECONDARY SECTION (RUMAH BEKAS) ========== -->
+<div class="section-container">
+      <div class="section-header">
+        <h4><i class="fas fa-home" style="color: #e67e22;"></i> Secondary</h4>
+        <a href="search.html?tab=secondary">Lihat Semua <i class="fas fa-chevron-right" style="font-size: 0.6rem;"></i></a>
+      </div>
+      
+      <div class="featured-carousel" id="secondaryCarousel">
+        <div class="carousel-container" id="secondaryContainer">
+          <div class="loading"><i class="fas fa-spinner"></i><p>Memuat properti...</p></div>
+        </div>
+        <div class="carousel-arrow prev" id="secondaryPrev"><i class="fas fa-chevron-left"></i></div>
+        <div class="carousel-arrow next" id="secondaryNext"><i class="fas fa-chevron-right"></i></div>
+      </div>
+      <div class="carousel-indicators" id="secondaryIndicators"></div>
     </div>
-    
-    <div id="galleryList" class="gallery-grid">
-      <div class="loading" style="grid-column: span 2;"><i class="fas fa-spinner"></i><p>Memuat galeri...</p></div>
+
+    <!-- ========== RENT SECTION (SEWA) ========== -->
+    <div class="section-container">
+      <div class="section-header">
+        <h4><i class="fas fa-key" style="color: #27ae60;"></i> Rent</h4>
+        <a href="search.html?tab=rent">Lihat Semua <i class="fas fa-chevron-right" style="font-size: 0.6rem;"></i></a>
+      </div>
+      
+      <div class="featured-carousel" id="rentCarousel">
+        <div class="carousel-container" id="rentContainer">
+          <div class="loading"><i class="fas fa-spinner"></i><p>Memuat properti...</p></div>
+        </div>
+        <div class="carousel-arrow prev" id="rentPrev"><i class="fas fa-chevron-left"></i></div>
+        <div class="carousel-arrow next" id="rentNext"><i class="fas fa-chevron-right"></i></div>
+      </div>
+      <div class="carousel-indicators" id="rentIndicators"></div>
     </div>
-  </div>
 
   <!-- ========== BOTTOM NAVIGATION ========== -->
   <nav class="bottom-nav">
@@ -105,76 +133,90 @@
   </nav>
 
   <!-- JavaScript Global -->
-  <script src="js/script.js"></script>
-  
-  <!-- JavaScript Khusus Home -->
-  <script>
-    // ========== LOAD HOME DATA ==========
-    async function loadHomeData() {
-      try {
-        // Ambil data dari KETIGA tab
-        const [primaryData, secondaryData, rentData] = await Promise.all([
-          fetchSheetData('primary'),
-          fetchSheetData('secondary'),
-          fetchSheetData('rent')
-        ]);
-        
-        // Gabungkan semua data
-        let allData = [
-          ...primaryData.map(item => ({ ...item, _tab: 'primary' })),
-          ...secondaryData.map(item => ({ ...item, _tab: 'secondary' })),
-          ...rentData.map(item => ({ ...item, _tab: 'rent' }))
-        ];
-        
-        // Filter yang memiliki gambar utama (tidak kosong)
-        allData = allData.filter(item => item['gambar utama']);
-        
-        // Ambil 3 data terbaru (berdasarkan timestamp)
-        allData.sort((a, b) => {
-          const timeA = new Date(a['timestamp'] || 0);
-          const timeB = new Date(b['timestamp'] || 0);
-          return timeB - timeA; // Terbaru di atas
-        });
-        
-        const properties = allData.slice(0, 3).map(item => ({
-          ...item,
-          'nama property': item['nama property'] || 'Tanpa Nama',
-          'harga': item['harga'] || '0',
-          'lokasi': item['lokasi'] || '-',
-          'kt': item['kt'] || '0',
-          'km': item['km'] || '0',
-          'lt': item['lt'] || '0',
-          'gambar utama': item['gambar utama'] || ''
-        }));
-        
-        displayProperties(properties);
-      } catch (e) {
-        console.error('Error loading home data:', e);
-        displayProperties(getDummyProperties());
-      }
-    }
+  <!-- JavaScript Global -->
+<script src="js/script.js"></script>
 
-    function displayProperties(properties) {
-      const container = document.getElementById('propertyList');
+<!-- JavaScript Khusus Home -->
+<script>
+  // ========== CAROUSEL STATE ==========
+  const carouselState = {
+    primary: { current: 0, total: 0, interval: null },
+    secondary: { current: 0, total: 0, interval: null },
+    rent: { current: 0, total: 0, interval: null }
+  };
+
+  // ========== LOAD ALL SECTIONS ==========
+  async function loadAllSections() {
+    await Promise.all([
+      loadCarouselSection('primary'),
+      loadCarouselSection('secondary'),
+      loadCarouselSection('rent')
+    ]);
+  }
+
+  async function loadCarouselSection(tabName) {
+    try {
+      const data = await fetchSheetData(tabName);
       
-      if (!properties || properties.length === 0) {
-        container.innerHTML = `<div class="empty-state"><i class="fas fa-home"></i><p>Belum ada properti</p></div>`;
-        return;
-      }
+      // Filter yang memiliki gambar utama
+      const validData = data.filter(item => item['gambar utama']);
+      
+      // Urutkan berdasarkan timestamp terbaru
+      validData.sort((a, b) => {
+        const timeA = new Date(a['timestamp'] || 0);
+        const timeB = new Date(b['timestamp'] || 0);
+        return timeB - timeA;
+      });
+      
+      // Ambil maksimal 3 data
+      const properties = validData.slice(0, 3).map(item => ({
+        ...item,
+        _tab: tabName,
+        'nama property': item['nama property'] || 'Tanpa Nama',
+        'harga': item['harga'] || '0',
+        'lokasi': item['lokasi'] || '-',
+        'kt': item['kt'] || '0',
+        'km': item['km'] || '0',
+        'lt': item['lt'] || '0',
+        'gambar utama': item['gambar utama'] || ''
+      }));
+      
+      displayCarouselSection(tabName, properties);
+    } catch (e) {
+      console.error(`Error loading ${tabName}:`, e);
+      const dummyData = getDummyProperties().filter(p => p._tab === tabName);
+      displayCarouselSection(tabName, dummyData.length ? dummyData : getDummyProperties().slice(0, 3));
+    }
+  }
 
-      container.innerHTML = properties.map((p, i) => {
-        // Simpan data ke sessionStorage untuk diakses di halaman detail
-        const detailId = `prop_${Date.now()}_${i}`;
-        sessionStorage.setItem(detailId, JSON.stringify(p));
-        
-        return `
-          <a href="detail.html?id=${detailId}" class="property-card">
+  function displayCarouselSection(tabName, properties) {
+    const container = document.getElementById(`${tabName}Container`);
+    const indicators = document.getElementById(`${tabName}Indicators`);
+    
+    if (!container || !indicators) return;
+    
+    if (!properties || properties.length === 0) {
+      container.innerHTML = `<div class="empty-state"><i class="fas fa-home"></i><p>Belum ada properti</p></div>`;
+      indicators.innerHTML = '';
+      return;
+    }
+    
+    carouselState[tabName].total = properties.length;
+    
+    // Buat slide
+    container.innerHTML = properties.map((p, i) => {
+      const detailId = `${tabName}_${Date.now()}_${i}`;
+      sessionStorage.setItem(detailId, JSON.stringify(p));
+      
+      return `
+        <div class="carousel-slide" data-index="${i}">
+          <a href="detail.html?id=${detailId}" class="property-card" style="text-decoration: none; color: inherit;">
             <div class="card-image">
               <img src="${convertDriveUrl(p['gambar utama']) || 'https://images.unsplash.com/photo-1580587771525-78b9dba3b914?w=400'}" 
                    alt="${p['nama property'] || 'Properti'}"
                    onerror="this.src='https://images.unsplash.com/photo-1580587771525-78b9dba3b914?w=400';">
               <span class="card-badge">${i === 0 ? 'HOT' : 'NEW'}</span>
-              <span class="tab-badge">${p._tab || 'primary'}</span>
+              <span class="tab-badge">${p._tab || tabName}</span>
               <div class="favorite-btn" onclick="event.preventDefault(); event.stopPropagation(); toggleFavorite(this)">
                 <i class="far fa-heart"></i>
               </div>
@@ -194,48 +236,177 @@
               </div>
             </div>
           </a>
-        `;
-      }).join('');
-    }
-
-    function displayGallery() {
-      const container = document.getElementById('galleryList');
-      const dummyImages = [
-        { name: 'Interior 1', url: 'https://images.unsplash.com/photo-1600210492493-0946911123ea?w=400' },
-        { name: 'Interior 2', url: 'https://images.unsplash.com/photo-1600607687939-ce8a6c25118c?w=400' },
-        { name: 'Eksterior 1', url: 'https://images.unsplash.com/photo-1600585154340-be6161a56a0c?w=400' },
-        { name: 'Kamar Tidur', url: 'https://images.unsplash.com/photo-1600566753086-00f18fb6b3ea?w=400' }
-      ];
-      container.innerHTML = dummyImages.map((img, i) => `
-        <div class="gallery-item">
-          <img src="${img.url}" alt="${img.name}">
-          <div class="overlay"><i class="fas fa-home"></i> Properti ${i+1}</div>
         </div>
-      `).join('');
+      `;
+    }).join('');
+    
+    // Buat indicators
+    indicators.innerHTML = properties.map((_, i) => `
+      <span class="carousel-dot ${i === 0 ? 'active' : ''}" onclick="goToSlide('${tabName}', ${i})"></span>
+    `).join('');
+    
+    // Reset posisi
+    carouselState[tabName].current = 0;
+    updateCarouselPosition(tabName);
+    
+    // Mulai auto-slide
+    startAutoSlide(tabName);
+    
+    // Setup event listeners
+    setupCarouselControls(tabName);
+  }
+
+  function updateCarouselPosition(tabName) {
+    const container = document.getElementById(`${tabName}Container`);
+    if (!container) return;
+    
+    container.style.transform = `translateX(-${carouselState[tabName].current * 100}%)`;
+    
+    const indicators = document.getElementById(`${tabName}Indicators`);
+    if (indicators) {
+      indicators.querySelectorAll('.carousel-dot').forEach((dot, i) => {
+        dot.classList.toggle('active', i === carouselState[tabName].current);
+      });
     }
+  }
 
-    // ========== NAVIGASI ==========
-    document.getElementById('searchBtn').addEventListener('click', function() {
-      const term = document.getElementById('searchInput').value;
-      window.location.href = `search.html?q=${encodeURIComponent(term)}`;
-    });
+  function goToSlide(tabName, index) {
+    carouselState[tabName].current = index;
+    updateCarouselPosition(tabName);
+    resetAutoSlide(tabName);
+  }
 
-    document.getElementById('filterBtn').addEventListener('click', function() {
-      window.location.href = 'search.html?filter=open';
-    });
+  function nextSlide(tabName) {
+    const state = carouselState[tabName];
+    if (state.total === 0) return;
+    state.current = (state.current + 1) % state.total;
+    updateCarouselPosition(tabName);
+    resetAutoSlide(tabName);
+  }
 
-    document.getElementById('searchInput').addEventListener('keypress', function(e) {
-      if (e.key === 'Enter') {
-        const term = e.target.value;
+  function prevSlide(tabName) {
+    const state = carouselState[tabName];
+    if (state.total === 0) return;
+    state.current = (state.current - 1 + state.total) % state.total;
+    updateCarouselPosition(tabName);
+    resetAutoSlide(tabName);
+  }
+
+  function startAutoSlide(tabName) {
+    stopAutoSlide(tabName);
+    if (carouselState[tabName].total > 1) {
+      carouselState[tabName].interval = setInterval(() => {
+        nextSlide(tabName);
+      }, 4000);
+    }
+  }
+
+  function stopAutoSlide(tabName) {
+    if (carouselState[tabName].interval) {
+      clearInterval(carouselState[tabName].interval);
+      carouselState[tabName].interval = null;
+    }
+  }
+
+  function resetAutoSlide(tabName) {
+    stopAutoSlide(tabName);
+    startAutoSlide(tabName);
+  }
+
+  function setupCarouselControls(tabName) {
+    const prevBtn = document.getElementById(`${tabName}Prev`);
+    const nextBtn = document.getElementById(`${tabName}Next`);
+    const carousel = document.getElementById(`${tabName}Carousel`);
+    
+    if (prevBtn) {
+      prevBtn.replaceWith(prevBtn.cloneNode(true));
+      const newPrevBtn = document.getElementById(`${tabName}Prev`);
+      newPrevBtn.addEventListener('click', () => prevSlide(tabName));
+    }
+    
+    if (nextBtn) {
+      nextBtn.replaceWith(nextBtn.cloneNode(true));
+      const newNextBtn = document.getElementById(`${tabName}Next`);
+      newNextBtn.addEventListener('click', () => nextSlide(tabName));
+    }
+    
+    // Swipe support
+    if (carousel) {
+      let touchStartX = 0;
+      
+      carousel.addEventListener('touchstart', (e) => {
+        touchStartX = e.changedTouches[0].screenX;
+        stopAutoSlide(tabName);
+      }, { passive: true });
+      
+      carousel.addEventListener('touchend', (e) => {
+        const touchEndX = e.changedTouches[0].screenX;
+        const diff = touchStartX - touchEndX;
+        
+        if (Math.abs(diff) > 50) {
+          if (diff > 0) {
+            nextSlide(tabName);
+          } else {
+            prevSlide(tabName);
+          }
+        }
+        startAutoSlide(tabName);
+      });
+    }
+  }
+
+  // ========== GALLERY ==========
+  function displayGallery() {
+    const container = document.getElementById('galleryList');
+    if (!container) return;
+    
+    const dummyImages = [
+      { name: 'Interior 1', url: 'https://images.unsplash.com/photo-1600210492493-0946911123ea?w=400' },
+      { name: 'Interior 2', url: 'https://images.unsplash.com/photo-1600607687939-ce8a6c25118c?w=400' },
+      { name: 'Eksterior 1', url: 'https://images.unsplash.com/photo-1600585154340-be6161a56a0c?w=400' },
+      { name: 'Kamar Tidur', url: 'https://images.unsplash.com/photo-1600566753086-00f18fb6b3ea?w=400' }
+    ];
+    container.innerHTML = dummyImages.map((img, i) => `
+      <div class="gallery-item">
+        <img src="${img.url}" alt="${img.name}">
+        <div class="overlay"><i class="fas fa-home"></i> Properti ${i+1}</div>
+      </div>
+    `).join('');
+  }
+
+  // ========== NAVIGASI ==========
+  document.addEventListener('DOMContentLoaded', function() {
+    const searchBtn = document.getElementById('searchBtn');
+    const filterBtn = document.getElementById('filterBtn');
+    const searchInput = document.getElementById('searchInput');
+    
+    if (searchBtn) {
+      searchBtn.addEventListener('click', function() {
+        const term = searchInput?.value || '';
         window.location.href = `search.html?q=${encodeURIComponent(term)}`;
-      }
-    });
+      });
+    }
+    
+    if (filterBtn) {
+      filterBtn.addEventListener('click', function() {
+        window.location.href = 'search.html?filter=open';
+      });
+    }
+    
+    if (searchInput) {
+      searchInput.addEventListener('keypress', function(e) {
+        if (e.key === 'Enter') {
+          window.location.href = `search.html?q=${encodeURIComponent(e.target.value)}`;
+        }
+      });
+    }
+  });
 
-    // ========== INIT ==========
-    document.addEventListener('DOMContentLoaded', function() {
-      loadHomeData();
-      displayGallery();
-    });
-  </script>
+  // ========== INIT ==========
+  document.addEventListener('DOMContentLoaded', function() {
+    loadAllSections();
+    displayGallery();
+  });
+</script>
 </body>
 </html>
