@@ -1164,13 +1164,14 @@
     </div>
   </header>
 
-  <!-- ========== SEARCH SECTION (HOME) ========== -->
+
+    <!-- ========== SEARCH SECTION (HOME) ========== -->
     <div class="search-section">
       <div class="search-box">
         <i class="fas fa-search"></i>
         <input type="text" placeholder="Cari properti, lokasi, atau harga..." id="searchInput">
         <button id="searchBtn">Cari</button>
-        <button class="filter-btn-inside" onclick="openSearchModal()"><i class="fas fa-sliders-h"></i></button>
+        <button class="filter-btn-inside" onclick="openFilterSheetFromHome()"><i class="fas fa-sliders-h"></i></button>
       </div>
     </div>
 
@@ -1555,9 +1556,25 @@ function convertToWaNumber(phone) {
       }
     }
 
+    // ========== BUKA FILTER SHEET DARI HOME ==========
+    function openFilterSheetFromHome() {
+      const filterSheet = document.getElementById('filterSheet');
+      const filterSheetOverlay = document.getElementById('filterSheetOverlay');
+      
+      if (filterSheet && filterSheetOverlay) {
+        filterSheet.classList.add('active');
+        filterSheetOverlay.classList.add('active');
+        document.body.style.overflow = 'hidden';
+      }
+      
+      // Simpan state bahwa filter dibuka dari Home
+      sessionStorage.setItem('filterOpenedFrom', 'home');
+    }
+
     function closeFilterSheet() {
       const filterSheet = document.getElementById('filterSheet');
       const filterSheetOverlay = document.getElementById('filterSheetOverlay');
+      
       if (filterSheet && filterSheetOverlay) {
         filterSheet.classList.remove('active');
         filterSheetOverlay.classList.remove('active');
@@ -1877,37 +1894,58 @@ function convertToWaNumber(phone) {
 
     // ========== FILTER FUNCTIONS ==========
     function applyModalFilter() {
-      modalFilters = {
-        kt: document.getElementById('modalFilterKT').value,
-        km: document.getElementById('modalFilterKM').value,
-        lt: document.getElementById('modalFilterLT').value,
-        minHarga: document.getElementById('modalMinHarga').value,
-        maxHarga: document.getElementById('modalMaxHarga').value,
-        tab: modalFilters.tab
-      };
-      closeFilterSheet();
-      updateActiveFilterChips();
-      doModalSearch();
-    }
+        modalFilters = {
+          kt: document.getElementById('modalFilterKT').value,
+          km: document.getElementById('modalFilterKM').value,
+          lt: document.getElementById('modalFilterLT').value,
+          minHarga: document.getElementById('modalMinHarga').value,
+          maxHarga: document.getElementById('modalMaxHarga').value,
+          tab: modalFilters.tab
+        };
+        
+        closeFilterSheet();
+        updateActiveFilterChips();
+        
+        // Cek apakah filter dibuka dari Home atau Modal
+        const openedFrom = sessionStorage.getItem('filterOpenedFrom');
+        
+        if (openedFrom === 'home') {
+          // Jika dari Home, buka modal search dengan filter yang sudah diterapkan
+          openSearchModal();
+          sessionStorage.removeItem('filterOpenedFrom');
+        } else {
+          // Jika dari dalam modal, langsung lakukan pencarian
+          doModalSearch();
+        }
+      }
 
-    function resetModalFilter() {
-      document.getElementById('modalFilterKT').value = '';
-      document.getElementById('modalFilterKM').value = '';
-      document.getElementById('modalFilterLT').value = '';
-      document.getElementById('modalMinHarga').value = '';
-      document.getElementById('modalMaxHarga').value = '';
-      
-      modalFilters = { kt: '', km: '', lt: '', minHarga: '', maxHarga: '', tab: '' };
-      
-      document.querySelectorAll('.modal-tab').forEach(tab => {
-        tab.classList.remove('active');
-        if (tab.dataset.tab === '') tab.classList.add('active');
-      });
-      
-      closeFilterSheet();
-      updateActiveFilterChips();
-      doModalSearch();
-    }
+      function resetModalFilter() {
+        document.getElementById('modalFilterKT').value = '';
+        document.getElementById('modalFilterKM').value = '';
+        document.getElementById('modalFilterLT').value = '';
+        document.getElementById('modalMinHarga').value = '';
+        document.getElementById('modalMaxHarga').value = '';
+        
+        modalFilters = { kt: '', km: '', lt: '', minHarga: '', maxHarga: '', tab: '' };
+        
+        document.querySelectorAll('.modal-tab').forEach(tab => {
+          tab.classList.remove('active');
+          if (tab.dataset.tab === '') tab.classList.add('active');
+        });
+        
+        closeFilterSheet();
+        updateActiveFilterChips();
+        
+        // Cek apakah filter dibuka dari Home atau Modal
+        const openedFrom = sessionStorage.getItem('filterOpenedFrom');
+        
+        if (openedFrom === 'home') {
+          openSearchModal();
+          sessionStorage.removeItem('filterOpenedFrom');
+        } else {
+          doModalSearch();
+        }
+      }
 
     function updateActiveFilterChips() {
       const container = document.getElementById('activeFilters');
