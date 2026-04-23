@@ -1,0 +1,2067 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=yes, viewport-fit=cover">
+  <meta name="theme-color" content="#2c3e50">
+  
+  <title>BMpro - Properti Batam</title>
+  
+  <!-- Font Awesome -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <!-- Google Fonts -->
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  
+  <style>
+    /* ============================================================
+       RESET & VARIABEL GLOBAL
+       ============================================================ */
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    :root {
+      --primary: #2c3e50;
+      --secondary: #3498db;
+      --accent: #e74c3c;
+      --light: #ecf0f1;
+      --dark: #1a252f;
+      --gray: #7f8c8d;
+      --shadow: 0 4px 12px rgba(0,0,0,0.15);
+      --safe-bottom: env(safe-area-inset-bottom, 0px);
+    }
+
+    body {
+      font-family: 'Poppins', sans-serif;
+      background: #f8f9fa;
+      color: #2c3e50;
+      line-height: 1.4;
+      font-size: 14px;
+    }
+
+    /* ============================================================
+       HEADER DENGAN GAMBAR LATAR
+       ============================================================ */
+    .mobile-header {
+      position: relative;
+      width: 100%;
+      height: 50vh;
+      min-height: 280px;
+      max-height: 400px;
+      background: linear-gradient(rgba(0,0,0,0.35), rgba(0,0,0,0.55)), 
+                  url('https://images.unsplash.com/photo-1564013799919-ab600027ffc6?w=800&q=80');
+      background-size: cover;
+      background-position: center;
+      border-radius: 0 0 24px 24px;
+      overflow: hidden;
+      box-shadow: var(--shadow);
+    }
+
+    .header-overlay {
+      position: absolute;
+      top: 0; left: 0; right: 0; bottom: 0;
+      background: linear-gradient(135deg, rgba(44,62,80,0.6) 0%, rgba(52,152,219,0.3) 100%);
+    }
+
+    .hamburger-btn {
+      position: absolute;
+      top: 16px;
+      left: 16px;
+      z-index: 1000;
+      width: 44px;
+      height: 44px;
+      background: rgba(255,255,255,0.95);
+      backdrop-filter: blur(10px);
+      border: none;
+      border-radius: 12px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+    }
+
+    .hamburger-btn i {
+      font-size: 22px;
+      color: var(--primary);
+    }
+
+    .header-content {
+      position: absolute;
+      bottom: 28px;
+      left: 0; right: 0;
+      padding: 0 20px;
+      color: white;
+      z-index: 5;
+    }
+
+    .header-content .badge {
+      display: inline-block;
+      background: var(--accent);
+      color: white;
+      font-size: 10px;
+      font-weight: 600;
+      padding: 4px 12px;
+      border-radius: 20px;
+      margin-bottom: 8px;
+      text-transform: uppercase;
+    }
+
+    .header-content h1 {
+      font-size: 1.8rem;
+      font-weight: 700;
+      line-height: 1.2;
+      margin-bottom: 6px;
+      text-shadow: 2px 2px 8px rgba(0,0,0,0.3);
+    }
+
+    .header-content p {
+      font-size: 0.85rem;
+      opacity: 0.95;
+      display: flex;
+      align-items: center;
+      gap: 4px;
+    }
+
+    /* ============================================================
+       SIDEBAR MENU
+       ============================================================ */
+    .sidebar-menu {
+      position: fixed;
+      top: 0;
+      left: -100%;
+      width: 85%;
+      max-width: 300px;
+      height: 100vh;
+      background: white;
+      z-index: 2000;
+      box-shadow: 4px 0 20px rgba(0,0,0,0.2);
+      transition: left 0.3s;
+      overflow-y: auto;
+    }
+
+    .sidebar-menu.active {
+      left: 0;
+    }
+
+    .menu-overlay {
+      position: fixed;
+      top: 0; left: 0; width: 100%; height: 100%;
+      background: rgba(0,0,0,0.5);
+      z-index: 1999;
+      opacity: 0;
+      visibility: hidden;
+      transition: all 0.3s;
+      backdrop-filter: blur(4px);
+    }
+
+    .menu-overlay.active {
+      opacity: 1;
+      visibility: visible;
+    }
+
+    .sidebar-header {
+      padding: 20px 16px 14px;
+      background: linear-gradient(135deg, var(--primary), var(--secondary));
+      color: white;
+    }
+
+    .sidebar-header-top {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      margin-bottom: 8px;
+    }
+
+    .sidebar-logo {
+      width: 45px;
+      height: 40px;
+      background: white;
+      border-radius: 12px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      box-shadow: 0 4px 10px rgba(0,0,0,0.15);
+      overflow: hidden;
+    }
+
+    .sidebar-logo img {
+      width: 70%;
+      height: 70%;
+      object-fit: cover;
+    }
+
+    .sidebar-header h3 {
+      font-size: 1.2rem;
+      font-weight: 600;
+    }
+
+    .sidebar-header p {
+      font-size: 0.7rem;
+      opacity: 0.9;
+      margin-left: 60px;
+    }
+
+    .menu-item {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      padding: 14px 18px;
+      color: var(--dark);
+      text-decoration: none;
+      font-weight: 500;
+      font-size: 0.9rem;
+      border-bottom: 1px solid #f0f0f0;
+    }
+
+    .menu-item i {
+      width: 22px;
+      color: var(--secondary);
+      font-size: 1.1rem;
+    }
+
+    .sidebar-footer {
+      padding: 16px;
+      border-top: 1px solid #eee;
+      font-size: 0.7rem;
+      color: var(--gray);
+      text-align: center;
+    }
+
+    /* ============================================================
+       SEARCH BAR (HOME)
+       ============================================================ */
+    .search-section {
+      padding: 12px 12px 6px;
+      margin-top: -18px;
+      position: relative;
+      z-index: 10;
+    }
+
+    .search-box {
+      background: white;
+      border-radius: 30px;
+      padding: 3px;
+      display: flex;
+      align-items: center;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+      border: 1px solid rgba(0,0,0,0.04);
+    }
+
+    .search-box i {
+      color: var(--gray);
+      font-size: 0.85rem;
+      margin-left: 12px;
+      margin-right: 4px;
+    }
+
+    .search-box input {
+      flex: 1;
+      border: none;
+      padding: 10px 4px;
+      font-size: 0.8rem;
+      font-family: 'Poppins', sans-serif;
+      outline: none;
+      background: transparent;
+      min-width: 0;
+    }
+
+    .search-box input::placeholder {
+      color: #bdc3c7;
+      font-size: 0.75rem;
+    }
+
+    .search-box button {
+      background: var(--secondary);
+      border: none;
+      color: white;
+      padding: 8px 14px;
+      border-radius: 30px;
+      font-weight: 500;
+      font-size: 0.7rem;
+      cursor: pointer;
+      white-space: nowrap;
+      margin: 2px;
+      flex-shrink: 0;
+    }
+
+    /* ============================================================
+       SECTION CONTAINER
+       ============================================================ */
+    .section-container {
+      padding: 18px 14px;
+    }
+
+    .section-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: baseline;
+      margin-bottom: 14px;
+    }
+
+    .section-header h4 {
+      font-size: 0.9rem;
+      font-weight: 600;
+      color: var(--dark);
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .section-header h4 i {
+      color: var(--accent);
+      font-size: 1rem;
+    }
+
+    .section-header a {
+      color: var(--secondary);
+      font-size: 0.75rem;
+      text-decoration: none;
+    }
+
+    /* ============================================================
+       PROPERTY CARDS
+       ============================================================ */
+    .property-grid {
+      display: flex;
+      flex-direction: column;
+      gap: 14px;
+    }
+
+    .property-card {
+      background: white;
+      border-radius: 16px;
+      overflow: hidden;
+      box-shadow: 0 3px 10px rgba(0,0,0,0.06);
+      border: 1px solid rgba(0,0,0,0.03);
+      cursor: pointer;
+      transition: transform 0.2s;
+    }
+
+    .property-card:active {
+      transform: scale(0.99);
+    }
+
+    .card-image {
+      position: relative;
+      width: 100%;
+      height: 180px;
+      overflow: hidden;
+    }
+
+    .card-image img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+
+    .card-badge {
+      position: absolute;
+      top: 10px;
+      left: 10px;
+      background: var(--accent);
+      color: white;
+      padding: 3px 10px;
+      border-radius: 16px;
+      font-size: 0.6rem;
+      font-weight: 600;
+      text-transform: uppercase;
+    }
+
+    .tab-badge {
+      position: absolute;
+      top: 10px;
+      right: 10px;
+      background: rgba(0,0,0,0.6);
+      color: white;
+      padding: 4px 10px;
+      border-radius: 20px;
+      font-size: 0.6rem;
+      font-weight: 500;
+      text-transform: uppercase;
+    }
+
+    .favorite-btn {
+      position: absolute;
+      bottom: 10px;
+      right: 10px;
+      background: rgba(255,255,255,0.95);
+      width: 32px;
+      height: 32px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+    }
+
+    .favorite-btn i {
+      color: var(--accent);
+      font-size: 1rem;
+    }
+
+    .card-content {
+      padding: 14px;
+    }
+
+    .property-price {
+      font-size: 1.10rem;
+      font-weight: 700;
+      color: var(--primary);
+      margin-bottom: 2px;
+      line-height: 1.2;
+    }
+
+    .property-title {
+      font-size: 0.85rem;
+      font-weight: 600;
+      margin-bottom: 4px;
+      color: var(--dark);
+      line-height: 1.3;
+    }
+
+    .property-address {
+      display: flex;
+      align-items: center;
+      gap: 4px;
+      color: var(--gray);
+      font-size: 0.7rem;
+      margin-bottom: 10px;
+    }
+
+    .property-address i {
+      color: var(--secondary);
+      font-size: 0.65rem;
+    }
+
+    .property-features {
+      display: flex;
+      gap: 12px;
+      padding-top: 10px;
+      border-top: 1px solid #f0f0f0;
+    }
+
+    .feature {
+      display: flex;
+      align-items: center;
+      gap: 4px;
+      font-size: 0.7rem;
+      color: #666;
+    }
+
+    .feature i {
+      color: var(--secondary);
+      font-size: 0.8rem;
+    }
+
+    /* ============================================================
+       GALERI GRID
+       ============================================================ */
+    .gallery-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 10px;
+    }
+
+    .gallery-item {
+      position: relative;
+      border-radius: 12px;
+      overflow: hidden;
+      aspect-ratio: 1 / 1;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.06);
+    }
+
+    .gallery-item img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+
+    .gallery-item .overlay {
+      position: absolute;
+      bottom: 0; left: 0; right: 0;
+      background: linear-gradient(transparent, rgba(0,0,0,0.65));
+      color: white;
+      padding: 8px 6px 6px;
+      font-size: 0.65rem;
+      font-weight: 500;
+    }
+
+    /* ============================================================
+       BOTTOM NAVIGATION
+       ============================================================ */
+    .bottom-nav {
+      position: sticky;
+      bottom: 0;
+      background: white;
+      display: flex;
+      justify-content: space-around;
+      padding: 8px 14px calc(8px + var(--safe-bottom));
+      box-shadow: 0 -2px 10px rgba(0,0,0,0.06);
+      border-top: 1px solid #eee;
+      z-index: 100;
+    }
+
+    .nav-item {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      text-decoration: none;
+      color: var(--gray);
+      font-size: 0.6rem;
+    }
+
+    .nav-item i {
+      font-size: 1.2rem;
+      margin-bottom: 2px;
+    }
+
+    .nav-item.active {
+      color: var(--secondary);
+    }
+
+    /* ============================================================
+       LOADING & EMPTY STATE
+       ============================================================ */
+    .loading {
+      text-align: center;
+      padding: 30px 16px;
+      color: var(--gray);
+    }
+
+    .loading i {
+      font-size: 1.8rem;
+      color: var(--secondary);
+      animation: spin 1s linear infinite;
+    }
+
+    @keyframes spin {
+      from { transform: rotate(0deg); }
+      to { transform: rotate(360deg); }
+    }
+
+    .empty-state {
+      text-align: center;
+      padding: 30px 16px;
+      background: white;
+      border-radius: 16px;
+    }
+
+    .empty-state i {
+      font-size: 2.5rem;
+      color: #ddd;
+      margin-bottom: 10px;
+    }
+
+    .empty-state p {
+      color: var(--gray);
+      font-size: 0.8rem;
+    }
+
+    /* ============================================================
+       SEARCH MODAL (POPUP HASIL PENCARIAN)
+       ============================================================ */
+    .search-modal {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background: #f8f9fa;
+      z-index: 3000;
+      transform: translateY(100%);
+      transition: transform 0.3s ease;
+      overflow-y: auto;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .search-modal.active {
+      transform: translateY(0);
+    }
+
+    /* ============================================================
+       POSISI ATAS ATAU BAWAH KOLOM SERACE SEARCH MODAL (POPUP HASIL PENCARIAN)
+       ============================================================ */
+    .modal-header {
+      background: white;
+      padding: 25px 10px;                    /* ✅ DIPERKECIL */
+      display: flex;
+      align-items: center;
+      gap: 4px;                             /* ✅ DIPERKECIL */
+      box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+      position: sticky;
+      top: 0;
+      z-index: 10;
+    }
+
+    /* ============================================================
+   SEARCH BAR (HOME) - MENGIKUTI MODAL
+   ============================================================ */
+    .search-section {
+      padding: 12px 12px 6px;
+      margin-top: -18px;
+      position: relative;
+      z-index: 10;
+    }
+
+    .search-box {
+      background: white;
+      border-radius: 30px;
+      padding: 2px;                         /* ✅ SAMA DENGAN MODAL */
+      display: flex;
+      align-items: center;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+      border: 1px solid rgba(0,0,0,0.04);
+      min-width: 0;                         /* ✅ Mencegah overflow */
+    }
+
+    .search-box i {
+      color: var(--gray);
+      font-size: 0.8rem;                    /* ✅ SAMA DENGAN MODAL */
+      margin-left: 8px;                     /* ✅ SAMA DENGAN MODAL */
+      margin-right: 2px;                    /* ✅ SAMA DENGAN MODAL */
+      flex-shrink: 0;
+    }
+
+    .search-box input {
+      flex: 1;
+      border: none;
+      padding: 8px 2px;                     /* ✅ SAMA DENGAN MODAL */
+      font-size: 0.75rem;                   /* ✅ SAMA DENGAN MODAL */
+      font-family: 'Poppins', sans-serif;
+      outline: none;
+      background: transparent;
+      min-width: 0;
+    }
+
+    .search-box input::placeholder {
+      color: #bdc3c7;
+      font-size: 0.7rem;                    /* ✅ SAMA DENGAN MODAL */
+    }
+
+    .search-box button {
+      background: var(--secondary);
+      border: none;
+      color: white;
+      padding: 6px 10px;                    /* ✅ SAMA DENGAN MODAL */
+      border-radius: 30px;
+      font-weight: 500;
+      font-size: 0.65rem;                   /* ✅ SAMA DENGAN MODAL */
+      cursor: pointer;
+      white-space: nowrap;
+      margin: 1px;                          /* ✅ SAMA DENGAN MODAL */
+      flex-shrink: 0;
+    }
+
+    /* ✅ TOMBOL FILTER DI DALAM SEARCH BOX (HOME) */
+    .search-box .filter-btn-inside {
+      background: transparent;
+      color: var(--gray);
+      border: none;
+      padding: 6px 8px;                     /* ✅ SAMA DENGAN MODAL */
+      border-radius: 30px;
+      font-size: 0.8rem;                    /* ✅ SAMA DENGAN MODAL */
+      cursor: pointer;
+      margin: 1px;                          /* ✅ SAMA DENGAN MODAL */
+      flex-shrink: 0;
+    }
+
+    .search-box .filter-btn-inside i {
+      font-size: 0.8rem;                    /* ✅ SAMA DENGAN MODAL */
+      margin: 0;
+      color: var(--gray);
+    }
+
+    .modal-tabs {
+      display: flex;
+      padding: 10px 16px;
+      gap: 8px;
+      background: white;
+      border-bottom: 1px solid #eee;
+      overflow-x: auto;
+      white-space: nowrap;
+    }
+
+    .modal-tab.active {
+      background: var(--primary);
+      color: white;
+    }
+
+    .modal-filters {
+      padding: 10px 16px;
+      background: white;
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      border-bottom: 1px solid #eee;
+    }
+
+    .filter-chip {
+      background: #e8f4fd;
+      color: var(--secondary);
+      padding: 4px 12px;
+      border-radius: 20px;
+      font-size: 0.7rem;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      cursor: pointer;
+    }
+
+    .filter-chip i {
+      font-size: 0.6rem;
+      opacity: 0.7;
+    }
+
+    .filter-chip.clear-all {
+      background: #fce4e4;
+      color: var(--accent);
+    }
+
+    .modal-result-count {
+      padding: 10px 16px;
+      font-size: 0.75rem;
+      color: var(--gray);
+      background: #f8f9fa;
+    }
+
+    .modal-property-list {
+      flex: 1;
+      padding: 12px 16px;
+      display: flex;
+      flex-direction: column;
+      gap: 14px;
+    }
+
+    /* ============================================================
+       DETAIL MODAL (POPUP DETAIL PROPERTI)
+       ============================================================ */
+    .detail-modal {
+      position: fixed;
+      top: 0; left: 0; right: 0; bottom: 0;
+      background: #f8f9fa;
+      z-index: 99999 !important;
+      transform: translateY(100%);
+      transition: transform 0.3s ease;
+      overflow-y: auto;
+    }
+
+    .detail-modal.active {
+      transform: translateY(0) !important;
+    }
+
+    .detail-header {
+      position: sticky;
+      top: 0;
+      background: white;
+      padding: 12px 16px;
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+      z-index: 10;
+    }
+
+    .detail-header .back-btn {
+      color: var(--primary);
+      font-size: 1.2rem;
+      cursor: pointer;
+      width: 36px;
+      height: 36px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border-radius: 50%;
+      background: #f0f0f0;
+    }
+
+    .detail-header h2 {
+      font-size: 1rem;
+      font-weight: 600;
+      flex: 1;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    .detail-main-image {
+      width: 100%;
+      height: 280px;
+      position: relative;
+    }
+
+    .detail-main-image img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+
+    .image-counter {
+      position: absolute;
+      bottom: 12px;
+      right: 12px;
+      background: rgba(0,0,0,0.6);
+      color: white;
+      padding: 4px 12px;
+      border-radius: 20px;
+      font-size: 0.75rem;
+    }
+
+    .detail-thumbnails {
+      display: flex;
+      gap: 8px;
+      padding: 12px 16px;
+      background: white;
+      overflow-x: auto;
+    }
+
+    .thumbnail {
+      width: 70px;
+      height: 70px;
+      border-radius: 10px;
+      overflow: hidden;
+      flex-shrink: 0;
+      cursor: pointer;
+      border: 2px solid transparent;
+    }
+
+    .thumbnail.active {
+      border-color: var(--secondary);
+    }
+
+    .thumbnail img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+
+    .detail-info {
+      background: white;
+      padding: 20px 16px;
+      margin-top: 8px;
+    }
+
+    .detail-price {
+      font-size: 1.5rem;
+      font-weight: 700;
+      color: var(--primary);
+      margin-bottom: 8px;
+    }
+
+    .detail-title {
+      font-size: 1.1rem;
+      font-weight: 600;
+      margin-bottom: 8px;
+    }
+
+    .detail-location {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      color: var(--gray);
+      font-size: 0.85rem;
+      margin-bottom: 16px;
+    }
+
+    .detail-features {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 16px;
+      padding: 16px 0;
+      border-top: 1px solid #eee;
+      border-bottom: 1px solid #eee;
+      text-align: center;
+    }
+
+    .detail-feature i {
+      font-size: 1.2rem;        /* ✅ ICON DIDALAM MODAL DIPERKECIL dari 1.5rem */
+      color: var(--secondary);
+      margin-bottom: 4px;
+    }
+
+    .detail-feature .value {
+      font-size: 0.9rem;        /* ✅ DIPERKECIL dari 1.1rem */
+      font-weight: 600;
+    }
+
+    .detail-feature .label {
+      font-size: 0.6rem;        /* ✅ DIPERKECIL dari 0.7rem */
+      color: var(--gray);
+    }
+
+    .detail-description {
+      background: white;
+      padding: 20px 16px;
+      margin-top: 8px;
+    }
+
+    .detail-description h3 {
+      font-size: 0.95rem;
+      margin-bottom: 12px;
+    }
+
+    .detail-description p {
+      color: #555;
+      font-size: 0.85rem;
+      line-height: 1.6;
+    }
+
+    .detail-specs {
+      background: white;
+      padding: 20px 16px;
+      margin-top: 8px;
+    }
+
+    .spec-item {
+      display: flex;
+      padding: 10px 0;
+      border-bottom: 1px solid #f0f0f0;
+    }
+
+    .spec-label {
+      width: 120px;
+      color: var(--gray);
+      font-size: 0.8rem;
+    }
+
+    .spec-value {
+      flex: 1;
+      font-weight: 500;
+      font-size: 0.85rem;
+    }
+
+    .detail-contact {
+      background: white;
+      padding: 20px 16px;
+      margin-top: 8px;
+      margin-bottom: 20px;
+    }
+
+    .contact-buttons {
+      display: flex;
+      gap: 12px;
+      margin-top: 16px;
+    }
+
+    .btn-wa {
+      flex: 1;
+      background: #25D366;
+      color: white;
+      border: none;
+      padding: 14px;
+      border-radius: 12px;
+      font-weight: 500;
+      text-decoration: none;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+    }
+
+    .btn-call {
+      flex: 1;
+      background: var(--secondary);
+      color: white;
+      border: none;
+      padding: 14px;
+      border-radius: 12px;
+      font-weight: 500;
+      text-decoration: none;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+    }
+
+    /* ============================================================
+       FILTER BOTTOM SHEET
+       ============================================================ */
+    .filter-sheet {
+      position: fixed;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      background: white;
+      border-radius: 24px 24px 0 0;
+      padding: 20px 16px;
+      box-shadow: 0 -4px 20px rgba(0,0,0,0.1);
+      z-index: 4000;
+      transform: translateY(100%);
+      transition: transform 0.3s;
+      max-height: 70vh;
+      overflow-y: auto;
+    }
+
+    .filter-sheet.active {
+      transform: translateY(0);
+    }
+
+    .filter-sheet-overlay {
+      position: fixed;
+      top: 0; left: 0; right: 0; bottom: 0;
+      background: rgba(0,0,0,0.5);
+      z-index: 3999;
+      opacity: 0;
+      visibility: hidden;
+      transition: all 0.3s;
+    }
+
+    .filter-sheet-overlay.active {
+      opacity: 1;
+      visibility: visible;
+    }
+
+    .filter-sheet-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 20px;
+    }
+
+    .filter-sheet-header h4 {
+      font-size: 1rem;
+      font-weight: 600;
+    }
+
+    .filter-group {
+      margin-bottom: 18px;
+    }
+
+    .filter-group label {
+      display: block;
+      font-size: 0.8rem;
+      font-weight: 500;
+      margin-bottom: 6px;
+      color: var(--primary);
+    }
+
+    .filter-group select,
+    .filter-group input {
+      width: 100%;
+      padding: 10px 12px;
+      border: 1px solid #ddd;
+      border-radius: 12px;
+      font-family: 'Poppins', sans-serif;
+      font-size: 0.75rem;
+      background: white;
+    }
+
+    .range-inputs {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .range-inputs input {
+      flex: 1;
+    }
+
+    .filter-sheet-actions {
+      display: flex;
+      gap: 12px;
+      margin-top: 24px;
+      padding-bottom: 10px;
+    }
+
+    .btn-reset {
+      flex: 1;
+      background: #eee;
+      border: none;
+      padding: 12px;
+      border-radius: 12px;
+      font-weight: 500;
+      cursor: pointer;
+    }
+
+    .btn-apply {
+      flex: 1;
+      background: var(--secondary);
+      color: white;
+      border: none;
+      padding: 12px;
+      border-radius: 12px;
+      font-weight: 500;
+      cursor: pointer;
+    }
+
+    /* ============================================================
+       RESPONSIVE
+       ============================================================ */
+    @media (min-width: 480px) {
+      .header-content h1 { font-size: 2rem; }
+      .property-title { font-size: 1rem; }
+      .property-price { font-size: 1.35rem; }
+    }
+
+    @media (min-width: 768px) {
+      .property-grid {
+        display: grid;
+        grid-template-columns: repeat(2, 1fr);
+      }
+      .gallery-grid {
+        grid-template-columns: repeat(3, 1fr);
+      }
+    }
+
+    @media (min-width: 1024px) {
+      .property-grid {
+        grid-template-columns: repeat(3, 1fr);
+      }
+      .gallery-grid {
+        grid-template-columns: repeat(4, 1fr);
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- ========== SIDEBAR MENU ========== -->
+  <div class="menu-overlay" id="menuOverlay"></div>
+  
+  <div class="sidebar-menu" id="sidebarMenu">
+    <div class="sidebar-header">
+      <div class="sidebar-header-top">
+        <div class="sidebar-logo">
+          <img src="https://drive.google.com/thumbnail?id=1a3cJptxJTSHksm9D7tN3us_7Ii7dQxxG&sz=w100" 
+               alt="BMpro Logo"
+               onerror="this.src='https://via.placeholder.com/100x100/2c3e50/ffffff?text=BM'">
+        </div>
+        <h3>BMpro</h3>
+      </div>
+      <p>Temukan properti impian Anda di Batam</p>
+    </div>
+    
+    <div class="sidebar-nav">
+      <a href="#" class="menu-item"><i class="fas fa-home"></i><span>Beranda</span></a>
+      <a href="#" class="menu-item" onclick="openSearchModal()"><i class="fas fa-search"></i><span>Cari Properti</span></a>
+      <a href="#" class="menu-item"><i class="fas fa-heart"></i><span>Favorit Saya</span></a>
+      <a href="#" class="menu-item"><i class="fas fa-building"></i><span>Primary</span></a>
+      <a href="#" class="menu-item"><i class="fas fa-home"></i><span>Secondary</span></a>
+      <a href="#" class="menu-item"><i class="fas fa-key"></i><span>Rent</span></a>
+      <a href="#" class="menu-item"><i class="fas fa-headset"></i><span>Hubungi Kami</span></a>
+    </div>
+    
+    <div class="sidebar-footer">
+      <p>© 2025 BMpro • Properti Batam</p>
+    </div>
+  </div>
+
+  <!-- ========== HEADER ========== -->
+  <header class="mobile-header">
+    <div class="header-overlay"></div>
+    
+    <button class="hamburger-btn" id="hamburgerBtn">
+      <i class="fas fa-bars"></i>
+    </button>
+    
+    <div class="header-content">
+      <span class="badge"><i class="fas fa-star"></i> Premium</span>
+      <h1>Temukan Properti<br>Impian Anda</h1>
+      <p><i class="fas fa-map-pin"></i> Batam, Kepulauan Riau <i class="fas fa-circle" style="font-size: 3px; margin: 0 6px;"></i> 150+ Properti</p>
+    </div>
+  </header>
+
+
+    <!-- ========== SEARCH SECTION (HOME) ========== -->
+    <div class="search-section">
+      <div class="search-box">
+        <i class="fas fa-search"></i>
+        <input type="text" placeholder="Cari properti, lokasi, atau harga..." id="searchInput">
+        <button id="searchBtn">Cari</button>
+        <button class="filter-btn-inside" onclick="openFilterSheetFromHome()"><i class="fas fa-sliders-h"></i></button>
+      </div>
+    </div>
+
+  <!-- ========== PROPERTY LISTINGS (HOME) ========== -->
+  <div class="section-container">
+    <div class="section-header">
+      <h4><i class="fas fa-fire" style="color: #e74c3c;"></i> Properti Unggulan</h4>
+      <a href="#" onclick="openSearchModal()">Lihat Semua <i class="fas fa-chevron-right" style="font-size: 0.6rem;"></i></a>
+    </div>
+    
+    <div id="propertyList" class="property-grid">
+      <div class="loading"><i class="fas fa-spinner"></i><p>Memuat properti...</p></div>
+    </div>
+  </div>
+
+  <!-- ========== GALLERY SECTION ========== -->
+  <div class="section-container">
+    <div class="section-header">
+      <h4><i class="fas fa-images"></i> Galeri Terbaru</h4>
+      <a href="#">Lihat Semua <i class="fas fa-chevron-right" style="font-size: 0.6rem;"></i></a>
+    </div>
+    
+    <div id="galleryList" class="gallery-grid">
+      <div class="loading" style="grid-column: span 2;"><i class="fas fa-spinner"></i><p>Memuat galeri...</p></div>
+    </div>
+  </div>
+
+  <!-- ========== BOTTOM NAVIGATION ========== -->
+  <nav class="bottom-nav">
+    <a href="#" class="nav-item active"><i class="fas fa-home"></i><span>Beranda</span></a>
+    <a href="#" class="nav-item" onclick="openSearchModal()"><i class="fas fa-search"></i><span>Cari</span></a>
+    <a href="#" class="nav-item"><i class="fas fa-heart"></i><span>Favorit</span></a>
+    <a href="#" class="nav-item"><i class="fas fa-user"></i><span>Profil</span></a>
+  </nav>
+
+  <!-- ========== SEARCH MODAL ========== -->
+    <div class="search-modal" id="searchModal">
+      <div class="modal-header">
+        <div class="close-btn" onclick="closeSearchModal()"><i class="fas fa-times"></i></div>
+        <div class="search-box">
+          <i class="fas fa-search"></i>
+          <input type="text" placeholder="Cari properti..." id="modalSearchInput">
+          <button onclick="doModalSearch()">Cari</button>
+          <button class="filter-btn-inside" onclick="openFilterSheet()"><i class="fas fa-sliders-h"></i></button>
+        </div>
+      </div>
+      
+      <div class="modal-tabs" id="modalTabs">
+        <button class="modal-tab active" data-tab="">Semua</button>
+        <button class="modal-tab" data-tab="primary">Primary</button>
+        <button class="modal-tab" data-tab="secondary">Secondary</button>
+        <button class="modal-tab" data-tab="rent">Rent</button>
+      </div>
+      
+      <div class="modal-filters" id="activeFilters"></div>
+      <div class="modal-result-count" id="modalResultCount">Ketik untuk mencari properti...</div>
+      <div id="modalPropertyList" class="modal-property-list"></div>
+    </div>
+
+  <!-- ========== DETAIL MODAL ========== -->
+  <div class="detail-modal" id="detailModal">
+    <div class="detail-header">
+      <div class="back-btn" onclick="closeDetailModal()"><i class="fas fa-arrow-left"></i></div>
+      <h2 id="detailTitle">Detail Properti</h2>
+      <div style="width: 36px;"></div>
+    </div>
+    
+    <div id="detailContent">
+      <div class="loading"><i class="fas fa-spinner"></i><p>Memuat detail...</p></div>
+    </div>
+  </div>
+
+  <!-- ========== FILTER BOTTOM SHEET ========== -->
+<div class="filter-sheet-overlay" id="filterSheetOverlay" onclick="closeFilterSheet()"></div>
+<div class="filter-sheet" id="filterSheet">
+  <div class="filter-sheet-header">
+    <h4><i class="fas fa-sliders-h"></i> Filter Properti</h4>
+    <i class="fas fa-times" style="cursor: pointer;" onclick="closeFilterSheet()"></i>
+  </div>
+  
+  <div class="filter-group">
+    <label>Kamar Tidur (Minimal)</label>
+    <select id="modalFilterKT">
+      <option value="">Semua</option>
+      <option value="1">1+ KT</option>
+      <option value="2">2+ KT</option>
+      <option value="3">3+ KT</option>
+      <option value="4">4+ KT</option>
+      <option value="5">5+ KT</option>
+    </select>
+  </div>
+  
+  <div class="filter-group">
+    <label>Kamar Mandi (Minimal)</label>
+    <select id="modalFilterKM">
+      <option value="">Semua</option>
+      <option value="1">1+ KM</option>
+      <option value="2">2+ KM</option>
+      <option value="3">3+ KM</option>
+      <option value="4">4+ KM</option>
+    </select>
+  </div>
+  
+  <div class="filter-group">
+    <label>Lantai (Minimal)</label>
+    <select id="modalFilterLT">
+      <option value="">Semua</option>
+      <option value="1">1+ Lantai</option>
+      <option value="2">2+ Lantai</option>
+      <option value="3">3+ Lantai</option>
+    </select>
+  </div>
+  
+  <div class="filter-group">
+    <label>Rentang Harga (Juta Rupiah)</label>
+    <div class="range-inputs">
+      <input type="number" id="modalMinHarga" placeholder="Min" step="50">
+      <span>-</span>
+      <input type="number" id="modalMaxHarga" placeholder="Max" step="50">
+    </div>
+  </div>
+  
+  <div class="filter-sheet-actions">
+    <button class="btn-reset" onclick="resetModalFilter()">Reset</button>
+    <button class="btn-apply" onclick="applyModalFilter()">Terapkan</button>
+  </div>
+</div>
+
+  <script>
+    // ========== KONFIGURASI OPENSHEET ==========
+    const SHEET_ID = '1e0-mHb2GCI-eVq8CrrxF3UlAz62CGQEAGlgmGRYBtPA';
+    const OPENSHEET_BASE = `https://opensheet.elk.sh/${SHEET_ID}`;
+
+    // ========== HAMBURGER MENU ==========
+    const hamburgerBtn = document.getElementById('hamburgerBtn');
+    const sidebarMenu = document.getElementById('sidebarMenu');
+    const menuOverlay = document.getElementById('menuOverlay');
+    const menuIcon = hamburgerBtn.querySelector('i');
+
+    function openMenu() {
+      sidebarMenu.classList.add('active');
+      menuOverlay.classList.add('active');
+      menuIcon.classList.remove('fa-bars');
+      menuIcon.classList.add('fa-times');
+      document.body.style.overflow = 'hidden';
+    }
+
+    function closeMenu() {
+      sidebarMenu.classList.remove('active');
+      menuOverlay.classList.remove('active');
+      menuIcon.classList.remove('fa-times');
+      menuIcon.classList.add('fa-bars');
+      document.body.style.overflow = '';
+    }
+
+    hamburgerBtn.addEventListener('click', (e) => {
+      e.stopPropagation();
+      sidebarMenu.classList.contains('active') ? closeMenu() : openMenu();
+    });
+
+    menuOverlay.addEventListener('click', closeMenu);
+
+    let touchStartX = 0;
+    sidebarMenu.addEventListener('touchstart', (e) => {
+      touchStartX = e.changedTouches[0].screenX;
+    }, { passive: true });
+
+    sidebarMenu.addEventListener('touchend', (e) => {
+      if (touchStartX - e.changedTouches[0].screenX > 40) closeMenu();
+    });
+
+    document.addEventListener('keydown', (e) => {
+      if (e.key === 'Escape') closeMenu();
+    });
+
+    // ========== STATE MANAGEMENT ==========
+    const searchModal = document.getElementById('searchModal');
+    const filterSheet = document.getElementById('filterSheet');
+    const filterSheetOverlay = document.getElementById('filterSheetOverlay');
+
+    let modalFilters = { kt: '', km: '', lt: '', minHarga: '', maxHarga: '', tab: '' };
+    let isModalOpen = false;
+    let allImages = [];
+    let currentImageIndex = 0;
+
+    // ========== FORMAT HARGA ==========
+    function formatPrice(price) {
+      if (!price) return 'Hubungi';
+      const num = parseInt(price.toString().replace(/\D/g, '')) || 0;
+      if (num >= 1000000000) return `Rp ${(num / 1000000000).toFixed(1)} M`;
+      if (num >= 1000000) return `Rp ${(num / 1000000).toFixed(0)} Jt`;
+      return `Rp ${num.toLocaleString('id-ID')}`;
+    }
+
+    // ========== KONVERSI URL GOOGLE DRIVE ==========
+    function convertDriveUrl(url) {
+      if (!url) return '';
+      if (url.includes('lh3.googleusercontent.com')) return url;
+      
+      const fileIdMatch = url.match(/\/d\/([a-zA-Z0-9_-]+)/);
+      if (fileIdMatch) {
+        return `https://lh3.googleusercontent.com/d/${fileIdMatch[1]}=w400`;
+      }
+      
+      const ucIdMatch = url.match(/[?&]id=([a-zA-Z0-9_-]+)/);
+      if (ucIdMatch) {
+        return `https://lh3.googleusercontent.com/d/${ucIdMatch[1]}=w400`;
+      }
+      
+      if (url.match(/^[a-zA-Z0-9_-]{25,}$/)) {
+        return `https://lh3.googleusercontent.com/d/${url}=w400`;
+      }
+      
+      return url;
+    }
+
+    // ========== KONVERSI NOMOR UNTUK WHATSAPP ==========
+function convertToWaNumber(phone) {
+      if (!phone) return '6281234567890';
+      
+      // Konversi ke string dan bersihkan dari karakter non-digit
+      let cleaned = phone.toString().replace(/\D/g, '');
+      
+      // Jika diawali dengan '0', ganti dengan '62'
+      if (cleaned.startsWith('0')) {
+        cleaned = '62' + cleaned.substring(1);
+      }
+      
+      // Jika diawali dengan '62', biarkan
+      // Jika diawali dengan '+62', hapus '+'
+      if (cleaned.startsWith('+62')) {
+        cleaned = cleaned.substring(1);
+      }
+      
+      return cleaned;
+    }
+
+    // ========== OPENSHEET FETCH ==========
+    async function fetchSheetData(tabName) {
+      try {
+        const response = await fetch(`${OPENSHEET_BASE}/${tabName}`);
+        if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
+        return await response.json();
+      } catch (error) {
+        console.error(`Error fetching ${tabName}:`, error);
+        return [];
+      }
+    }
+
+    // ========== LOAD HOME DATA ==========
+    async function loadHomeData() {
+      try {
+        const primaryData = await fetchSheetData('primary');
+        const properties = primaryData.slice(0, 3).map(item => ({
+          ...item,
+          _tab: 'primary',
+          'nama property': item['nama property'] || 'Tanpa Nama',
+          'harga': item['harga'] || '0',
+          'lokasi': item['lokasi'] || '-',
+          'kt': item['kt'] || '0',
+          'km': item['km'] || '0',
+          'lt': item['lt'] || '0',
+          'sales': item['sales'] || '-',
+          'kontak': item['kontak'] || '-',
+          'spesifikasi': item['spesifikasi'] || '',
+          'gambar utama': item['gambar utama'] || '',
+          'gambar2': item['gambar2'] || '',
+          'gambar3': item['gambar3'] || '',
+          'gambar4': item['gambar4'] || '',
+          'gambar5': item['gambar5'] || ''
+        }));
+        displayProperties(properties);
+      } catch (e) {
+        displayProperties(getDummyProperties());
+      }
+    }
+
+    function displayProperties(properties) {
+      const container = document.getElementById('propertyList');
+      
+      if (!properties || properties.length === 0) {
+        container.innerHTML = `<div class="empty-state"><i class="fas fa-home"></i><p>Belum ada properti</p></div>`;
+        return;
+      }
+
+      container.innerHTML = properties.map((p, i) => {
+        const detailData = {
+          'nama property': p['nama property'] || 'Tanpa Nama',
+          'harga': p['harga'] || '0',
+          'lokasi': p['lokasi'] || '-',
+          'kt': p['kt'] || '0',
+          'km': p['km'] || '0',
+          'lt': p['lt'] || '0',
+          'sales': p['sales'] || '-',
+          'kontak': p['kontak'] || '-',
+          'spesifikasi': p['spesifikasi'] || p['detail'] || '',
+          'gambar utama': p['gambar utama'] || '',
+          'gambar2': p['gambar2'] || '',
+          'gambar3': p['gambar3'] || '',
+          'gambar4': p['gambar4'] || '',
+          'gambar5': p['gambar5'] || '',
+          '_tab': p._tab || 'primary'
+        };
+        
+        return `
+          <div class="property-card" onclick='showDetail(${JSON.stringify(detailData).replace(/'/g, "\\'").replace(/"/g, '&quot;')})'>
+            <div class="card-image">
+              <img src="${convertDriveUrl(p['gambar utama']) || 'https://images.unsplash.com/photo-1580587771525-78b9dba3b914?w=400'}" 
+                   alt="${p['nama property'] || 'Properti'}"
+                   onerror="this.onerror=null; this.src='https://images.unsplash.com/photo-1580587771525-78b9dba3b914?w=400';">
+              <span class="card-badge">${i === 0 ? 'HOT' : 'NEW'}</span>
+              <span class="tab-badge">${p._tab || 'primary'}</span>
+              <div class="favorite-btn" onclick="event.stopPropagation(); toggleFavorite(this)">
+                <i class="far fa-heart"></i>
+              </div>
+            </div>
+            
+            <div class="card-content">
+              <div class="property-price">${formatPrice(p['harga'])}</div>
+              <h3 class="property-title">${p['nama property'] || 'Nama Properti'}</h3>
+              <div class="property-address">
+                <i class="fas fa-map-marker-alt"></i>
+                <span>${p['lokasi'] || 'Alamat tidak tersedia'}</span>
+              </div>
+              <div class="property-features">
+                <span class="feature"><i class="fas fa-bed"></i> ${p['kt'] || '0'} KT</span>
+                <span class="feature"><i class="fas fa-bath"></i> ${p['km'] || '0'} KM</span>
+                <span class="feature"><i class="fas fa-layer-group"></i> ${p['lt'] || '0'} Lt</span>
+              </div>
+            </div>
+          </div>
+        `;
+      }).join('');
+    }
+
+    // ========== GALLERY ==========
+    function displayGallery() {
+      const container = document.getElementById('galleryList');
+      const dummyImages = [
+        { name: 'Interior 1', url: 'https://images.unsplash.com/photo-1600210492493-0946911123ea?w=400' },
+        { name: 'Interior 2', url: 'https://images.unsplash.com/photo-1600607687939-ce8a6c25118c?w=400' },
+        { name: 'Eksterior 1', url: 'https://images.unsplash.com/photo-1600585154340-be6161a56a0c?w=400' },
+        { name: 'Kamar Tidur', url: 'https://images.unsplash.com/photo-1600566753086-00f18fb6b3ea?w=400' }
+      ];
+      container.innerHTML = dummyImages.map((img, i) => `
+        <div class="gallery-item">
+          <img src="${img.url}" alt="${img.name}">
+          <div class="overlay"><i class="fas fa-home"></i> Properti ${i+1}</div>
+        </div>
+      `).join('');
+    }
+
+    // ========== SEARCH MODAL ==========
+    function openSearchModal() {
+      const searchTerm = document.getElementById('searchInput').value;
+      document.getElementById('modalSearchInput').value = searchTerm;
+      
+      searchModal.classList.add('active');
+      document.body.style.overflow = 'hidden';
+      isModalOpen = true;
+      
+      if (searchTerm) {
+        doModalSearch();
+      }
+      
+      saveModalState();
+    }
+
+    function closeSearchModal() {
+      searchModal.classList.remove('active');
+      document.body.style.overflow = '';
+      isModalOpen = false;
+      sessionStorage.removeItem('searchModalState');
+    }
+
+    function openFilterSheet() {
+      const filterSheet = document.getElementById('filterSheet');
+      const filterSheetOverlay = document.getElementById('filterSheetOverlay');
+      if (filterSheet && filterSheetOverlay) {
+        filterSheet.classList.add('active');
+        filterSheetOverlay.classList.add('active');
+      }
+    }
+
+    // ========== BUKA FILTER SHEET DARI HOME ==========
+    function openFilterSheetFromHome() {
+      const filterSheet = document.getElementById('filterSheet');
+      const filterSheetOverlay = document.getElementById('filterSheetOverlay');
+      
+      if (filterSheet && filterSheetOverlay) {
+        filterSheet.classList.add('active');
+        filterSheetOverlay.classList.add('active');
+        document.body.style.overflow = 'hidden';
+      }
+      
+      // Simpan state bahwa filter dibuka dari Home
+      sessionStorage.setItem('filterOpenedFrom', 'home');
+    }
+
+    function closeFilterSheet() {
+      const filterSheet = document.getElementById('filterSheet');
+      const filterSheetOverlay = document.getElementById('filterSheetOverlay');
+      
+      if (filterSheet && filterSheetOverlay) {
+        filterSheet.classList.remove('active');
+        filterSheetOverlay.classList.remove('active');
+      }
+    }
+
+    async function doModalSearch() {
+      const searchTerm = document.getElementById('modalSearchInput').value.toLowerCase().trim();
+      
+      document.getElementById('modalPropertyList').innerHTML = 
+        '<div class="loading"><i class="fas fa-spinner"></i><p>Mencari properti...</p></div>';
+      document.getElementById('modalResultCount').innerHTML = 'Mencari...';
+      
+      try {
+        const [primaryData, secondaryData, rentData] = await Promise.all([
+          fetchSheetData('primary'),
+          fetchSheetData('secondary'),
+          fetchSheetData('rent')
+        ]);
+        
+        let allResults = [
+          ...primaryData.map(item => ({ ...item, _tab: 'primary' })),
+          ...secondaryData.map(item => ({ ...item, _tab: 'secondary' })),
+          ...rentData.map(item => ({ ...item, _tab: 'rent' }))
+        ];
+        
+        if (searchTerm) {
+          allResults = allResults.filter(item => {
+            const nama = (item['nama property'] || '').toLowerCase();
+            const lokasi = (item['lokasi'] || '').toLowerCase();
+            const detail = (item['detail'] || '').toLowerCase();
+            return nama.includes(searchTerm) || lokasi.includes(searchTerm) || detail.includes(searchTerm);
+          });
+        }
+        
+        if (modalFilters.tab) {
+          allResults = allResults.filter(item => item._tab === modalFilters.tab);
+        }
+        
+        if (modalFilters.kt) {
+          const minKT = parseInt(modalFilters.kt);
+          allResults = allResults.filter(item => (parseInt(item['kt']) || 0) >= minKT);
+        }
+
+        if (modalFilters.km) {
+          const minKM = parseInt(modalFilters.km);
+          allResults = allResults.filter(item => (parseInt(item['km']) || 0) >= minKM);
+        }
+
+        if (modalFilters.lt) {
+          const minLT = parseInt(modalFilters.lt);
+          allResults = allResults.filter(item => (parseInt(item['lt']) || 0) >= minLT);
+        }
+        
+        if (modalFilters.minHarga || modalFilters.maxHarga) {
+          allResults = allResults.filter(item => {
+            let harga = parseInt((item['harga'] || '0').toString().replace(/\D/g, '')) || 0;
+            if (modalFilters.minHarga && harga < parseInt(modalFilters.minHarga) * 1000000) return false;
+            if (modalFilters.maxHarga && harga > parseInt(modalFilters.maxHarga) * 1000000) return false;
+            return true;
+          });
+        }
+        
+        displayModalResults(allResults);
+        
+      } catch (error) {
+        document.getElementById('modalPropertyList').innerHTML = 
+          `<div class="empty-state"><i class="fas fa-exclamation-triangle"></i><p>Gagal memuat data</p></div>`;
+        document.getElementById('modalResultCount').innerHTML = 'Error';
+      }
+    }
+
+    function displayModalResults(results) {
+      const container = document.getElementById('modalPropertyList');
+      
+      document.getElementById('modalResultCount').innerHTML = 
+        `Ditemukan <strong>${results.length}</strong> properti`;
+      
+      if (results.length === 0) {
+        container.innerHTML = `<div class="empty-state"><i class="fas fa-search"></i><p>Tidak ada properti yang cocok</p></div>`;
+        saveModalState();
+        return;
+      }
+      
+      container.innerHTML = results.map(item => {
+        const detailData = {
+          'nama property': item['nama property'] || 'Tanpa Nama',
+          'harga': item['harga'] || '0',
+          'lokasi': item['lokasi'] || '-',
+          'kt': item['kt'] || '0',
+          'km': item['km'] || '0',
+          'lt': item['lt'] || '0',
+          'sales': item['sales'] || '-',
+          'kontak': item['kontak'] || '-',
+          'spesifikasi': item['spesifikasi'] || item['detail'] || '',
+          'gambar utama': item['gambar utama'] || '',
+          'gambar2': item['gambar2'] || '',
+          'gambar3': item['gambar3'] || '',
+          'gambar4': item['gambar4'] || '',
+          'gambar5': item['gambar5'] || '',
+          '_tab': item._tab || 'primary'
+        };
+        
+        return `
+          <div class="property-card" onclick='showDetail(${JSON.stringify(detailData).replace(/'/g, "\\'").replace(/"/g, '&quot;')})'>
+            <div class="card-image">
+              <img src="${convertDriveUrl(item['gambar utama']) || 'https://images.unsplash.com/photo-1580587771525-78b9dba3b914?w=400'}" 
+                   alt="${item['nama property']}">
+              <span class="tab-badge">${item._tab}</span>
+              <div class="favorite-btn" onclick="event.stopPropagation(); toggleFavorite(this)">
+                <i class="far fa-heart"></i>
+              </div>
+            </div>
+            <div class="card-content">
+              <div class="property-price">${formatPrice(item['harga'])}</div>
+              <h3 class="property-title">${item['nama property'] || 'Tanpa Nama'}</h3>
+              <div class="property-address">
+                <i class="fas fa-map-marker-alt"></i> 
+                <span>${item['lokasi'] || '-'}</span>
+              </div>
+              <div class="property-features">
+                <span class="feature"><i class="fas fa-bed"></i> ${item['kt'] || '0'} KT</span>
+                <span class="feature"><i class="fas fa-bath"></i> ${item['km'] || '0'} KM</span>
+                <span class="feature"><i class="fas fa-layer-group"></i> ${item['lt'] || '0'} Lt</span>
+              </div>
+            </div>
+          </div>
+        `;
+      }).join('');
+      
+      saveModalState();
+    }
+
+    // ========== DETAIL MODAL ==========
+    function showDetail(property) {
+      console.log('showDetail dipanggil', property);
+      
+      const detailModal = document.getElementById('detailModal');
+      if (!detailModal) {
+        console.error('Detail modal tidak ditemukan');
+        return;
+      }
+      
+      if (typeof property === 'string') {
+        try {
+          property = JSON.parse(property);
+        } catch (e) {
+          console.error('Gagal parse property:', e);
+          return;
+        }
+      }
+      
+      allImages = [];
+      if (property['gambar utama']) allImages.push(convertDriveUrl(property['gambar utama']));
+      if (property['gambar2']) allImages.push(convertDriveUrl(property['gambar2']));
+      if (property['gambar3']) allImages.push(convertDriveUrl(property['gambar3']));
+      if (property['gambar4']) allImages.push(convertDriveUrl(property['gambar4']));
+      if (property['gambar5']) allImages.push(convertDriveUrl(property['gambar5']));
+      
+      currentImageIndex = 0;
+      
+      document.getElementById('detailTitle').textContent = 
+        property['nama property'] || 'Detail Properti';
+
+      const content = document.getElementById('detailContent');
+      const hargaValue = property['harga'] || '0';
+      
+      content.innerHTML = `
+        <div class="detail-main-image">
+          <img src="${allImages[0] || 'https://images.unsplash.com/photo-1580587771525-78b9dba3b914?w=600'}" 
+               alt="${property['nama property']}" id="mainDetailImage">
+          ${allImages.length > 1 ? `<span class="image-counter" id="imageCounter">1/${allImages.length}</span>` : ''}
+        </div>
+        
+        ${allImages.length > 1 ? `
+          <div class="detail-thumbnails">
+            ${allImages.map((img, i) => `
+              <div class="thumbnail ${i === 0 ? 'active' : ''}" onclick="changeDetailImage(${i})">
+                <img src="${img}" alt="Thumbnail ${i+1}">
+              </div>
+            `).join('')}
+          </div>
+        ` : ''}
+        
+        <div class="detail-info">
+          <div class="detail-price">${formatPrice(hargaValue)}</div>
+          <h2 class="detail-title">${property['nama property'] || '-'}</h2>
+          <div class="detail-location">
+            <i class="fas fa-map-marker-alt"></i> ${property['lokasi'] || '-'}
+          </div>
+          
+          <div class="detail-features">
+            <div class="detail-feature">
+              <i class="fas fa-bed"></i>
+              <div class="value">${property['kt'] || '0'}</div>
+              <div class="label">Kamar Tidur</div>
+            </div>
+            <div class="detail-feature">
+              <i class="fas fa-bath"></i>
+              <div class="value">${property['km'] || '0'}</div>
+              <div class="label">Kamar Mandi</div>
+            </div>
+            <div class="detail-feature">
+              <i class="fas fa-layer-group"></i>
+              <div class="value">${property['lt'] || '0'}</div>
+              <div class="label">Lantai</div>
+            </div>
+          </div>
+        </div>
+        
+        ${(property['spesifikasi'] || property['detail']) ? `
+            <div class="detail-description">
+              <h3>Deskripsi</h3>
+              <p>${property['spesifikasi'] || property['detail']}</p>
+            </div>
+          ` : ''}
+        
+        <div class="detail-specs">
+            <div class="spec-item">
+              <span class="spec-label">Kategori</span>
+              <span class="spec-value">${property._tab || 'primary'}</span>
+            </div>
+            <div class="spec-item">
+              <span class="spec-label">Sales</span>
+              <span class="spec-value">${property['sales'] || '-'}</span>
+            </div>
+            <div class="spec-item">
+              <span class="spec-label">Kontak</span>
+              <span class="spec-value">${property['kontak'] || '-'}</span>
+            </div>
+          </div>
+        
+        <div class="detail-contact">
+          <h3 style="margin-bottom:12px;">Hubungi Marketing</h3>
+          <div class="contact-buttons">
+            <a href="tel:${property['kontak'] || '081234567890'}" class="btn-call">
+                <i class="fas fa-phone"></i> Telepon
+              </a>
+            <a href="https://wa.me/${convertToWaNumber(property['kontak'] || '081234567890')}?text=Halo, saya tertarik dengan properti ${encodeURIComponent(property['nama property'] || '')}" class="btn-wa" target="_blank">
+                <i class="fab fa-whatsapp"></i> WhatsApp
+              </a>
+          </div>
+        </div>
+      `;
+      
+      detailModal.classList.add('active');
+      document.body.style.overflow = 'hidden';
+    }
+
+    function changeDetailImage(index) {
+      currentImageIndex = index;
+      const mainImg = document.getElementById('mainDetailImage');
+      if (mainImg && allImages[index]) {
+        mainImg.src = allImages[index];
+      }
+      document.querySelectorAll('.thumbnail').forEach((thumb, i) => {
+        thumb.classList.toggle('active', i === index);
+      });
+      const counter = document.getElementById('imageCounter');
+      if (counter) counter.textContent = `${index + 1}/${allImages.length}`;
+    }
+
+    function closeDetailModal() {
+      const detailModal = document.getElementById('detailModal');
+      if (detailModal) {
+        detailModal.classList.remove('active');
+        document.body.style.overflow = '';
+      }
+    }
+
+    // ========== SESSION STORAGE ==========
+    function saveModalState() {
+      const state = {
+        isOpen: isModalOpen,
+        searchTerm: document.getElementById('modalSearchInput').value,
+        filters: modalFilters,
+        resultCount: document.getElementById('modalResultCount').innerHTML,
+        propertyListHTML: document.getElementById('modalPropertyList').innerHTML
+      };
+      sessionStorage.setItem('searchModalState', JSON.stringify(state));
+    }
+
+    function restoreModalState() {
+      const saved = sessionStorage.getItem('searchModalState');
+      if (saved) {
+        try {
+          const state = JSON.parse(saved);
+          if (state.isOpen) {
+            document.getElementById('modalSearchInput').value = state.searchTerm;
+            modalFilters = state.filters;
+            document.getElementById('modalFilterKT').value = state.filters.kt || '';
+            document.getElementById('modalFilterKM').value = state.filters.km || '';
+            document.getElementById('modalFilterLT').value = state.filters.lt || '';
+            document.getElementById('modalMinHarga').value = state.filters.minHarga || '';
+            document.getElementById('modalMaxHarga').value = state.filters.maxHarga || '';
+            
+            document.querySelectorAll('.modal-tab').forEach(tab => {
+              tab.classList.remove('active');
+              if (tab.dataset.tab === state.filters.tab) tab.classList.add('active');
+            });
+            if (!state.filters.tab) {
+              document.querySelector('.modal-tab[data-tab=""]').classList.add('active');
+            }
+            
+            document.getElementById('modalResultCount').innerHTML = state.resultCount;
+            document.getElementById('modalPropertyList').innerHTML = state.propertyListHTML;
+            
+            updateActiveFilterChips();
+            
+            searchModal.classList.add('active');
+            document.body.style.overflow = 'hidden';
+            isModalOpen = true;
+          }
+        } catch (e) {}
+      }
+    }
+
+    // ========== FILTER FUNCTIONS ==========
+    function applyModalFilter() {
+        modalFilters = {
+          kt: document.getElementById('modalFilterKT').value,
+          km: document.getElementById('modalFilterKM').value,
+          lt: document.getElementById('modalFilterLT').value,
+          minHarga: document.getElementById('modalMinHarga').value,
+          maxHarga: document.getElementById('modalMaxHarga').value,
+          tab: modalFilters.tab
+        };
+        
+        closeFilterSheet();
+        updateActiveFilterChips();
+        
+        // Cek apakah filter dibuka dari Home atau Modal
+        const openedFrom = sessionStorage.getItem('filterOpenedFrom');
+        
+        if (openedFrom === 'home') {
+          // Jika dari Home, buka modal search dengan filter yang sudah diterapkan
+          openSearchModal();
+          sessionStorage.removeItem('filterOpenedFrom');
+        } else {
+          // Jika dari dalam modal, langsung lakukan pencarian
+          doModalSearch();
+        }
+      }
+
+      function resetModalFilter() {
+        document.getElementById('modalFilterKT').value = '';
+        document.getElementById('modalFilterKM').value = '';
+        document.getElementById('modalFilterLT').value = '';
+        document.getElementById('modalMinHarga').value = '';
+        document.getElementById('modalMaxHarga').value = '';
+        
+        modalFilters = { kt: '', km: '', lt: '', minHarga: '', maxHarga: '', tab: '' };
+        
+        document.querySelectorAll('.modal-tab').forEach(tab => {
+          tab.classList.remove('active');
+          if (tab.dataset.tab === '') tab.classList.add('active');
+        });
+        
+        closeFilterSheet();
+        updateActiveFilterChips();
+        
+        // Cek apakah filter dibuka dari Home atau Modal
+        const openedFrom = sessionStorage.getItem('filterOpenedFrom');
+        
+        if (openedFrom === 'home') {
+          openSearchModal();
+          sessionStorage.removeItem('filterOpenedFrom');
+        } else {
+          doModalSearch();
+        }
+      }
+
+    function updateActiveFilterChips() {
+      const container = document.getElementById('activeFilters');
+      let html = '';
+      
+      if (modalFilters.tab) html += `<span class="filter-chip">📁 ${modalFilters.tab} <i class="fas fa-times" onclick="removeFilter('tab')"></i></span>`;
+      if (modalFilters.kt) html += `<span class="filter-chip">🛏️ ${modalFilters.kt}+ KT <i class="fas fa-times" onclick="removeFilter('kt')"></i></span>`;
+      if (modalFilters.km) html += `<span class="filter-chip">🚿 ${modalFilters.km}+ KM <i class="fas fa-times" onclick="removeFilter('km')"></i></span>`;
+      if (modalFilters.lt) html += `<span class="filter-chip">🏢 ${modalFilters.lt}+ Lt <i class="fas fa-times" onclick="removeFilter('lt')"></i></span>`;
+      if (modalFilters.minHarga || modalFilters.maxHarga) {
+        const min = modalFilters.minHarga ? modalFilters.minHarga + 'jt' : '0';
+        const max = modalFilters.maxHarga ? modalFilters.maxHarga + 'jt' : '∞';
+        html += `<span class="filter-chip">💰 ${min} - ${max} <i class="fas fa-times" onclick="removeFilter('harga')"></i></span>`;
+      }
+      if (html) html += `<span class="filter-chip clear-all" onclick="resetModalFilter()"><i class="fas fa-times"></i> Clear All</span>`;
+      
+      container.innerHTML = html || '<span style="font-size:0.7rem; color:var(--gray);">🔍 Belum ada filter aktif</span>';
+      saveModalState();
+    }
+
+    function removeFilter(type) {
+      if (type === 'tab') {
+        modalFilters.tab = '';
+        document.querySelectorAll('.modal-tab').forEach(t => { t.classList.remove('active'); if (t.dataset.tab === '') t.classList.add('active'); });
+      } else if (type === 'kt') { modalFilters.kt = ''; document.getElementById('modalFilterKT').value = ''; }
+      else if (type === 'km') { modalFilters.km = ''; document.getElementById('modalFilterKM').value = ''; }
+      else if (type === 'lt') { modalFilters.lt = ''; document.getElementById('modalFilterLT').value = ''; }
+      else if (type === 'harga') { modalFilters.minHarga = ''; modalFilters.maxHarga = ''; document.getElementById('modalMinHarga').value = ''; document.getElementById('modalMaxHarga').value = ''; }
+      updateActiveFilterChips();
+      doModalSearch();
+    }
+
+    // ========== TOGGLE FAVORITE ==========
+    function toggleFavorite(btn) {
+      const icon = btn.querySelector('i');
+      if (icon.classList.contains('far')) {
+        icon.classList.remove('far'); icon.classList.add('fas');
+        btn.style.background = '#e74c3c'; icon.style.color = 'white';
+      } else {
+        icon.classList.remove('fas'); icon.classList.add('far');
+        btn.style.background = 'rgba(255,255,255,0.95)'; icon.style.color = '#e74c3c';
+      }
+    }
+
+    // ========== DUMMY DATA ==========
+    function getDummyProperties() {
+      return [
+        { 
+          'nama property': 'Ruko Bisnis', 
+          'harga': '99000000', 
+          'lokasi': 'Tiban', 
+          'kt': '4', 
+          'km': '10', 
+          'lt': '2', 
+          'sales': 'Toni',
+          'kontak': '081234567899',
+          'spesifikasi': 'Ruko ini untuk bisnis',
+          'gambar utama': 'https://lh3.googleusercontent.com/d/10mZumMZTUW2piz9af9i4s-cUVm4hLQSA=w400',
+          _tab: 'primary' 
+        },
+        { 
+          'nama property': 'Apartemen City View', 
+          'harga': '850000000', 
+          'lokasi': 'Nagoya', 
+          'kt': '2', 
+          'km': '1', 
+          'lt': '1', 
+          'sales': 'Dewi',
+          'kontak': '085678901234',
+          'spesifikasi': 'Apartemen dengan view kota',
+          'gambar utama': 'https://images.unsplash.com/photo-1600607687939-ce8a6c25118c?w=400', 
+          _tab: 'secondary' 
+        },
+        { 
+          'nama property': 'Rumah Minimalis', 
+          'harga': '2100000000', 
+          'lokasi': 'Batam Center', 
+          'kt': '3', 
+          'km': '2', 
+          'lt': '1', 
+          'sales': 'Budi',
+          'kontak': '081298765432',
+          'spesifikasi': 'Rumah minimalis lokasi strategis',
+          'gambar utama': 'https://images.unsplash.com/photo-1600585154340-be6161a56a0c?w=400', 
+          _tab: 'rent' 
+        }
+      ];
+    }
+
+    // ========== EVENT LISTENERS ==========
+    document.getElementById('searchBtn').addEventListener('click', openSearchModal);
+    document.getElementById('searchInput').addEventListener('keypress', function(e) {
+      if (e.key === 'Enter') openSearchModal();
+    });
+    document.getElementById('modalSearchInput').addEventListener('keypress', function(e) {
+      if (e.key === 'Enter') doModalSearch();
+    });
+
+    document.querySelectorAll('.modal-tab').forEach(tab => {
+      tab.addEventListener('click', function() {
+        document.querySelectorAll('.modal-tab').forEach(t => t.classList.remove('active'));
+        this.classList.add('active');
+        modalFilters.tab = this.dataset.tab;
+        doModalSearch();
+        updateActiveFilterChips();
+      });
+    });
+
+    // ========== INIT ==========
+    window.addEventListener('pageshow', restoreModalState);
+    document.addEventListener('DOMContentLoaded', function() {
+      loadHomeData();
+      displayGallery();
+      restoreModalState();
+      if (!isModalOpen) sessionStorage.removeItem('searchModalState');
+    });
+  </script>
+</body>
+</html>

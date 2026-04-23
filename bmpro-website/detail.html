@@ -1,0 +1,227 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=yes, viewport-fit=cover">
+  <meta name="theme-color" content="#2c3e50">
+  
+  <title>Detail Properti - BMpro</title>
+  
+  <!-- Font Awesome -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <!-- Google Fonts -->
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <!-- CSS Global -->
+  <link rel="stylesheet" href="css/style.css">
+  
+  <style>
+    /* Tambahan khusus detail.html */
+    .detail-page {
+      padding-bottom: 20px;
+    }
+    
+    .detail-header {
+      position: sticky;
+      top: 0;
+      background: white;
+      padding: 12px 16px;
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+      z-index: 100;
+    }
+    
+    .back-btn {
+      color: var(--primary);
+      font-size: 1.2rem;
+      cursor: pointer;
+      width: 36px;
+      height: 36px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border-radius: 50%;
+      background: #f0f0f0;
+      text-decoration: none;
+    }
+    
+    .detail-header h2 {
+      font-size: 1rem;
+      font-weight: 600;
+      flex: 1;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+  </style>
+</head>
+<body>
+  <div class="detail-page">
+    <!-- ========== HEADER ========== -->
+    <div class="detail-header">
+      <a href="javascript:history.back()" class="back-btn"><i class="fas fa-arrow-left"></i></a>
+      <h2 id="detailTitle">Detail Properti</h2>
+      <div style="width: 36px;"></div>
+    </div>
+    
+    <!-- ========== CONTENT ========== -->
+    <div id="detailContent">
+      <div class="loading"><i class="fas fa-spinner"></i><p>Memuat detail...</p></div>
+    </div>
+  </div>
+
+  <!-- JavaScript Global -->
+  <script src="js/script.js"></script>
+  
+  <!-- JavaScript Khusus Detail -->
+  <script>
+    let allImages = [];
+    let currentImageIndex = 0;
+    let currentProperty = null;
+    
+    // ========== LOAD DETAIL ==========
+    function loadDetail() {
+      const params = new URLSearchParams(window.location.search);
+      const id = params.get('id');
+      
+      if (!id) {
+        showError('ID properti tidak ditemukan');
+        return;
+      }
+      
+      // Ambil data dari sessionStorage
+      const storedData = sessionStorage.getItem(id);
+      if (!storedData) {
+        showError('Data properti tidak ditemukan');
+        return;
+      }
+      
+      try {
+        const property = JSON.parse(storedData);
+        currentProperty = property;
+        displayDetail(property);
+      } catch (e) {
+        showError('Gagal memuat data properti');
+      }
+    }
+    
+    function showError(message) {
+      document.getElementById('detailContent').innerHTML = `
+        <div class="empty-state" style="margin-top: 40px;">
+          <i class="fas fa-exclamation-triangle"></i>
+          <p>${message}</p>
+          <a href="index.html" style="display: inline-block; margin-top: 16px; color: var(--secondary);">Kembali ke Beranda</a>
+        </div>
+      `;
+    }
+    
+    function displayDetail(property) {
+      // Kumpulkan gambar
+      allImages = [];
+      if (property['gambar utama']) allImages.push(convertDriveUrl(property['gambar utama']));
+      if (property['gambar2']) allImages.push(convertDriveUrl(property['gambar2']));
+      if (property['gambar3']) allImages.push(convertDriveUrl(property['gambar3']));
+      if (property['gambar4']) allImages.push(convertDriveUrl(property['gambar4']));
+      if (property['gambar5']) allImages.push(convertDriveUrl(property['gambar5']));
+      
+      document.getElementById('detailTitle').textContent = 
+        property['nama property'] || 'Detail Properti';
+      
+      const content = document.getElementById('detailContent');
+      const hargaValue = property['harga'] || '0';
+      
+      content.innerHTML = `
+        <div class="detail-main-image">
+          <img src="${allImages[0] || 'https://images.unsplash.com/photo-1580587771525-78b9dba3b914?w=600'}" 
+               alt="${property['nama property']}" id="mainImage">
+          ${allImages.length > 1 ? `<span class="image-counter" id="imageCounter">1/${allImages.length}</span>` : ''}
+        </div>
+        
+        ${allImages.length > 1 ? `
+          <div class="detail-thumbnails">
+            ${allImages.map((img, i) => `
+              <div class="thumbnail ${i === 0 ? 'active' : ''}" onclick="changeImage(${i})">
+                <img src="${img}" alt="Thumbnail ${i+1}">
+              </div>
+            `).join('')}
+          </div>
+        ` : ''}
+        
+        <div class="detail-info">
+          <div class="detail-price">${formatPrice(hargaValue)}</div>
+          <h2 class="detail-title">${property['nama property'] || '-'}</h2>
+          <div class="detail-location">
+            <i class="fas fa-map-marker-alt"></i> ${property['lokasi'] || '-'}
+          </div>
+          
+          <div class="detail-features">
+            <div class="detail-feature">
+              <i class="fas fa-bed"></i>
+              <div class="value">${property['kt'] || '0'}</div>
+              <div class="label">Kamar Tidur</div>
+            </div>
+            <div class="detail-feature">
+              <i class="fas fa-bath"></i>
+              <div class="value">${property['km'] || '0'}</div>
+              <div class="label">Kamar Mandi</div>
+            </div>
+            <div class="detail-feature">
+              <i class="fas fa-layer-group"></i>
+              <div class="value">${property['lt'] || '0'}</div>
+              <div class="label">Lantai</div>
+            </div>
+          </div>
+        </div>
+        
+        ${property['spesifikasi'] ? `
+          <div class="detail-description">
+            <h3>Deskripsi</h3>
+            <p>${property['spesifikasi']}</p>
+          </div>
+        ` : ''}
+        
+        <div class="detail-specs">
+          <div class="spec-item">
+            <span class="spec-label">Kategori</span>
+            <span class="spec-value">${property._tab || 'primary'}</span>
+          </div>
+          <div class="spec-item">
+            <span class="spec-label">Sales</span>
+            <span class="spec-value">${property['sales'] || '-'}</span>
+          </div>
+          <div class="spec-item">
+            <span class="spec-label">Kontak</span>
+            <span class="spec-value">${property['kontak'] || '-'}</span>
+          </div>
+        </div>
+        
+        <div class="detail-contact">
+          <h3 style="margin-bottom:12px;">Hubungi Marketing</h3>
+          <div class="contact-buttons">
+            <a href="tel:${property['kontak'] || '081234567890'}" class="btn-call">
+              <i class="fas fa-phone"></i> Telepon
+            </a>
+            <a href="https://wa.me/${convertToWaNumber(property['kontak'] || '081234567890')}?text=Halo, saya tertarik dengan properti ${encodeURIComponent(property['nama property'] || '')}" class="btn-wa" target="_blank">
+              <i class="fab fa-whatsapp"></i> WhatsApp
+            </a>
+          </div>
+        </div>
+      `;
+    }
+    
+    function changeImage(index) {
+      currentImageIndex = index;
+      document.getElementById('mainImage').src = allImages[index];
+      document.querySelectorAll('.thumbnail').forEach((thumb, i) => {
+        thumb.classList.toggle('active', i === index);
+      });
+      const counter = document.getElementById('imageCounter');
+      if (counter) counter.textContent = `${index + 1}/${allImages.length}`;
+    }
+    
+    // ========== INIT ==========
+    loadDetail();
+  </script>
+</body>
+</html>
