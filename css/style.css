@@ -900,3 +900,82 @@
       grid-template-columns: repeat(4, 1fr);
     }
   }
+
+
+  /* ============================================================
+   CAROUSEL / SLIDER
+   ============================================================ */
+.featured-carousel {
+  position: relative;
+  width: 100%;
+  overflow: hidden;
+  border-radius: 16px;
+  margin-bottom: 8px;
+}
+
+.carousel-container {
+  display: flex;
+  transition: transform 0.4s ease;
+}
+
+.carousel-slide {
+  flex: 0 0 100%;
+  width: 100%;
+}
+
+.carousel-slide .property-card {
+  margin: 0;
+  border-radius: 16px;
+}
+
+.carousel-indicators {
+  display: flex;
+  justify-content: center;
+  gap: 6px;
+  margin-top: 8px;
+  margin-bottom: 4px;
+}
+
+.carousel-dot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: #ccc;
+  transition: all 0.3s;
+  cursor: pointer;
+}
+
+.carousel-dot.active {
+  width: 20px;
+  border-radius: 10px;
+  background: var(--secondary);
+}
+
+.carousel-arrow {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 32px;
+  height: 32px;
+  background: rgba(255,255,255,0.9);
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  z-index: 10;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+}
+
+.carousel-arrow.prev {
+  left: 8px;
+}
+
+.carousel-arrow.next {
+  right: 8px;
+}
+
+.carousel-arrow i {
+  font-size: 0.9rem;
+  color: var(--primary);
+}
