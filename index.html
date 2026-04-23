@@ -584,10 +584,10 @@
 
     .modal-header {
       background: white;
-      padding: 12px 16px;
+      padding: 10px 12px;              /* ✅ DIPERKECIL dari 12px 16px */
       display: flex;
       align-items: center;
-      gap: 12px;
+      gap: 8px;                        /* ✅ DIPERKECIL dari 12px */
       box-shadow: 0 2px 8px rgba(0,0,0,0.05);
       position: sticky;
       top: 0;
@@ -596,33 +596,34 @@
 
     .modal-header .close-btn {
       color: var(--primary);
-      font-size: 1.3rem;
+      font-size: 1.1rem;               /* ✅ DIPERKECIL dari 1.3rem */
       cursor: pointer;
-      width: 36px;
-      height: 36px;
+      width: 32px;                     /* ✅ DIPERKECIL dari 36px */
+      height: 32px;                    /* ✅ DIPERKECIL dari 36px */
       display: flex;
       align-items: center;
       justify-content: center;
       border-radius: 50%;
       background: #f0f0f0;
+      flex-shrink: 0;                  /* ✅ Mencegah mengecil */
     }
 
     .modal-header .search-box {
       flex: 1;
       background: #f0f0f0;
       border-radius: 30px;
-      padding: 4px 4px 4px 16px;
+      padding: 2px;
       display: flex;
       align-items: center;
-      gap: 8px;
       box-shadow: none;
       border: none;
     }
 
     .modal-header .search-box i {
       color: var(--gray);
-      font-size: 0.9rem;
-      margin: 0;
+      font-size: 0.8rem;
+      margin-left: 10px;
+      margin-right: 2px;
     }
 
     .modal-header .search-box input {
@@ -630,32 +631,53 @@
       border: none;
       background: transparent;
       font-family: 'Poppins', sans-serif;
-      font-size: 0.9rem;
+      font-size: 0.75rem;
       outline: none;
-      padding: 10px 0;
+      padding: 8px 2px;
+      min-width: 0;
+    }
+
+    .modal-header .search-box input::placeholder {
+      font-size: 0.7rem;
+      color: #bdc3c7;
     }
 
     .modal-header .search-box button {
       background: var(--secondary);
       color: white;
       border: none;
-      padding: 8px 16px;
+      padding: 6px 12px;
       border-radius: 30px;
-      font-size: 0.75rem;
-      font-weight: 500;
-      cursor: pointer;
-    }
-
-    .modal-header .filter-btn {
-      background: white;
-      color: var(--secondary);
-      border: 1.5px solid var(--secondary);
-      padding: 8px 14px;
-      border-radius: 30px;
-      font-size: 0.75rem;
+      font-size: 0.7rem;
       font-weight: 500;
       cursor: pointer;
       white-space: nowrap;
+      margin: 2px;
+      flex-shrink: 0;
+    }
+
+    /* ✅ TOMBOL FILTER DI DALAM SEARCH BOX */
+    .modal-header .search-box .filter-btn-inside {
+      background: transparent;
+      color: var(--gray);
+      border: none;
+      padding: 6px 10px;
+      border-radius: 30px;
+      font-size: 0.9rem;
+      cursor: pointer;
+      margin: 2px;
+      flex-shrink: 0;
+      transition: background 0.2s;
+    }
+
+    .modal-header .search-box .filter-btn-inside:hover {
+      background: rgba(0,0,0,0.05);
+    }
+
+    .modal-header .search-box .filter-btn-inside i {
+      font-size: 0.9rem;
+      margin: 0;
+      color: var(--gray);
     }
 
     .modal-tabs {
@@ -666,17 +688,6 @@
       border-bottom: 1px solid #eee;
       overflow-x: auto;
       white-space: nowrap;
-    }
-
-    .modal-tab {
-      padding: 6px 14px;
-      border-radius: 30px;
-      font-size: 0.75rem;
-      font-weight: 500;
-      background: #f0f0f0;
-      color: var(--gray);
-      border: none;
-      cursor: pointer;
     }
 
     .modal-tab.active {
@@ -871,18 +882,18 @@
     }
 
     .detail-feature i {
-      font-size: 1.5rem;
+      font-size: 1.2rem;        /* ✅ ICON DIDALAM MODAL DIPERKECIL dari 1.5rem */
       color: var(--secondary);
       margin-bottom: 4px;
     }
 
     .detail-feature .value {
-      font-size: 1.1rem;
+      font-size: 0.9rem;        /* ✅ DIPERKECIL dari 1.1rem */
       font-weight: 600;
     }
 
     .detail-feature .label {
-      font-size: 0.7rem;
+      font-size: 0.6rem;        /* ✅ DIPERKECIL dari 0.7rem */
       color: var(--gray);
     }
 
@@ -1200,28 +1211,28 @@
   </nav>
 
   <!-- ========== SEARCH MODAL ========== -->
-  <div class="search-modal" id="searchModal">
-    <div class="modal-header">
-      <div class="close-btn" onclick="closeSearchModal()"><i class="fas fa-times"></i></div>
-      <div class="search-box">
-        <i class="fas fa-search"></i>
-        <input type="text" placeholder="Cari properti..." id="modalSearchInput">
-        <button onclick="doModalSearch()">Cari</button>
+    <div class="search-modal" id="searchModal">
+      <div class="modal-header">
+        <div class="close-btn" onclick="closeSearchModal()"><i class="fas fa-times"></i></div>
+        <div class="search-box">
+          <i class="fas fa-search"></i>
+          <input type="text" placeholder="Cari properti..." id="modalSearchInput">
+          <button onclick="doModalSearch()">Cari</button>
+          <button class="filter-btn-inside" onclick="openFilterSheet()"><i class="fas fa-sliders-h"></i></button>
+        </div>
       </div>
-      <button class="filter-btn" onclick="openFilterSheet()"><i class="fas fa-sliders-h"></i> Filter</button>
+      
+      <div class="modal-tabs" id="modalTabs">
+        <button class="modal-tab active" data-tab="">Semua</button>
+        <button class="modal-tab" data-tab="primary">Primary</button>
+        <button class="modal-tab" data-tab="secondary">Secondary</button>
+        <button class="modal-tab" data-tab="rent">Rent</button>
+      </div>
+      
+      <div class="modal-filters" id="activeFilters"></div>
+      <div class="modal-result-count" id="modalResultCount">Ketik untuk mencari properti...</div>
+      <div id="modalPropertyList" class="modal-property-list"></div>
     </div>
-    
-    <div class="modal-tabs" id="modalTabs">
-      <button class="modal-tab active" data-tab="">Semua</button>
-      <button class="modal-tab" data-tab="primary">Primary</button>
-      <button class="modal-tab" data-tab="secondary">Secondary</button>
-      <button class="modal-tab" data-tab="rent">Rent</button>
-    </div>
-    
-    <div class="modal-filters" id="activeFilters"></div>
-    <div class="modal-result-count" id="modalResultCount">Ketik untuk mencari properti...</div>
-    <div id="modalPropertyList" class="modal-property-list"></div>
-  </div>
 
   <!-- ========== DETAIL MODAL ========== -->
   <div class="detail-modal" id="detailModal">
@@ -1237,60 +1248,60 @@
   </div>
 
   <!-- ========== FILTER BOTTOM SHEET ========== -->
-  <div class="filter-sheet-overlay" id="filterSheetOverlay" onclick="closeFilterSheet()"></div>
-  <div class="filter-sheet" id="filterSheet">
-    <div class="filter-sheet-header">
-      <h4><i class="fas fa-sliders-h"></i> Filter Properti</h4>
-      <i class="fas fa-times" style="cursor: pointer;" onclick="closeFilterSheet()"></i>
-    </div>
-    
-    <div class="filter-group">
-      <label>Kamar Tidur (Minimal)</label>
-      <select id="modalFilterKT">
-        <option value="">Semua</option>
-        <option value="1">1+ KT</option>
-        <option value="2">2+ KT</option>
-        <option value="3">3+ KT</option>
-        <option value="4">4+ KT</option>
-        <option value="5">5+ KT</option>
-      </select>
-    </div>
-    
-    <div class="filter-group">
-      <label>Kamar Mandi (Minimal)</label>
-      <select id="modalFilterKM">
-        <option value="">Semua</option>
-        <option value="1">1+ KM</option>
-        <option value="2">2+ KM</option>
-        <option value="3">3+ KM</option>
-        <option value="4">4+ KM</option>
-      </select>
-    </div>
-    
-    <div class="filter-group">
-      <label>Lantai (Minimal)</label>
-      <select id="modalFilterLT">
-        <option value="">Semua</option>
-        <option value="1">1+ Lantai</option>
-        <option value="2">2+ Lantai</option>
-        <option value="3">3+ Lantai</option>
-      </select>
-    </div>
-    
-    <div class="filter-group">
-      <label>Rentang Harga (Juta Rupiah)</label>
-      <div class="range-inputs">
-        <input type="number" id="modalMinHarga" placeholder="Min" step="50">
-        <span>-</span>
-        <input type="number" id="modalMaxHarga" placeholder="Max" step="50">
-      </div>
-    </div>
-    
-    <div class="filter-sheet-actions">
-      <button class="btn-reset" onclick="resetModalFilter()">Reset</button>
-      <button class="btn-apply" onclick="applyModalFilter()">Terapkan</button>
+<div class="filter-sheet-overlay" id="filterSheetOverlay" onclick="closeFilterSheet()"></div>
+<div class="filter-sheet" id="filterSheet">
+  <div class="filter-sheet-header">
+    <h4><i class="fas fa-sliders-h"></i> Filter Properti</h4>
+    <i class="fas fa-times" style="cursor: pointer;" onclick="closeFilterSheet()"></i>
+  </div>
+  
+  <div class="filter-group">
+    <label>Kamar Tidur (Minimal)</label>
+    <select id="modalFilterKT">
+      <option value="">Semua</option>
+      <option value="1">1+ KT</option>
+      <option value="2">2+ KT</option>
+      <option value="3">3+ KT</option>
+      <option value="4">4+ KT</option>
+      <option value="5">5+ KT</option>
+    </select>
+  </div>
+  
+  <div class="filter-group">
+    <label>Kamar Mandi (Minimal)</label>
+    <select id="modalFilterKM">
+      <option value="">Semua</option>
+      <option value="1">1+ KM</option>
+      <option value="2">2+ KM</option>
+      <option value="3">3+ KM</option>
+      <option value="4">4+ KM</option>
+    </select>
+  </div>
+  
+  <div class="filter-group">
+    <label>Lantai (Minimal)</label>
+    <select id="modalFilterLT">
+      <option value="">Semua</option>
+      <option value="1">1+ Lantai</option>
+      <option value="2">2+ Lantai</option>
+      <option value="3">3+ Lantai</option>
+    </select>
+  </div>
+  
+  <div class="filter-group">
+    <label>Rentang Harga (Juta Rupiah)</label>
+    <div class="range-inputs">
+      <input type="number" id="modalMinHarga" placeholder="Min" step="50">
+      <span>-</span>
+      <input type="number" id="modalMaxHarga" placeholder="Max" step="50">
     </div>
   </div>
+  
+  <div class="filter-sheet-actions">
+    <button class="btn-reset" onclick="resetModalFilter()">Reset</button>
+    <button class="btn-apply" onclick="applyModalFilter()">Terapkan</button>
+  </div>
+</div>
 
   <script>
     // ========== KONFIGURASI OPENSHEET ==========
@@ -1380,6 +1391,27 @@
       return url;
     }
 
+    // ========== KONVERSI NOMOR UNTUK WHATSAPP ==========
+function convertToWaNumber(phone) {
+      if (!phone) return '6281234567890';
+      
+      // Konversi ke string dan bersihkan dari karakter non-digit
+      let cleaned = phone.toString().replace(/\D/g, '');
+      
+      // Jika diawali dengan '0', ganti dengan '62'
+      if (cleaned.startsWith('0')) {
+        cleaned = '62' + cleaned.substring(1);
+      }
+      
+      // Jika diawali dengan '62', biarkan
+      // Jika diawali dengan '+62', hapus '+'
+      if (cleaned.startsWith('+62')) {
+        cleaned = cleaned.substring(1);
+      }
+      
+      return cleaned;
+    }
+
     // ========== OPENSHEET FETCH ==========
     async function fetchSheetData(tabName) {
       try {
@@ -1405,12 +1437,14 @@
           'kt': item['kt'] || '0',
           'km': item['km'] || '0',
           'lt': item['lt'] || '0',
+          'sales': item['sales'] || '-',
+          'kontak': item['kontak'] || '-',
+          'spesifikasi': item['spesifikasi'] || '',
           'gambar utama': item['gambar utama'] || '',
           'gambar2': item['gambar2'] || '',
           'gambar3': item['gambar3'] || '',
           'gambar4': item['gambar4'] || '',
-          'gambar5': item['gambar5'] || '',
-          'detail': item['detail'] || ''
+          'gambar5': item['gambar5'] || ''
         }));
         displayProperties(properties);
       } catch (e) {
@@ -1434,12 +1468,14 @@
           'kt': p['kt'] || '0',
           'km': p['km'] || '0',
           'lt': p['lt'] || '0',
+          'sales': p['sales'] || '-',
+          'kontak': p['kontak'] || '-',
+          'spesifikasi': p['spesifikasi'] || p['detail'] || '',
           'gambar utama': p['gambar utama'] || '',
           'gambar2': p['gambar2'] || '',
           'gambar3': p['gambar3'] || '',
           'gambar4': p['gambar4'] || '',
           'gambar5': p['gambar5'] || '',
-          'detail': p['detail'] || '',
           '_tab': p._tab || 'primary'
         };
         
@@ -1515,13 +1551,21 @@
     }
 
     function openFilterSheet() {
-      filterSheet.classList.add('active');
-      filterSheetOverlay.classList.add('active');
+      const filterSheet = document.getElementById('filterSheet');
+      const filterSheetOverlay = document.getElementById('filterSheetOverlay');
+      if (filterSheet && filterSheetOverlay) {
+        filterSheet.classList.add('active');
+        filterSheetOverlay.classList.add('active');
+      }
     }
 
     function closeFilterSheet() {
-      filterSheet.classList.remove('active');
-      filterSheetOverlay.classList.remove('active');
+      const filterSheet = document.getElementById('filterSheet');
+      const filterSheetOverlay = document.getElementById('filterSheetOverlay');
+      if (filterSheet && filterSheetOverlay) {
+        filterSheet.classList.remove('active');
+        filterSheetOverlay.classList.remove('active');
+      }
     }
 
     async function doModalSearch() {
@@ -1610,12 +1654,14 @@
           'kt': item['kt'] || '0',
           'km': item['km'] || '0',
           'lt': item['lt'] || '0',
+          'sales': item['sales'] || '-',
+          'kontak': item['kontak'] || '-',
+          'spesifikasi': item['spesifikasi'] || item['detail'] || '',
           'gambar utama': item['gambar utama'] || '',
           'gambar2': item['gambar2'] || '',
           'gambar3': item['gambar3'] || '',
           'gambar4': item['gambar4'] || '',
           'gambar5': item['gambar5'] || '',
-          'detail': item['detail'] || '',
           '_tab': item._tab || 'primary'
         };
         
@@ -1726,37 +1772,37 @@
           </div>
         </div>
         
-        ${property['detail'] ? `
-          <div class="detail-description">
-            <h3>Deskripsi</h3>
-            <p>${property['detail']}</p>
-          </div>
-        ` : ''}
+        ${(property['spesifikasi'] || property['detail']) ? `
+            <div class="detail-description">
+              <h3>Deskripsi</h3>
+              <p>${property['spesifikasi'] || property['detail']}</p>
+            </div>
+          ` : ''}
         
         <div class="detail-specs">
-          <div class="spec-item">
-            <span class="spec-label">Kategori</span>
-            <span class="spec-value">${property._tab || 'primary'}</span>
+            <div class="spec-item">
+              <span class="spec-label">Kategori</span>
+              <span class="spec-value">${property._tab || 'primary'}</span>
+            </div>
+            <div class="spec-item">
+              <span class="spec-label">Sales</span>
+              <span class="spec-value">${property['sales'] || '-'}</span>
+            </div>
+            <div class="spec-item">
+              <span class="spec-label">Kontak</span>
+              <span class="spec-value">${property['kontak'] || '-'}</span>
+            </div>
           </div>
-          <div class="spec-item">
-            <span class="spec-label">Sales</span>
-            <span class="spec-value">${property['sales'] || '-'}</span>
-          </div>
-          <div class="spec-item">
-            <span class="spec-label">Kontak</span>
-            <span class="spec-value">${property['phone'] || '-'}</span>
-          </div>
-        </div>
         
         <div class="detail-contact">
           <h3 style="margin-bottom:12px;">Hubungi Marketing</h3>
           <div class="contact-buttons">
-            <a href="https://wa.me/${(property['phone'] || '081234567890').replace(/\D/g, '')}?text=Halo, saya tertarik dengan properti ${encodeURIComponent(property['nama property'] || '')}" class="btn-wa" target="_blank">
-              <i class="fab fa-whatsapp"></i> WhatsApp
-            </a>
-            <a href="tel:${(property['phone'] || '081234567890').replace(/\D/g, '')}" class="btn-call">
-              <i class="fas fa-phone"></i> Telepon
-            </a>
+            <a href="tel:${property['kontak'] || '081234567890'}" class="btn-call">
+                <i class="fas fa-phone"></i> Telepon
+              </a>
+            <a href="https://wa.me/${convertToWaNumber(property['kontak'] || '081234567890')}?text=Halo, saya tertarik dengan properti ${encodeURIComponent(property['nama property'] || '')}" class="btn-wa" target="_blank">
+                <i class="fab fa-whatsapp"></i> WhatsApp
+              </a>
           </div>
         </div>
       `;
@@ -1920,10 +1966,10 @@
           'kt': '4', 
           'km': '10', 
           'lt': '2', 
-          'gambar utama': 'https://lh3.googleusercontent.com/d/10mZumMZTUW2piz9af9i4s-cUVm4hLQSA=w400',
-          'detail': 'Ruko ini untuk bisnis',
           'sales': 'Toni',
-          'phone': '081234567899',
+          'kontak': '081234567899',
+          'spesifikasi': 'Ruko ini untuk bisnis',
+          'gambar utama': 'https://lh3.googleusercontent.com/d/10mZumMZTUW2piz9af9i4s-cUVm4hLQSA=w400',
           _tab: 'primary' 
         },
         { 
@@ -1933,6 +1979,9 @@
           'kt': '2', 
           'km': '1', 
           'lt': '1', 
+          'sales': 'Dewi',
+          'kontak': '085678901234',
+          'spesifikasi': 'Apartemen dengan view kota',
           'gambar utama': 'https://images.unsplash.com/photo-1600607687939-ce8a6c25118c?w=400', 
           _tab: 'secondary' 
         },
@@ -1943,6 +1992,9 @@
           'kt': '3', 
           'km': '2', 
           'lt': '1', 
+          'sales': 'Budi',
+          'kontak': '081298765432',
+          'spesifikasi': 'Rumah minimalis lokasi strategis',
           'gambar utama': 'https://images.unsplash.com/photo-1600585154340-be6161a56a0c?w=400', 
           _tab: 'rent' 
         }
