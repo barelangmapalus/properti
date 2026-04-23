@@ -1,0 +1,217 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=yes, viewport-fit=cover">
+  <meta name="theme-color" content="#2c3e50">
+  
+  <title>BMpro - Properti Batam</title>
+  
+  <!-- Font Awesome -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <!-- Google Fonts -->
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <!-- CSS Global -->
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+
+  <!-- ========== SIDEBAR MENU ========== -->
+  <div class="menu-overlay" id="menuOverlay"></div>
+  
+  <div class="sidebar-menu" id="sidebarMenu">
+    <div class="sidebar-header">
+      <div class="sidebar-header-top">
+        <div class="sidebar-logo">
+          <img src="https://drive.google.com/thumbnail?id=1a3cJptxJTSHksm9D7tN3us_7Ii7dQxxG&sz=w100" 
+               alt="BMpro Logo"
+               onerror="this.src='https://via.placeholder.com/100x100/2c3e50/ffffff?text=BM'">
+        </div>
+        <h3>BMpro</h3>
+      </div>
+      <p>Temukan properti impian Anda di Batam</p>
+    </div>
+    
+    <div class="sidebar-nav">
+      <a href="index.html" class="menu-item"><i class="fas fa-home"></i><span>Beranda</span></a>
+      <a href="search.html" class="menu-item"><i class="fas fa-search"></i><span>Cari Properti</span></a>
+      <a href="#" class="menu-item"><i class="fas fa-heart"></i><span>Favorit Saya</span></a>
+      <a href="search.html?tab=primary" class="menu-item"><i class="fas fa-building"></i><span>Primary</span></a>
+      <a href="search.html?tab=secondary" class="menu-item"><i class="fas fa-home"></i><span>Secondary</span></a>
+      <a href="search.html?tab=rent" class="menu-item"><i class="fas fa-key"></i><span>Rent</span></a>
+      <a href="#" class="menu-item"><i class="fas fa-headset"></i><span>Hubungi Kami</span></a>
+    </div>
+    
+    <div class="sidebar-footer">
+      <p>© 2025 BMpro • Properti Batam</p>
+    </div>
+  </div>
+
+  <!-- ========== HEADER ========== -->
+  <header class="mobile-header">
+    <div class="header-overlay"></div>
+    
+    <button class="hamburger-btn" id="hamburgerBtn">
+      <i class="fas fa-bars"></i>
+    </button>
+    
+    <div class="header-content">
+      <span class="badge"><i class="fas fa-star"></i> Premium</span>
+      <h1>Temukan Properti<br>Impian Anda</h1>
+      <p><i class="fas fa-map-pin"></i> Batam, Kepulauan Riau <i class="fas fa-circle" style="font-size: 3px; margin: 0 6px;"></i> 150+ Properti</p>
+    </div>
+  </header>
+
+  <!-- ========== SEARCH SECTION ========== -->
+  <div class="search-section">
+    <div class="search-box">
+      <i class="fas fa-search"></i>
+      <input type="text" placeholder="Cari properti, lokasi, atau harga..." id="searchInput">
+      <button id="searchBtn">Cari</button>
+      <button class="filter-btn-inside" id="filterBtn"><i class="fas fa-sliders-h"></i></button>
+    </div>
+  </div>
+
+  <!-- ========== PROPERTY LISTINGS ========== -->
+  <div class="section-container">
+    <div class="section-header">
+      <h4><i class="fas fa-fire" style="color: #e74c3c;"></i> Properti Unggulan</h4>
+      <a href="search.html">Lihat Semua <i class="fas fa-chevron-right" style="font-size: 0.6rem;"></i></a>
+    </div>
+    
+    <div id="propertyList" class="property-grid">
+      <div class="loading"><i class="fas fa-spinner"></i><p>Memuat properti...</p></div>
+    </div>
+  </div>
+
+  <!-- ========== GALLERY SECTION ========== -->
+  <div class="section-container">
+    <div class="section-header">
+      <h4><i class="fas fa-images"></i> Galeri Terbaru</h4>
+      <a href="#">Lihat Semua <i class="fas fa-chevron-right" style="font-size: 0.6rem;"></i></a>
+    </div>
+    
+    <div id="galleryList" class="gallery-grid">
+      <div class="loading" style="grid-column: span 2;"><i class="fas fa-spinner"></i><p>Memuat galeri...</p></div>
+    </div>
+  </div>
+
+  <!-- ========== BOTTOM NAVIGATION ========== -->
+  <nav class="bottom-nav">
+    <a href="index.html" class="nav-item active"><i class="fas fa-home"></i><span>Beranda</span></a>
+    <a href="search.html" class="nav-item"><i class="fas fa-search"></i><span>Cari</span></a>
+    <a href="#" class="nav-item"><i class="fas fa-heart"></i><span>Favorit</span></a>
+    <a href="#" class="nav-item"><i class="fas fa-user"></i><span>Profil</span></a>
+  </nav>
+
+  <!-- JavaScript Global -->
+  <script src="js/script.js"></script>
+  
+  <!-- JavaScript Khusus Home -->
+  <script>
+    // ========== LOAD HOME DATA ==========
+    async function loadHomeData() {
+      try {
+        const primaryData = await fetchSheetData('primary');
+        const properties = primaryData.slice(0, 3).map(item => ({
+          ...item,
+          _tab: 'primary',
+          'nama property': item['nama property'] || 'Tanpa Nama',
+          'harga': item['harga'] || '0',
+          'lokasi': item['lokasi'] || '-',
+          'kt': item['kt'] || '0',
+          'km': item['km'] || '0',
+          'lt': item['lt'] || '0',
+          'gambar utama': item['gambar utama'] || ''
+        }));
+        displayProperties(properties);
+      } catch (e) {
+        displayProperties(getDummyProperties());
+      }
+    }
+
+    function displayProperties(properties) {
+      const container = document.getElementById('propertyList');
+      
+      if (!properties || properties.length === 0) {
+        container.innerHTML = `<div class="empty-state"><i class="fas fa-home"></i><p>Belum ada properti</p></div>`;
+        return;
+      }
+
+      container.innerHTML = properties.map((p, i) => {
+        // Simpan data ke sessionStorage untuk diakses di halaman detail
+        const detailId = `prop_${Date.now()}_${i}`;
+        sessionStorage.setItem(detailId, JSON.stringify(p));
+        
+        return `
+          <a href="detail.html?id=${detailId}" class="property-card">
+            <div class="card-image">
+              <img src="${convertDriveUrl(p['gambar utama']) || 'https://images.unsplash.com/photo-1580587771525-78b9dba3b914?w=400'}" 
+                   alt="${p['nama property'] || 'Properti'}"
+                   onerror="this.src='https://images.unsplash.com/photo-1580587771525-78b9dba3b914?w=400';">
+              <span class="card-badge">${i === 0 ? 'HOT' : 'NEW'}</span>
+              <span class="tab-badge">${p._tab || 'primary'}</span>
+              <div class="favorite-btn" onclick="event.preventDefault(); event.stopPropagation(); toggleFavorite(this)">
+                <i class="far fa-heart"></i>
+              </div>
+            </div>
+            
+            <div class="card-content">
+              <div class="property-price">${formatPrice(p['harga'])}</div>
+              <h3 class="property-title">${p['nama property'] || 'Nama Properti'}</h3>
+              <div class="property-address">
+                <i class="fas fa-map-marker-alt"></i>
+                <span>${p['lokasi'] || 'Alamat tidak tersedia'}</span>
+              </div>
+              <div class="property-features">
+                <span class="feature"><i class="fas fa-bed"></i> ${p['kt'] || '0'} KT</span>
+                <span class="feature"><i class="fas fa-bath"></i> ${p['km'] || '0'} KM</span>
+                <span class="feature"><i class="fas fa-layer-group"></i> ${p['lt'] || '0'} Lt</span>
+              </div>
+            </div>
+          </a>
+        `;
+      }).join('');
+    }
+
+    function displayGallery() {
+      const container = document.getElementById('galleryList');
+      const dummyImages = [
+        { name: 'Interior 1', url: 'https://images.unsplash.com/photo-1600210492493-0946911123ea?w=400' },
+        { name: 'Interior 2', url: 'https://images.unsplash.com/photo-1600607687939-ce8a6c25118c?w=400' },
+        { name: 'Eksterior 1', url: 'https://images.unsplash.com/photo-1600585154340-be6161a56a0c?w=400' },
+        { name: 'Kamar Tidur', url: 'https://images.unsplash.com/photo-1600566753086-00f18fb6b3ea?w=400' }
+      ];
+      container.innerHTML = dummyImages.map((img, i) => `
+        <div class="gallery-item">
+          <img src="${img.url}" alt="${img.name}">
+          <div class="overlay"><i class="fas fa-home"></i> Properti ${i+1}</div>
+        </div>
+      `).join('');
+    }
+
+    // ========== NAVIGASI ==========
+    document.getElementById('searchBtn').addEventListener('click', function() {
+      const term = document.getElementById('searchInput').value;
+      window.location.href = `search.html?q=${encodeURIComponent(term)}`;
+    });
+
+    document.getElementById('filterBtn').addEventListener('click', function() {
+      window.location.href = 'search.html?filter=open';
+    });
+
+    document.getElementById('searchInput').addEventListener('keypress', function(e) {
+      if (e.key === 'Enter') {
+        const term = e.target.value;
+        window.location.href = `search.html?q=${encodeURIComponent(term)}`;
+      }
+    });
+
+    // ========== INIT ==========
+    document.addEventListener('DOMContentLoaded', function() {
+      loadHomeData();
+      displayGallery();
+    });
+  </script>
+</body>
+</html>

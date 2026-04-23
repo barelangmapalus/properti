@@ -1,0 +1,476 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=yes, viewport-fit=cover">
+  <meta name="theme-color" content="#2c3e50">
+  
+  <title>Pencarian - BMpro</title>
+  
+  <!-- Font Awesome -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <!-- Google Fonts -->
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <!-- CSS Global -->
+  <link rel="stylesheet" href="css/style.css">
+  
+  <style>
+    /* Tambahan khusus search.html */
+    .search-header {
+      background: white;
+      padding: 12px 16px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+      position: sticky;
+      top: 0;
+      z-index: 100;
+    }
+    
+    .back-btn {
+      color: var(--primary);
+      font-size: 1.2rem;
+      cursor: pointer;
+      width: 36px;
+      height: 36px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border-radius: 50%;
+      background: #f0f0f0;
+      text-decoration: none;
+    }
+    
+    .search-header .search-box {
+      flex: 1;
+    }
+    
+    .filter-tabs {
+      display: flex;
+      padding: 10px 16px;
+      gap: 8px;
+      background: white;
+      border-bottom: 1px solid #eee;
+      overflow-x: auto;
+      white-space: nowrap;
+    }
+    
+    .filter-tab {
+      padding: 6px 14px;
+      border-radius: 30px;
+      font-size: 0.75rem;
+      font-weight: 500;
+      background: #f0f0f0;
+      color: var(--gray);
+      border: none;
+      cursor: pointer;
+    }
+    
+    .filter-tab.active {
+      background: var(--primary);
+      color: white;
+    }
+    
+    .active-filters {
+      padding: 10px 16px;
+      background: white;
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      border-bottom: 1px solid #eee;
+    }
+    
+    .filter-chip {
+      background: #e8f4fd;
+      color: var(--secondary);
+      padding: 4px 12px;
+      border-radius: 20px;
+      font-size: 0.7rem;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      cursor: pointer;
+    }
+    
+    .filter-chip i {
+      font-size: 0.6rem;
+      opacity: 0.7;
+    }
+    
+    .filter-chip.clear-all {
+      background: #fce4e4;
+      color: var(--accent);
+    }
+    
+    .result-count {
+      padding: 10px 16px;
+      font-size: 0.75rem;
+      color: var(--gray);
+      background: #f8f9fa;
+    }
+    
+    .property-list {
+      padding: 12px 16px;
+      display: flex;
+      flex-direction: column;
+      gap: 14px;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- ========== HEADER SEARCH ========== -->
+  <div class="search-header">
+    <a href="index.html" class="back-btn"><i class="fas fa-arrow-left"></i></a>
+    <div class="search-box">
+      <i class="fas fa-search"></i>
+      <input type="text" placeholder="Cari properti..." id="searchInput">
+      <button id="searchBtn">Cari</button>
+      <button class="filter-btn-inside" id="filterBtn"><i class="fas fa-sliders-h"></i></button>
+    </div>
+  </div>
+  
+  <!-- ========== FILTER TABS ========== -->
+  <div class="filter-tabs">
+    <button class="filter-tab active" data-tab="">Semua</button>
+    <button class="filter-tab" data-tab="primary">Primary</button>
+    <button class="filter-tab" data-tab="secondary">Secondary</button>
+    <button class="filter-tab" data-tab="rent">Rent</button>
+  </div>
+  
+  <!-- ========== ACTIVE FILTERS ========== -->
+  <div class="active-filters" id="activeFilters">
+    <span style="font-size:0.7rem; color:var(--gray);">🔍 Belum ada filter aktif</span>
+  </div>
+  
+  <!-- ========== RESULT COUNT ========== -->
+  <div class="result-count" id="resultCount">Ketik untuk mencari properti...</div>
+  
+  <!-- ========== PROPERTY LIST ========== -->
+  <div id="propertyList" class="property-list">
+    <div class="loading"><i class="fas fa-spinner"></i><p>Mencari properti...</p></div>
+  </div>
+
+  <!-- ========== FILTER SHEET ========== -->
+  <div class="filter-sheet-overlay" id="filterSheetOverlay"></div>
+  <div class="filter-sheet" id="filterSheet">
+    <div class="filter-sheet-header">
+      <h4><i class="fas fa-sliders-h"></i> Filter Properti</h4>
+      <i class="fas fa-times" style="cursor: pointer;" id="closeFilterSheetBtn"></i>
+    </div>
+    
+    <div class="filter-group">
+      <label>Kamar Tidur (Minimal)</label>
+      <select id="filterKT">
+        <option value="">Semua</option>
+        <option value="1">1+ KT</option>
+        <option value="2">2+ KT</option>
+        <option value="3">3+ KT</option>
+        <option value="4">4+ KT</option>
+        <option value="5">5+ KT</option>
+      </select>
+    </div>
+    
+    <div class="filter-group">
+      <label>Kamar Mandi (Minimal)</label>
+      <select id="filterKM">
+        <option value="">Semua</option>
+        <option value="1">1+ KM</option>
+        <option value="2">2+ KM</option>
+        <option value="3">3+ KM</option>
+        <option value="4">4+ KM</option>
+      </select>
+    </div>
+    
+    <div class="filter-group">
+      <label>Lantai (Minimal)</label>
+      <select id="filterLT">
+        <option value="">Semua</option>
+        <option value="1">1+ Lantai</option>
+        <option value="2">2+ Lantai</option>
+        <option value="3">3+ Lantai</option>
+      </select>
+    </div>
+    
+    <div class="filter-group">
+      <label>Rentang Harga (Juta Rupiah)</label>
+      <div class="range-inputs">
+        <input type="number" id="minHarga" placeholder="Min" step="50">
+        <span>-</span>
+        <input type="number" id="maxHarga" placeholder="Max" step="50">
+      </div>
+    </div>
+    
+    <div class="filter-sheet-actions">
+      <button class="btn-reset" id="resetFilterBtn">Reset</button>
+      <button class="btn-apply" id="applyFilterBtn">Terapkan</button>
+    </div>
+  </div>
+
+  <!-- JavaScript Global -->
+  <script src="js/script.js"></script>
+  
+  <!-- JavaScript Khusus Search -->
+  <script>
+    // ========== STATE ==========
+    let currentTab = '';
+    let currentFilters = { kt: '', km: '', lt: '', minHarga: '', maxHarga: '' };
+    let allResults = [];
+    
+    // ========== FILTER SHEET ==========
+    const filterSheet = document.getElementById('filterSheet');
+    const filterSheetOverlay = document.getElementById('filterSheetOverlay');
+    
+    function openFilterSheet() {
+      filterSheet.classList.add('active');
+      filterSheetOverlay.classList.add('active');
+    }
+    
+    function closeFilterSheet() {
+      filterSheet.classList.remove('active');
+      filterSheetOverlay.classList.remove('active');
+    }
+    
+    document.getElementById('filterBtn').addEventListener('click', openFilterSheet);
+    document.getElementById('closeFilterSheetBtn').addEventListener('click', closeFilterSheet);
+    filterSheetOverlay.addEventListener('click', closeFilterSheet);
+    
+    // ========== FILTER TABS ==========
+    document.querySelectorAll('.filter-tab').forEach(tab => {
+      tab.addEventListener('click', function() {
+        document.querySelectorAll('.filter-tab').forEach(t => t.classList.remove('active'));
+        this.classList.add('active');
+        currentTab = this.dataset.tab;
+        doSearch();
+        updateActiveFilterChips();
+      });
+    });
+    
+    // ========== SEARCH ==========
+    async function doSearch() {
+      const searchTerm = document.getElementById('searchInput').value.toLowerCase().trim();
+      
+      document.getElementById('propertyList').innerHTML = 
+        '<div class="loading"><i class="fas fa-spinner"></i><p>Mencari properti...</p></div>';
+      
+      try {
+        const [primaryData, secondaryData, rentData] = await Promise.all([
+          fetchSheetData('primary'),
+          fetchSheetData('secondary'),
+          fetchSheetData('rent')
+        ]);
+        
+        let results = [
+          ...primaryData.map(item => ({ ...item, _tab: 'primary' })),
+          ...secondaryData.map(item => ({ ...item, _tab: 'secondary' })),
+          ...rentData.map(item => ({ ...item, _tab: 'rent' }))
+        ];
+        
+        // Filter teks
+        if (searchTerm) {
+          results = results.filter(item => {
+            const nama = (item['nama property'] || '').toLowerCase();
+            const lokasi = (item['lokasi'] || '').toLowerCase();
+            const spesifikasi = (item['spesifikasi'] || '').toLowerCase();
+            return nama.includes(searchTerm) || lokasi.includes(searchTerm) || spesifikasi.includes(searchTerm);
+          });
+        }
+        
+        // Filter tab
+        if (currentTab) {
+          results = results.filter(item => item._tab === currentTab);
+        }
+        
+        // Filter KT
+        if (currentFilters.kt) {
+          results = results.filter(item => (parseInt(item['kt']) || 0) >= parseInt(currentFilters.kt));
+        }
+        
+        // Filter KM
+        if (currentFilters.km) {
+          results = results.filter(item => (parseInt(item['km']) || 0) >= parseInt(currentFilters.km));
+        }
+        
+        // Filter LT
+        if (currentFilters.lt) {
+          results = results.filter(item => (parseInt(item['lt']) || 0) >= parseInt(currentFilters.lt));
+        }
+        
+        // Filter Harga
+        if (currentFilters.minHarga || currentFilters.maxHarga) {
+          results = results.filter(item => {
+            let harga = parseInt((item['harga'] || '0').toString().replace(/\D/g, '')) || 0;
+            if (currentFilters.minHarga && harga < parseInt(currentFilters.minHarga) * 1000000) return false;
+            if (currentFilters.maxHarga && harga > parseInt(currentFilters.maxHarga) * 1000000) return false;
+            return true;
+          });
+        }
+        
+        allResults = results;
+        displayResults(results);
+        
+      } catch (error) {
+        document.getElementById('propertyList').innerHTML = 
+          `<div class="empty-state"><i class="fas fa-exclamation-triangle"></i><p>Gagal memuat data</p></div>`;
+      }
+    }
+    
+    function displayResults(results) {
+      const container = document.getElementById('propertyList');
+      
+      document.getElementById('resultCount').innerHTML = 
+        `Ditemukan <strong>${results.length}</strong> properti`;
+      
+      if (results.length === 0) {
+        container.innerHTML = `<div class="empty-state"><i class="fas fa-search"></i><p>Tidak ada properti yang cocok</p></div>`;
+        return;
+      }
+      
+      container.innerHTML = results.map((item, i) => {
+        const detailId = `search_${Date.now()}_${i}`;
+        sessionStorage.setItem(detailId, JSON.stringify(item));
+        
+        return `
+          <a href="detail.html?id=${detailId}" class="property-card">
+            <div class="card-image">
+              <img src="${convertDriveUrl(item['gambar utama']) || 'https://images.unsplash.com/photo-1580587771525-78b9dba3b914?w=400'}" 
+                   alt="${item['nama property']}">
+              <span class="tab-badge">${item._tab}</span>
+              <div class="favorite-btn" onclick="event.preventDefault(); event.stopPropagation(); toggleFavorite(this)">
+                <i class="far fa-heart"></i>
+              </div>
+            </div>
+            <div class="card-content">
+              <div class="property-price">${formatPrice(item['harga'])}</div>
+              <h3 class="property-title">${item['nama property'] || 'Tanpa Nama'}</h3>
+              <div class="property-address">
+                <i class="fas fa-map-marker-alt"></i> 
+                <span>${item['lokasi'] || '-'}</span>
+              </div>
+              <div class="property-features">
+                <span class="feature"><i class="fas fa-bed"></i> ${item['kt'] || '0'} KT</span>
+                <span class="feature"><i class="fas fa-bath"></i> ${item['km'] || '0'} KM</span>
+                <span class="feature"><i class="fas fa-layer-group"></i> ${item['lt'] || '0'} Lt</span>
+              </div>
+            </div>
+          </a>
+        `;
+      }).join('');
+    }
+    
+    // ========== FILTER FUNCTIONS ==========
+    function applyFilter() {
+      currentFilters = {
+        kt: document.getElementById('filterKT').value,
+        km: document.getElementById('filterKM').value,
+        lt: document.getElementById('filterLT').value,
+        minHarga: document.getElementById('minHarga').value,
+        maxHarga: document.getElementById('maxHarga').value
+      };
+      
+      closeFilterSheet();
+      updateActiveFilterChips();
+      doSearch();
+    }
+    
+    function resetFilter() {
+      document.getElementById('filterKT').value = '';
+      document.getElementById('filterKM').value = '';
+      document.getElementById('filterLT').value = '';
+      document.getElementById('minHarga').value = '';
+      document.getElementById('maxHarga').value = '';
+      
+      currentFilters = { kt: '', km: '', lt: '', minHarga: '', maxHarga: '' };
+      
+      closeFilterSheet();
+      updateActiveFilterChips();
+      doSearch();
+    }
+    
+    function updateActiveFilterChips() {
+      const container = document.getElementById('activeFilters');
+      let html = '';
+      
+      if (currentTab) html += `<span class="filter-chip" onclick="removeTabFilter()">📁 ${currentTab} <i class="fas fa-times"></i></span>`;
+      if (currentFilters.kt) html += `<span class="filter-chip" onclick="removeFilter('kt')">🛏️ ${currentFilters.kt}+ KT <i class="fas fa-times"></i></span>`;
+      if (currentFilters.km) html += `<span class="filter-chip" onclick="removeFilter('km')">🚿 ${currentFilters.km}+ KM <i class="fas fa-times"></i></span>`;
+      if (currentFilters.lt) html += `<span class="filter-chip" onclick="removeFilter('lt')">🏢 ${currentFilters.lt}+ Lt <i class="fas fa-times"></i></span>`;
+      if (currentFilters.minHarga || currentFilters.maxHarga) {
+        const min = currentFilters.minHarga ? currentFilters.minHarga + 'jt' : '0';
+        const max = currentFilters.maxHarga ? currentFilters.maxHarga + 'jt' : '∞';
+        html += `<span class="filter-chip" onclick="removeFilter('harga')">💰 ${min} - ${max} <i class="fas fa-times"></i></span>`;
+      }
+      if (html) html += `<span class="filter-chip clear-all" onclick="resetFilter()"><i class="fas fa-times"></i> Clear All</span>`;
+      
+      container.innerHTML = html || '<span style="font-size:0.7rem; color:var(--gray);">🔍 Belum ada filter aktif</span>';
+    }
+    
+    function removeTabFilter() {
+      currentTab = '';
+      document.querySelectorAll('.filter-tab').forEach(t => {
+        t.classList.remove('active');
+        if (t.dataset.tab === '') t.classList.add('active');
+      });
+      updateActiveFilterChips();
+      doSearch();
+    }
+    
+    function removeFilter(type) {
+      if (type === 'kt') { currentFilters.kt = ''; document.getElementById('filterKT').value = ''; }
+      else if (type === 'km') { currentFilters.km = ''; document.getElementById('filterKM').value = ''; }
+      else if (type === 'lt') { currentFilters.lt = ''; document.getElementById('filterLT').value = ''; }
+      else if (type === 'harga') { 
+        currentFilters.minHarga = ''; 
+        currentFilters.maxHarga = ''; 
+        document.getElementById('minHarga').value = ''; 
+        document.getElementById('maxHarga').value = ''; 
+      }
+      updateActiveFilterChips();
+      doSearch();
+    }
+    
+    document.getElementById('applyFilterBtn').addEventListener('click', applyFilter);
+    document.getElementById('resetFilterBtn').addEventListener('click', resetFilter);
+    
+    // ========== NAVIGASI ==========
+    document.getElementById('searchBtn').addEventListener('click', doSearch);
+    document.getElementById('searchInput').addEventListener('keypress', function(e) {
+      if (e.key === 'Enter') doSearch();
+    });
+    
+    // ========== INIT DARI URL ==========
+    function initFromUrl() {
+      const params = new URLSearchParams(window.location.search);
+      const query = params.get('q');
+      const filter = params.get('filter');
+      const tab = params.get('tab');
+      
+      if (query) {
+        document.getElementById('searchInput').value = query;
+      }
+      
+      if (tab) {
+        currentTab = tab;
+        document.querySelectorAll('.filter-tab').forEach(t => {
+          t.classList.remove('active');
+          if (t.dataset.tab === tab) t.classList.add('active');
+        });
+        if (!document.querySelector('.filter-tab.active')) {
+          document.querySelector('.filter-tab[data-tab=""]').classList.add('active');
+        }
+        updateActiveFilterChips();
+      }
+      
+      if (filter === 'open') {
+        setTimeout(openFilterSheet, 100);
+      }
+      
+      doSearch();
+    }
+    
+    // ========== INIT ==========
+    initFromUrl();
+  </script>
+</body>
+</html>
