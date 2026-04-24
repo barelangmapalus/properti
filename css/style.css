@@ -906,109 +906,105 @@
   }
 
 /* ============================================================
-   CAROUSEL / SLIDER - TETAP DALAM FRAME MOBILE
+   CAROUSEL / SLIDER FINAL- TETAP DALAM FRAME MOBILE
    ============================================================ */
-   .featured-carousel {
-    position: relative;
-    width: 100%;
-    overflow: hidden;
-    border-radius: 16px;
-    margin-bottom: 8px;
-  }
-  
-  /* Panah di dalam carousel, sejajar dengan tengah gambar */
-  .featured-carousel .carousel-arrow {
-    top: 90px;                       /* ✅ Setengah dari tinggi gambar (180px/2) */
-  }
-  
-  .carousel-container {
-    display: flex;
-    transition: transform 0.4s ease;
-    width: 100%;
-  }
-  
-  .carousel-slide {
-    flex: 0 0 100%;
-    width: 100%;
-    padding: 0;               /* ✅ Hapus padding penyebab overflow */
-  }
-  
-  .carousel-slide .property-card {
-    margin: 0;
-    border-radius: 16px;
-    box-shadow: 0 6px 16px rgba(0,0,0,0.10);
-    border: 1px solid rgba(0,0,0,0.04);
-    width: 100%;
-  }
-  
-  .carousel-indicators {
-    display: flex;
-    justify-content: center;
-    gap: 6px;
-    margin-top: 6px;
-    margin-bottom: 4px;
-  }
-  
-  .carousel-dot {
-    width: 6px;
-    height: 6px;
-    border-radius: 50%;
-    background: #ccc;
-    transition: all 0.3s;
-    cursor: pointer;
-  }
-  
-  .carousel-dot.active {
-    width: 20px;
-    border-radius: 10px;
-    background: var(--secondary);
-  }
-  
-  .carousel-arrow {
-    position: absolute;
-    top: 0;                                    /* ✅ Mulai dari atas */
-    bottom: 0;                                 /* ✅ Sampai bawah card-content */
-    height: 26px;                              /* ✅ Tinggi panah */
-    width: 26px;
-    margin: auto 0;                            /* ✅ Tengah vertikal otomatis */
-    background: rgba(255, 255, 255, 0.5);
-    border-radius: 50%;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    cursor: pointer;
-    z-index: 10;
-    box-shadow: 0 1px 4px rgba(0,0,0,0.08);
-    transition: background 0.2s ease;
-  }
-  
-  /* ✅ Batasi area panah hanya di area gambar */
-  .featured-carousel .carousel-arrow {
-    bottom: 55%;                               /* ✅ Hanya setengah bawah card = area gambar */
-  }
-  
-  .carousel-arrow:hover {
-    background: rgba(255, 255, 255, 0.85);
-  }
-  
-  .carousel-arrow.prev {
-    left: 6px;
-  }
-  
-  .carousel-arrow.next {
-    right: 6px;
-  }
-  
-  .carousel-arrow i {
-    font-size: 0.7rem;
-    color: rgba(44, 62, 80, 0.7);
-    transition: color 0.2s ease;
-  }
-  
-  .carousel-arrow:hover i {
-    color: rgba(44, 62, 80, 1);
-  }
+.featured-carousel {
+  position: relative;
+  width: 100%;
+  overflow: hidden;          /* ✅ Slide tetap dalam frame */
+  border-radius: 16px;
+  margin-bottom: 8px;
+  padding: 4px 0 8px 0;      /* ✅ Shadow tetap terlihat */
+}
 
+.carousel-container {
+  display: flex;
+  transition: transform 0.4s ease;
+  width: 100%;
+}
+
+.carousel-slide {
+  flex: 0 0 100%;
+  width: 100%;
+  padding: 8px 4px 12px 4px; /* ✅ Jarak untuk shadow */
+}
+
+.carousel-slide .property-card {
+  margin: 0;
+  border-radius: 16px;
+  box-shadow: 0 8px 20px rgba(0,0,0,0.12);
+  border: none;
+  width: 100%;
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.carousel-slide .property-card:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 12px 28px rgba(0,0,0,0.18);
+}
+
+.carousel-indicators {
+  display: flex;
+  justify-content: center;
+  gap: 6px;
+  margin-top: 6px;
+  margin-bottom: 4px;
+}
+
+.carousel-dot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: #ccc;
+  transition: all 0.3s;
+  cursor: pointer;
+}
+
+.carousel-dot.active {
+  width: 20px;
+  border-radius: 10px;
+  background: var(--secondary);
+}
+
+.carousel-arrow {
+  position: absolute;
+  top: 0;
+  bottom: 55%;               /* ✅ Hanya di area gambar */
+  height: 26px;
+  width: 26px;
+  margin: auto 0;            /* ✅ Tengah vertikal */
+  background: rgba(255, 255, 255, 0.5);
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  z-index: 10;
+  box-shadow: 0 1px 4px rgba(0,0,0,0.08);
+  transition: background 0.2s ease;
+}
+
+.carousel-arrow:hover {
+  background: rgba(255, 255, 255, 0.85);
+}
+
+.carousel-arrow.prev {
+  left: 6px;
+}
+
+.carousel-arrow.next {
+  right: 6px;
+}
+
+.carousel-arrow i {
+  font-size: 0.7rem;
+  color: rgba(44, 62, 80, 0.7);
+  transition: color 0.2s ease;
+}
+
+.carousel-arrow:hover i {
+  color: rgba(44, 62, 80, 1);
+}
 
 /* ============================================================
    CARD MENGAMBANG DI CAROUSEL
@@ -1028,21 +1024,6 @@
     box-shadow: 0 12px 28px rgba(0,0,0,0.18);
   }
   
-  /* Container carousel diberi padding agar shadow terlihat */
-  .featured-carousel {
-    padding: 4px 0 8px 0;
-    overflow: visible !important;  /* Biarkan shadow keluar */
-  }
-  
-  .carousel-container {
-    overflow: visible !important;
-  }
-  
-  /* Arrow disesuaikan posisinya */
-  .carousel-arrow {
-    top: calc(50% - 8px);  /* Sesuaikan dengan padding */
-  }
-
   /* ============================================================
    MODAL PROFIL
    ============================================================ */
