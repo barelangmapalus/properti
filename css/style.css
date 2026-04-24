@@ -984,7 +984,7 @@
   
   /* ✅ Batasi area panah hanya di area gambar */
   .featured-carousel .carousel-arrow {
-    bottom: 65%;                               /* ✅ Hanya setengah bawah card = area gambar */
+    bottom: 55%;                               /* ✅ Hanya setengah bawah card = area gambar */
   }
   
   .carousel-arrow:hover {
