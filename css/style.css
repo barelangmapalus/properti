@@ -1042,3 +1042,61 @@
   .carousel-arrow {
     top: calc(50% - 8px);  /* Sesuaikan dengan padding */
   }
+
+  /* ============================================================
+   MODAL PROFIL
+   ============================================================ */
+.profile-modal-overlay {
+  position: fixed;
+  top: 0; left: 0; right: 0; bottom: 0;
+  background: rgba(0,0,0,0.5);
+  z-index: 5000;
+  opacity: 0;
+  visibility: hidden;
+  transition: all 0.3s;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.profile-modal-overlay.active {
+  opacity: 1;
+  visibility: visible;
+}
+
+.profile-modal {
+  background: white;
+  border-radius: 16px;
+  width: 85%;
+  max-width: 320px;
+  box-shadow: 0 8px 30px rgba(0,0,0,0.2);
+  z-index: 5001;
+  overflow: hidden;
+}
+
+.profile-modal-header {
+  background: linear-gradient(135deg, var(--primary), var(--secondary));
+  color: white;
+  padding: 16px 20px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.profile-modal-header h3 {
+  font-size: 1rem;
+  font-weight: 600;
+}
+
+.profile-modal-header i {
+  font-size: 1.1rem;
+  opacity: 0.8;
+}
+
+.profile-modal-content {
+  padding: 20px;
+}
+
+.profile-modal-footer {
+  padding: 12px 20px 20px;
+}
