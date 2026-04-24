@@ -124,31 +124,6 @@
       <div class="carousel-indicators" id="rentIndicators"></div>
     </div>
 
-  <!-- ========== MODAL PROFIL ========== -->
-    <div class="profile-modal-overlay" id="profileModalOverlay" onclick="closeProfileModal()"></div>
-    <div class="profile-modal" id="profileModal">
-      <div class="profile-modal-header">
-        <h3>👤 Profil Saya</h3>
-        <i class="fas fa-times" onclick="closeProfileModal()" style="cursor: pointer;"></i>
-      </div>
-      <div class="profile-modal-content">
-        <p style="text-align: center; margin-bottom: 16px; color: #27ae60; font-weight: 500;">
-          ✅ Terimakasih sudah mendaftar di BMproperty
-        </p>
-        <div class="spec-item">
-          <span class="spec-label">Nama</span>
-          <span class="spec-value" id="profileName">-</span>
-        </div>
-        <div class="spec-item">
-          <span class="spec-label">Kontak</span>
-          <span class="spec-value" id="profilePhone">-</span>
-        </div>
-      </div>
-      <div class="profile-modal-footer">
-        <button class="btn-apply" onclick="closeProfileModal()" style="width: 100%;">Tutup</button>
-      </div>
-    </div>
-
   <!-- ========== BOTTOM NAVIGATION ========== -->
     <nav class="bottom-nav">
       <a href="index.html" class="nav-item active"><i class="fas fa-home"></i><span>Beranda</span></a>
@@ -501,24 +476,13 @@ function goToFavorite(event) {
 
 function goToProfile(event) {
   event.preventDefault();
-  
   const userData = JSON.parse(localStorage.getItem('bmpro_user') || 'null');
-  
   if (!userData) {
     window.location.href = 'register.html';
   } else {
-    // Isi data profil
-    document.getElementById('profileName').textContent = userData.nama;
-    document.getElementById('profilePhone').textContent = userData.kontak;
-    
-    // Tampilkan modal
-    document.getElementById('profileModalOverlay').classList.add('active');
+    window.location.href = 'profile.html';
   }
-}
-
-function closeProfileModal() {
-  document.getElementById('profileModalOverlay').classList.remove('active');
 }
 </script>
 </body>
-</html>
+</html>1
