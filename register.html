@@ -1,0 +1,234 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=yes, viewport-fit=cover">
+  <meta name="theme-color" content="#2c3e50">
+  
+  <title>Registrasi - BMpro</title>
+  
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="css/style.css">
+  
+  <style>
+    .register-page {
+      min-height: 100vh;
+      background: #f8f9fa;
+      padding: 20px;
+    }
+    
+    .register-header {
+      text-align: center;
+      margin-bottom: 30px;
+      margin-top: 40px;
+    }
+    
+    .register-header h1 {
+      font-size: 1.5rem;
+      color: var(--primary);
+      margin-bottom: 8px;
+    }
+    
+    .register-header p {
+      color: var(--gray);
+      font-size: 0.85rem;
+    }
+    
+    .register-form {
+      background: white;
+      padding: 24px;
+      border-radius: 16px;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.06);
+    }
+    
+    .form-group {
+      margin-bottom: 20px;
+    }
+    
+    .form-group label {
+      display: block;
+      font-size: 0.85rem;
+      font-weight: 500;
+      margin-bottom: 8px;
+      color: var(--primary);
+    }
+    
+    .form-group input {
+      width: 100%;
+      padding: 12px 16px;
+      border: 2px solid #e0e0e0;
+      border-radius: 12px;
+      font-family: 'Poppins', sans-serif;
+      font-size: 0.9rem;
+      transition: border-color 0.2s;
+    }
+    
+    .form-group input:focus {
+      outline: none;
+      border-color: var(--secondary);
+    }
+    
+    .btn-register {
+      width: 100%;
+      padding: 14px;
+      background: var(--secondary);
+      color: white;
+      border: none;
+      border-radius: 12px;
+      font-weight: 600;
+      font-size: 1rem;
+      cursor: pointer;
+      transition: background 0.2s;
+      font-family: 'Poppins', sans-serif;
+    }
+    
+    .btn-register:active {
+      background: #2980b9;
+    }
+    
+    .success-message {
+      display: none;
+      text-align: center;
+      padding: 30px;
+    }
+    
+    .success-message i {
+      font-size: 4rem;
+      color: #27ae60;
+      margin-bottom: 16px;
+    }
+    
+    .success-message h2 {
+      color: var(--primary);
+      margin-bottom: 8px;
+    }
+    
+    .success-message p {
+      color: var(--gray);
+      margin-bottom: 20px;
+    }
+    
+    .btn-back {
+      display: inline-block;
+      padding: 12px 24px;
+      background: var(--primary);
+      color: white;
+      text-decoration: none;
+      border-radius: 12px;
+      font-weight: 500;
+    }
+  </style>
+</head>
+<body>
+    <div class="register-page">
+        <!-- Tombol Back -->
+        <a href="index.html" style="
+          display: inline-flex;
+          align-items: center;
+          gap: 6px;
+          color: var(--primary);
+          text-decoration: none;
+          font-weight: 500;
+          font-size: 0.9rem;
+          margin-bottom: 16px;
+          padding: 8px 12px;
+          background: white;
+          border-radius: 10px;
+          box-shadow: 0 2px 6px rgba(0,0,0,0.06);
+        ">
+          <i class="fas fa-arrow-left"></i> Kembali ke Beranda
+        </a>
+        
+        <div class="register-header">
+          <h1>📋 Registrasi</h1>
+          <p>Dapatkan notifikasi properti terbaru langsung ke WhatsApp Anda</p>
+        </div>
+    
+    <!-- Form Registrasi -->
+    <div class="register-form" id="registerForm">
+      <div class="form-group">
+        <label>Nama Lengkap</label>
+        <input type="text" id="regName" placeholder="Masukkan nama Anda" required>
+      </div>
+      
+      <div class="form-group">
+        <label>Nomor WhatsApp</label>
+        <input type="tel" id="regPhone" placeholder="Contoh: 081234567890" required>
+      </div>
+      
+      <button class="btn-register" onclick="doRegister()">Daftar Sekarang</button>
+    </div>
+    
+    <!-- Pesan Sukses -->
+    <div class="success-message" id="successMessage">
+      <i class="fas fa-check-circle"></i>
+      <h2>Registrasi Berhasil!</h2>
+      <p>Anda akan mendapatkan notifikasi WhatsApp setiap ada properti baru.</p>
+      <a href="index.html" class="btn-back">Kembali ke Beranda</a>
+    </div>
+  </div>
+
+  <script src="js/script.js"></script>
+  
+  <script>
+    // ========== SIMPAN REGISTRASI KE SESSION STORAGE ==========
+    function doRegister() {
+      const name = document.getElementById('regName').value.trim();
+      const phone = document.getElementById('regPhone').value.trim();
+      
+      if (!name || !phone) {
+        alert('Mohon isi nama dan nomor WhatsApp');
+        return;
+      }
+      
+      if (!/^0\d{9,12}$/.test(phone.replace(/\D/g, ''))) {
+        alert('Format nomor tidak valid. Contoh: 081234567890');
+        return;
+      }
+      
+      // Simpan ke sessionStorage
+      const userData = {
+        nama: name,
+        kontak: phone,
+        timestamp: new Date().toISOString()
+      };
+      
+      sessionStorage.setItem('bmpro_user', JSON.stringify(userData));
+      
+      // Tampilkan pesan sukses
+      document.getElementById('registerForm').style.display = 'none';
+      document.getElementById('successMessage').style.display = 'block';
+      
+      // Simpan ke Google Sheet via API (opsional - perlu Apps Script Web App)
+      saveUserToSheet(userData);
+    }
+    
+    // ========== SIMPAN USER KE GOOGLE SHEET ==========
+    async function saveUserToSheet(userData) {
+      try {
+        // Ganti dengan URL Web App Google Apps Script Anda
+        const API_URL = 'https://script.google.com/macros/s/YOUR_SCRIPT_ID/exec';
+        
+        await fetch(API_URL, {
+          method: 'POST',
+          body: JSON.stringify({
+            action: 'register',
+            nama: userData.nama,
+            kontak: userData.kontak,
+            timestamp: userData.timestamp
+          })
+        });
+        
+        console.log('User saved to sheet');
+      } catch (e) {
+        console.log('Save to sheet pending (will retry)');
+        // Simpan offline untuk retry nanti
+        const pending = JSON.parse(localStorage.getItem('pendingRegistrations') || '[]');
+        pending.push(userData);
+        localStorage.setItem('pendingRegistrations', JSON.stringify(pending));
+      }
+    }
+  </script>
+</body>
+</html>
