@@ -905,11 +905,6 @@
     }
   }
 
-
-  
-   /* ============================================================
-   CAROUSEL / SLIDER
-   ============================================================ */
 /* ============================================================
    CAROUSEL / SLIDER - TETAP DALAM FRAME MOBILE
    ============================================================ */
@@ -919,6 +914,11 @@
     overflow: hidden;
     border-radius: 16px;
     margin-bottom: 8px;
+  }
+  
+  /* Panah di dalam carousel, sejajar dengan tengah gambar */
+  .featured-carousel .carousel-arrow {
+    top: 90px;                       /* ✅ Setengah dari tinggi gambar (180px/2) */
   }
   
   .carousel-container {
@@ -966,18 +966,23 @@
   
   .carousel-arrow {
     position: absolute;
-    top: 50%;
+    top: 90px;
     transform: translateY(-50%);
-    width: 28px;
-    height: 28px;
-    background: rgba(255,255,255,0.9);
+    width: 26px;
+    height: 26px;
+    background: rgba(255, 255, 255, 0.5);   /* ✅ Lebih transparan (50%) */
     border-radius: 50%;
     display: flex;
     align-items: center;
     justify-content: center;
     cursor: pointer;
     z-index: 10;
-    box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+    box-shadow: 0 1px 4px rgba(0,0,0,0.08);  /* ✅ Shadow lebih tipis */
+    transition: background 0.2s ease;          /* ✅ Animasi halus saat hover */
+  }
+  
+  .carousel-arrow:hover {
+    background: rgba(255, 255, 255, 0.85);    /* ✅ Lebih solid saat di-hover */
   }
   
   .carousel-arrow.prev {
@@ -989,8 +994,13 @@
   }
   
   .carousel-arrow i {
-    font-size: 0.8rem;
-    color: var(--primary);
+    font-size: 0.7rem;
+    color: rgba(44, 62, 80, 0.7);            /* ✅ Ikon juga transparan */
+    transition: color 0.2s ease;
+  }
+  
+  .carousel-arrow:hover i {
+    color: rgba(44, 62, 80, 1);              /* ✅ Ikon solid saat hover */
   }
 
 
