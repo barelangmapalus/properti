@@ -1,0 +1,186 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=yes, viewport-fit=cover">
+  <meta name="theme-color" content="#2c3e50">
+  
+  <title>Profil Saya - BMpro</title>
+  
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="css/style.css">
+  
+  <style>
+    .profile-page {
+      min-height: 100vh;
+      background: #f8f9fa;
+      padding-top: 20px;
+    }
+    
+    .profile-header {
+      background: white;
+      padding: 10px 16px;
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+      position: sticky;
+      top: 0;
+      z-index: 100;
+    }
+    
+    .profile-header h2 {
+      font-size: 1rem;
+      font-weight: 600;
+    }
+    
+    .profile-content {
+      padding: 16px;
+    }
+    
+    .profile-card {
+      background: white;
+      border-radius: 16px;
+      padding: 20px;
+      text-align: center;
+      box-shadow: 0 3px 10px rgba(0,0,0,0.06);
+    }
+    
+    .profile-avatar {
+      width: 64px;
+      height: 64px;
+      background: linear-gradient(135deg, var(--primary), var(--secondary));
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin: 0 auto 12px;
+      color: white;
+      font-size: 1.5rem;
+      font-weight: 600;
+    }
+    
+    .profile-name {
+      font-size: 1rem;
+      font-weight: 600;
+      color: var(--primary);
+      margin-bottom: 2px;
+    }
+    
+    .profile-phone {
+      color: var(--gray);
+      font-size: 0.8rem;
+      margin-bottom: 16px;
+    }
+    
+    .profile-info {
+      background: white;
+      border-radius: 16px;
+      padding: 14px;
+      margin-top: 14px;
+      box-shadow: 0 3px 10px rgba(0,0,0,0.06);
+    }
+    
+    .profile-info .spec-item {
+      padding: 8px 0;
+    }
+    
+    .profile-info .spec-label {
+      font-size: 0.75rem;
+    }
+    
+    .profile-info .spec-value {
+      font-size: 0.8rem;
+    }
+    
+    .btn-logout {
+      display: block;
+      width: 100%;
+      padding: 10px;
+      margin-top: 16px;
+      background: #e74c3c;
+      color: white;
+      border: none;
+      border-radius: 12px;
+      font-weight: 500;
+      font-size: 0.8rem;
+      cursor: pointer;
+      font-family: 'Poppins', sans-serif;
+    }
+    
+    .btn-logout:active {
+      background: #c0392b;
+    }
+  </style>
+</head>
+<body>
+  <div class="profile-page">
+    <!-- Header -->
+    <div class="profile-header">
+      <a href="index.html" class="back-btn"><i class="fas fa-arrow-left"></i></a>
+      <h2>👤 Profil Saya</h2>
+    </div>
+    
+    <!-- Konten -->
+    <div class="profile-content">
+      <div class="profile-card">
+        <div class="profile-avatar" id="profileAvatar">U</div>
+        <div class="profile-name" id="profileName">-</div>
+        <div class="profile-phone" id="profilePhone">-</div>
+      </div>
+      
+      <div class="profile-info">
+        <div class="spec-item">
+          <span class="spec-label">Status</span>
+          <span class="spec-value" style="color: #27ae60;">✅ Terdaftar</span>
+        </div>
+        <div class="spec-item">
+          <span class="spec-label">Notifikasi</span>
+          <span class="spec-value">WhatsApp Aktif</span>
+        </div>
+        <div class="spec-item">
+            <span class="spec-label">Keterangan</span>
+          <span class="spec-value" style="font-size: 0.7rem; color: #888;">Anda akan menerima notifikasi listing baru</span>
+        </div>
+      </div>
+      
+      <button class="btn-logout" onclick="doLogout()">Logout</button>
+    </div>
+  </div>
+
+  <script src="js/script.js"></script>
+  
+  <script>
+    // ========== LOAD PROFIL ==========
+    function loadProfile() {
+      const userData = JSON.parse(localStorage.getItem('bmpro_user') || 'null');
+      
+      if (!userData) {
+        window.location.href = 'register.html';
+        return;
+      }
+      
+      document.getElementById('profileName').textContent = userData.nama || '-';
+      document.getElementById('profilePhone').textContent = userData.kontak || '-';
+      
+      // Set avatar (huruf pertama nama)
+      const initial = (userData.nama || 'U').charAt(0).toUpperCase();
+      document.getElementById('profileAvatar').textContent = initial;
+    }
+    
+    function doLogout() {
+        if (confirm('⚠️ Jika Anda Logout, maka listing properti Favorite akan terhapus.\n\nApakah Anda yakin ingin logout?')) {
+            // Hapus data user DAN favorit dari localStorage
+            localStorage.removeItem('bmpro_user');
+            localStorage.removeItem('bmpro_favorites');
+            
+            alert('Anda telah logout. Silakan registrasi lagi untuk mengakses fitur favorit dan profil.');
+            window.location.href = 'index.html';
+        }
+    }
+    
+    document.addEventListener('DOMContentLoaded', loadProfile);
+  </script>
+</body>
+</html>
