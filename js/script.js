@@ -11,8 +11,6 @@ const OPENSHEET_BASE = `https://opensheet.elk.sh/${SHEET_ID}`;
 function formatPrice(price) {
   if (!price) return 'Hubungi';
   const num = parseInt(price.toString().replace(/\D/g, '')) || 0;
-  if (num >= 1000000000) return `Rp ${(num / 1000000000).toFixed(1)} M`;
-  if (num >= 1000000) return `Rp ${(num / 1000000).toFixed(0)} Jt`;
   return `Rp ${num.toLocaleString('id-ID')}`;
 }
 
