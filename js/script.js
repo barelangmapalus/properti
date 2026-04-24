@@ -181,7 +181,7 @@ function toggleLove(btn, propertyData) {
   const icon = btn.querySelector('i');
   
   // Ambil data user
-  const userData = JSON.parse(sessionStorage.getItem('bmpro_user') || 'null');
+  const userData = JSON.parse(localStorage.getItem('bmpro_user') || 'null');
   
   if (!userData) {
     // User belum registrasi
