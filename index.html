@@ -125,14 +125,14 @@
     </div>
 
   <!-- ========== BOTTOM NAVIGATION ========== -->
-  <nav class="bottom-nav">
-    <a href="index.html" class="nav-item active"><i class="fas fa-home"></i><span>Beranda</span></a>
-    <a href="search.html" class="nav-item"><i class="fas fa-search"></i><span>Cari</span></a>
-    <a href="#" class="nav-item"><i class="fas fa-heart"></i><span>Favorit</span></a>
-    <a href="#" class="nav-item"><i class="fas fa-user"></i><span>Profil</span></a>
-  </nav>
+  <!-- ========== BOTTOM NAVIGATION ========== -->
+    <nav class="bottom-nav">
+      <a href="index.html" class="nav-item active"><i class="fas fa-home"></i><span>Beranda</span></a>
+      <a href="search.html" class="nav-item"><i class="fas fa-search"></i><span>Cari</span></a>
+      <a href="#" class="nav-item" onclick="goToFavorite(event)"><i class="fas fa-heart"></i><span>Favorit</span></a>
+      <a href="#" class="nav-item" onclick="goToProfile(event)"><i class="fas fa-user"></i><span>Profil</span></a>
+    </nav>
 
-  <!-- JavaScript Global -->
   <!-- JavaScript Global -->
 <script src="js/script.js"></script>
 
@@ -217,9 +217,9 @@
                    onerror="this.src='https://images.unsplash.com/photo-1580587771525-78b9dba3b914?w=400';">
               <span class="card-badge">${i === 0 ? 'HOT' : 'NEW'}</span>
               <span class="tab-badge">${p._tab || tabName}</span>
-              <div class="favorite-btn" onclick="event.preventDefault(); event.stopPropagation(); toggleFavorite(this)">
-                <i class="far fa-heart"></i>
-              </div>
+              <div class="favorite-btn" id="loveBtn_${detailId}" onclick="event.preventDefault(); event.stopPropagation(); toggleLove(this, ${JSON.stringify(p).replace(/"/g, '&quot;')})">
+                  <i class="${isLocalFavorite(p) ? 'fas' : 'far'} fa-heart"></i>
+                </div>
             </div>
             
             <div class="card-content">
@@ -407,6 +407,115 @@
     loadAllSections();
     displayGallery();
   });
+
+
+
+
+
+  // ========== FAVORIT / LOVE (LOKAL UNTUK HOME) ==========
+function toggleLove(btn, propertyData) {
+  const icon = btn.querySelector('i');
+  const userData = JSON.parse(sessionStorage.getItem('bmpro_user') || 'null');
+  
+  if (!userData) {
+    alert('Silakan registrasi terlebih dahulu untuk menyimpan favorit!\n\nKlik OK untuk menuju halaman registrasi.');
+    window.location.href = 'register.html';
+    return;
+  }
+  
+  if (icon.classList.contains('far')) {
+    icon.classList.remove('far');
+    icon.classList.add('fas');
+    btn.style.background = '#e74c3c';
+    icon.style.color = 'white';
+    saveLocalFavorite(propertyData);
+  } else {
+    icon.classList.remove('fas');
+    icon.classList.add('far');
+    btn.style.background = 'rgba(255,255,255,0.95)';
+    icon.style.color = '#e74c3c';
+    removeLocalFavorite(propertyData);
+  }
+}
+
+function saveLocalFavorite(property) {
+  const favorites = JSON.parse(localStorage.getItem('bmpro_favorites') || '[]');
+  const exists = favorites.find(f => 
+    f['nama property'] === property['nama property'] && f._tab === property._tab
+  );
+  if (!exists) {
+    favorites.unshift(property);
+    localStorage.setItem('bmpro_favorites', JSON.stringify(favorites));
+  }
+}
+
+function removeLocalFavorite(property) {
+  let favorites = JSON.parse(localStorage.getItem('bmpro_favorites') || '[]');
+  favorites = favorites.filter(f => 
+    !(f['nama property'] === property['nama property'] && f._tab === property._tab)
+  );
+  localStorage.setItem('bmpro_favorites', JSON.stringify(favorites));
+}
+
+function isLocalFavorite(propertyData) {
+  const favorites = JSON.parse(localStorage.getItem('bmpro_favorites') || '[]');
+  return favorites.some(f => 
+    f['nama property'] === propertyData['nama property'] && f._tab === propertyData._tab
+  );
+}
+
+// ========== NAVIGASI FAVORIT & PROFIL ==========
+function goToFavorite(event) {
+  event.preventDefault();
+  const userData = JSON.parse(sessionStorage.getItem('bmpro_user') || 'null');
+  if (!userData) {
+    window.location.href = 'register.html';
+  } else {
+    window.location.href = 'favorite.html';
+  }
+}
+
+function goToProfile(event) {
+  event.preventDefault();
+  const userData = JSON.parse(sessionStorage.getItem('bmpro_user') || 'null');
+  if (!userData) {
+    window.location.href = 'register.html';
+  } else {
+    alert(`Nama: ${userData.nama}\nKontak: ${userData.kontak}\n\nTerima kasih telah terdaftar di BMpro!`);
+  }
+}
+
+
+  // ========== NAVIGASI FAVORIT & PROFIL ==========
+function goToFavorite(event) {
+  event.preventDefault();
+  
+  // Cek apakah user sudah registrasi
+  const userData = JSON.parse(sessionStorage.getItem('bmpro_user') || 'null');
+  
+  if (!userData) {
+    // User belum registrasi, arahkan ke halaman registrasi
+    window.location.href = 'register.html';
+  } else {
+    // User sudah registrasi, arahkan ke halaman favorit
+    window.location.href = 'favorite.html';
+  }
+}
+
+function goToProfile(event) {
+  event.preventDefault();
+  
+  // Cek apakah user sudah registrasi
+  const userData = JSON.parse(sessionStorage.getItem('bmpro_user') || 'null');
+  
+  if (!userData) {
+    // User belum registrasi, arahkan ke halaman registrasi
+    window.location.href = 'register.html';
+  } else {
+    // User sudah registrasi, tampilkan profil
+    alert(`Nama: ${userData.nama}\nKontak: ${userData.kontak}\n\nTerima kasih telah terdaftar di BMpro!`);
+  }
+}
 </script>
 </body>
 </html>
