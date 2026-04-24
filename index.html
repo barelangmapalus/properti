@@ -415,7 +415,7 @@
   // ========== FAVORIT / LOVE (LOKAL UNTUK HOME) ==========
 function toggleLove(btn, propertyData) {
   const icon = btn.querySelector('i');
-  const userData = JSON.parse(sessionStorage.getItem('bmpro_user') || 'null');
+  const userData = JSON.parse(localStorage.getItem('bmpro_user') || 'null');
   
   if (!userData) {
     alert('Silakan registrasi terlebih dahulu untuk menyimpan favorit!\n\nKlik OK untuk menuju halaman registrasi.');
@@ -467,7 +467,7 @@ function isLocalFavorite(propertyData) {
 // ========== NAVIGASI FAVORIT & PROFIL ==========
 function goToFavorite(event) {
   event.preventDefault();
-  const userData = JSON.parse(sessionStorage.getItem('bmpro_user') || 'null');
+  const userData = JSON.parse(localStorage.getItem('bmpro_user') || 'null');
   if (!userData) {
     window.location.href = 'register.html';
   } else {
@@ -477,7 +477,7 @@ function goToFavorite(event) {
 
 function goToProfile(event) {
   event.preventDefault();
-  const userData = JSON.parse(sessionStorage.getItem('bmpro_user') || 'null');
+  const userData = JSON.parse(localStorage.getItem('bmpro_user') || 'null');
   if (!userData) {
     window.location.href = 'register.html';
   } else {
@@ -491,7 +491,7 @@ function goToFavorite(event) {
   event.preventDefault();
   
   // Cek apakah user sudah registrasi
-  const userData = JSON.parse(sessionStorage.getItem('bmpro_user') || 'null');
+  const userData = JSON.parse(localStorage.getItem('bmpro_user') || 'null');
   
   if (!userData) {
     // User belum registrasi, arahkan ke halaman registrasi
@@ -506,7 +506,7 @@ function goToProfile(event) {
   event.preventDefault();
   
   // Cek apakah user sudah registrasi
-  const userData = JSON.parse(sessionStorage.getItem('bmpro_user') || 'null');
+  const userData = JSON.parse(localStorage.getItem('bmpro_user') || 'null');
   
   if (!userData) {
     // User belum registrasi, arahkan ke halaman registrasi
