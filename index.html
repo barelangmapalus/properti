@@ -519,38 +519,6 @@ function goToProfile(event) {
 function closeProfileModal() {
   document.getElementById('profileModalOverlay').classList.remove('active');
 }
-
-
-  // ========== NAVIGASI FAVORIT & PROFIL ==========
-function goToFavorite(event) {
-  event.preventDefault();
-  
-  // Cek apakah user sudah registrasi
-  const userData = JSON.parse(localStorage.getItem('bmpro_user') || 'null');
-  
-  if (!userData) {
-    // User belum registrasi, arahkan ke halaman registrasi
-    window.location.href = 'register.html';
-  } else {
-    // User sudah registrasi, arahkan ke halaman favorit
-    window.location.href = 'favorite.html';
-  }
-}
-
-function goToProfile(event) {
-  event.preventDefault();
-  
-  // Cek apakah user sudah registrasi
-  const userData = JSON.parse(localStorage.getItem('bmpro_user') || 'null');
-  
-  if (!userData) {
-    // User belum registrasi, arahkan ke halaman registrasi
-    window.location.href = 'register.html';
-  } else {
-    // User sudah registrasi, tampilkan profil
-    alert(`Nama: ${userData.nama}\nKontak: ${userData.kontak}\n\nTerima kasih telah terdaftar di BMpro!`);
-  }
-}
 </script>
 </body>
 </html>
