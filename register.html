@@ -20,47 +20,52 @@
     
     .register-header {
       text-align: center;
-      margin-bottom: 30px;
-      margin-top: 40px;
+      margin-bottom: 20px;
+      margin-top: 20px;
     }
     
     .register-header h1 {
-      font-size: 1.5rem;
+      font-size: 1.2rem;
       color: var(--primary);
-      margin-bottom: 8px;
+      margin-bottom: 6px;
     }
     
     .register-header p {
       color: var(--gray);
-      font-size: 0.85rem;
+      font-size: 0.75rem;
     }
     
     .register-form {
       background: white;
-      padding: 24px;
+      padding: 20px;
       border-radius: 16px;
       box-shadow: 0 4px 12px rgba(0,0,0,0.06);
+      display: block;
+    }
+    
+    .register-form.hidden {
+      display: none;
     }
     
     .form-group {
-      margin-bottom: 20px;
+      margin-bottom: 16px;
     }
     
     .form-group label {
       display: block;
-      font-size: 0.85rem;
+      font-size: 0.75rem;
       font-weight: 500;
-      margin-bottom: 8px;
+      margin-bottom: 6px;
       color: var(--primary);
     }
     
     .form-group input {
       width: 100%;
-      padding: 12px 16px;
+      padding: 10px 14px;
       border: 2px solid #e0e0e0;
-      border-radius: 12px;
+      border-radius: 10px;
       font-family: 'Poppins', sans-serif;
-      font-size: 0.9rem;
+      font-size: 0.8rem;
       transition: border-color 0.2s;
     }
     
@@ -71,20 +76,54 @@
     
     .btn-register {
       width: 100%;
-      padding: 14px;
+      padding: 10px;
       background: var(--secondary);
       color: white;
       border: none;
-      border-radius: 12px;
+      border-radius: 10px;
       font-weight: 600;
-      font-size: 1rem;
+      font-size: 0.85rem;
       cursor: pointer;
       transition: background 0.2s;
       font-family: 'Poppins', sans-serif;
+      margin-top: 4px;
     }
     
     .btn-register:active {
       background: #2980b9;
+    }
+    
+    .btn-login {
+      width: 100%;
+      padding: 10px;
+      background: #27ae60;
+      color: white;
+      border: none;
+      border-radius: 10px;
+      font-weight: 600;
+      font-size: 0.85rem;
+      cursor: pointer;
+      transition: background 0.2s;
+      font-family: 'Poppins', sans-serif;
+      margin-top: 4px;
+    }
+    
+    .btn-login:active {
+      background: #219a52;
+    }
+    
+    .toggle-link {
+      text-align: center;
+      margin-top: 14px;
+      font-size: 0.75rem;
+      color: var(--gray);
+    }
+    
+    .toggle-link a {
+      color: var(--secondary);
+      text-decoration: none;
+      font-weight: 500;
+      cursor: pointer;
     }
     
     .success-message {
@@ -94,70 +133,96 @@
     }
     
     .success-message i {
-      font-size: 4rem;
+      font-size: 3rem;
       color: #27ae60;
-      margin-bottom: 16px;
+      margin-bottom: 12px;
     }
     
     .success-message h2 {
       color: var(--primary);
-      margin-bottom: 8px;
+      font-size: 1.1rem;
+      margin-bottom: 6px;
     }
     
     .success-message p {
       color: var(--gray);
-      margin-bottom: 20px;
+      font-size: 0.8rem;
+      margin-bottom: 16px;
     }
     
     .btn-back {
       display: inline-block;
-      padding: 12px 24px;
+      padding: 10px 20px;
       background: var(--primary);
       color: white;
       text-decoration: none;
-      border-radius: 12px;
+      border-radius: 10px;
       font-weight: 500;
+      font-size: 0.8rem;
     }
   </style>
 </head>
 <body>
-    <div class="register-page">
-        <!-- Tombol Back -->
-        <a href="index.html" style="
-          display: inline-flex;
-          align-items: center;
-          gap: 6px;
-          color: var(--primary);
-          text-decoration: none;
-          font-weight: 500;
-          font-size: 0.9rem;
-          margin-bottom: 16px;
-          padding: 8px 12px;
-          background: white;
-          border-radius: 10px;
-          box-shadow: 0 2px 6px rgba(0,0,0,0.06);
-        ">
-          <i class="fas fa-arrow-left"></i> Kembali ke Beranda
-        </a>
-        
-        <div class="register-header">
-          <h1>📋 Registrasi</h1>
-          <p>Dapatkan notifikasi properti terbaru langsung ke WhatsApp Anda</p>
-        </div>
+  <div class="register-page">
+    <!-- Tombol Back -->
+    <a href="index.html" style="
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      color: var(--primary);
+      text-decoration: none;
+      font-weight: 500;
+      font-size: 0.85rem;
+      margin-bottom: 16px;
+      padding: 6px 10px;
+      background: white;
+      border-radius: 10px;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.06);
+    ">
+      <i class="fas fa-arrow-left"></i> Kembali ke Beranda
+    </a>
+    
+    <div class="register-header" id="headerRegistrasi">
+      <h1>📋 Registrasi</h1>
+      <p>Dapatkan notifikasi properti terbaru langsung ke WhatsApp Anda</p>
+    </div>
+    
+    <div class="register-header" id="headerLogin" style="display: none;">
+      <h1>🔑 Login</h1>
+      <p>Masuk dengan nomor WhatsApp yang sudah terdaftar</p>
+    </div>
     
     <!-- Form Registrasi -->
     <div class="register-form" id="registerForm">
       <div class="form-group">
         <label>Nama Lengkap</label>
-        <input type="text" id="regName" placeholder="Masukkan nama Anda" required>
+        <input type="text" id="regName" placeholder="Masukkan nama Anda">
       </div>
       
       <div class="form-group">
         <label>Nomor WhatsApp</label>
-        <input type="tel" id="regPhone" placeholder="Contoh: 081234567890" required>
+        <input type="tel" id="regPhone" placeholder="Contoh: 081234567890">
       </div>
       
       <button class="btn-register" onclick="doRegister()">Daftar Sekarang</button>
+      
+      <div class="toggle-link">
+        Sudah punya akun? <a onclick="showLogin()">Login di sini</a>
+      </div>
+    </div>
+    
+    <!-- Form Login -->
+    <div class="register-form hidden" id="loginForm">
+      <div class="form-group">
+        <label>Nomor WhatsApp</label>
+        <input type="tel" id="loginPhone" placeholder="Masukkan nomor WhatsApp terdaftar">
+      </div>
+      
+      <button class="btn-login" onclick="doLogin()">Masuk</button>
+      
+      <div class="toggle-link">
+        Belum punya akun? <a onclick="showRegister()">Daftar di sini</a>
+      </div>
     </div>
     
     <!-- Pesan Sukses -->
@@ -172,7 +237,22 @@
   <script src="js/script.js"></script>
   
   <script>
-    // ========== SIMPAN REGISTRASI KE SESSION STORAGE ==========
+    // ========== TOGGLE FORM ==========
+    function showLogin() {
+      document.getElementById('registerForm').classList.add('hidden');
+      document.getElementById('loginForm').classList.remove('hidden');
+      document.getElementById('headerRegistrasi').style.display = 'none';
+      document.getElementById('headerLogin').style.display = 'block';
+    }
+    
+    function showRegister() {
+      document.getElementById('loginForm').classList.add('hidden');
+      document.getElementById('registerForm').classList.remove('hidden');
+      document.getElementById('headerLogin').style.display = 'none';
+      document.getElementById('headerRegistrasi').style.display = 'block';
+    }
+    
+    // ========== REGISTRASI ==========
     function doRegister() {
       const name = document.getElementById('regName').value.trim();
       const phone = document.getElementById('regPhone').value.trim();
@@ -187,7 +267,6 @@
         return;
       }
       
-      // Simpan ke sessionStorage
       const userData = {
         nama: name,
         kontak: phone,
@@ -196,18 +275,58 @@
       
       localStorage.setItem('bmpro_user', JSON.stringify(userData));
       
-      // Tampilkan pesan sukses
       document.getElementById('registerForm').style.display = 'none';
+      document.getElementById('loginForm').style.display = 'none';
+      document.getElementById('headerRegistrasi').style.display = 'none';
+      document.getElementById('headerLogin').style.display = 'none';
       document.getElementById('successMessage').style.display = 'block';
       
-      // Simpan ke Google Sheet via API (opsional - perlu Apps Script Web App)
       saveUserToSheet(userData);
+    }
+    
+    // ========== LOGIN ==========
+    async function doLogin() {
+      const phone = document.getElementById('loginPhone').value.trim();
+      
+      if (!phone) {
+        alert('Mohon isi nomor WhatsApp');
+        return;
+      }
+      
+      if (!/^0\d{9,12}$/.test(phone.replace(/\D/g, ''))) {
+        alert('Format nomor tidak valid. Contoh: 081234567890');
+        return;
+      }
+      
+      // Cek di Google Sheet
+      try {
+        const users = await fetchSheetData('users');
+        const found = users.find(u => {
+          const userPhone = (u['kontak'] || '').toString().replace(/\D/g, '');
+          const inputPhone = phone.replace(/\D/g, '');
+          return userPhone === inputPhone;
+        });
+        
+        if (found) {
+          // Login berhasil
+          const userData = {
+            nama: found['nama'] || 'User',
+            kontak: found['kontak'] || phone,
+            timestamp: found['timestamp'] || new Date().toISOString()
+          };
+          localStorage.setItem('bmpro_user', JSON.stringify(userData));
+          window.location.href = 'index.html';
+        } else {
+          alert('❌ Anda belum terdaftar!\n\nNomor ini tidak ditemukan di database.\nSilakan registrasi terlebih dahulu.');
+        }
+      } catch (e) {
+        alert('⚠️ Gagal menghubungi server. Silakan coba lagi.');
+      }
     }
     
     // ========== SIMPAN USER KE GOOGLE SHEET ==========
     async function saveUserToSheet(userData) {
       try {
-        // Ganti dengan URL Web App Google Apps Script Anda
         const API_URL = 'https://script.google.com/macros/s/AKfycbx7duxvbx7dNlWzbH0khwqjCRctK8VgwWDV-kj-WM4ZwTBU9tsC9CEQjAmS45k8MIEFRA/exec';
         
         await fetch(API_URL, {
@@ -222,8 +341,7 @@
         
         console.log('User saved to sheet');
       } catch (e) {
-        console.log('Save to sheet pending (will retry)');
-        // Simpan offline untuk retry nanti
+        console.log('Save to sheet pending');
         const pending = JSON.parse(localStorage.getItem('pendingRegistrations') || '[]');
         pending.push(userData);
         localStorage.setItem('pendingRegistrations', JSON.stringify(pending));
