@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=yes, viewport-fit=cover">
+  <meta name="theme-color" content="#2c3e50">
+  
+  <title>Favorit Saya - BMpro</title>
+  
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="css/style.css">
+  
+  <style>
+    .favorite-page {
+      min-height: 100vh;
+      background: #f8f9fa;
+    }
+    
+    .favorite-header {
+      background: white;
+      padding: 12px 16px;
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+      position: sticky;
+      top: 0;
+      z-index: 100;
+    }
+    
+    .favorite-header h2 {
+      font-size: 1.1rem;
+      font-weight: 600;
+    }
+    
+    .favorite-list {
+      padding: 16px;
+      display: flex;
+      flex-direction: column;
+      gap: 14px;
+    }
+  </style>
+</head>
+<body>
+  <div class="favorite-page">
+    <div class="favorite-header">
+      <a href="index.html" class="back-btn"><i class="fas fa-arrow-left"></i></a>
+      <h2><i class="fas fa-heart" style="color: #e74c3c;"></i> Favorit Saya</h2>
+    </div>
+    
+    <div class="favorite-list" id="favoriteList">
+      <div class="loading"><i class="fas fa-spinner"></i><p>Memuat favorit...</p></div>
+    </div>
+  </div>
+
+  <script src="js/script.js"></script>
+  
+  <script>
+    function loadFavorites() {
+      const container = document.getElementById('favoriteList');
+      const favorites = JSON.parse(localStorage.getItem('bmpro_favorites') || '[]');
+      
+      if (favorites.length === 0) {
+            container.innerHTML = `
+                <div class="empty-state" style="margin-top: 60px;">
+                <i class="fas fa-heart-broken"></i>
+                <p>Belum ada listing favorit</p>
+                <p style="font-size: 0.7rem; color: #aaa; margin-top: 4px;">Klik ikon ❤️ pada properti yang Anda sukai</p>
+                <a href="index.html" style="display: inline-block; margin-top: 16px; color: var(--secondary); font-size: 0.8rem;">Jelajahi Properti</a>
+                </div>
+            `;
+            return;
+            }
+      
+      container.innerHTML = favorites.map((p, i) => {
+        const detailId = `fav_${Date.now()}_${i}`;
+        sessionStorage.setItem(detailId, JSON.stringify(p));
+        
+        return `
+          <a href="detail.html?id=${detailId}" class="property-card" style="text-decoration: none; color: inherit;">
+            <div class="card-image">
+              <img src="${convertDriveUrl(p['gambar utama']) || 'https://images.unsplash.com/photo-1580587771525-78b9dba3b914?w=400'}" 
+                   alt="${p['nama property'] || 'Properti'}"
+                   onerror="this.src='https://images.unsplash.com/photo-1580587771525-78b9dba3b914?w=400';">
+              <span class="tab-badge">${p._tab || 'primary'}</span>
+            </div>
+            
+            <div class="card-content">
+              <div class="property-price">${formatPrice(p['harga'])}</div>
+              <h3 class="property-title">${p['nama property'] || 'Nama Properti'}</h3>
+              <div class="property-address">
+                <i class="fas fa-map-marker-alt"></i>
+                <span>${p['lokasi'] || 'Alamat tidak tersedia'}</span>
+              </div>
+              <div class="property-features">
+                <span class="feature"><i class="fas fa-bed"></i> ${p['kt'] || '0'} KT</span>
+                <span class="feature"><i class="fas fa-bath"></i> ${p['km'] || '0'} KM</span>
+                <span class="feature"><i class="fas fa-layer-group"></i> ${p['lt'] || '0'} Lt</span>
+              </div>
+            </div>
+          </a>
+        `;
+      }).join('');
+    }
+    
+    document.addEventListener('DOMContentLoaded', loadFavorites);
+  </script>
+</body>
+</html>
