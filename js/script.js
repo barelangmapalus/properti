@@ -175,3 +175,111 @@ function getDummyProperties() {
 document.addEventListener('DOMContentLoaded', function() {
   initHamburgerMenu();
 });
+
+// ========== FAVORIT / LOVE ==========
+function toggleLove(btn, propertyData) {
+  const icon = btn.querySelector('i');
+  
+  // Ambil data user
+  const userData = JSON.parse(sessionStorage.getItem('bmpro_user') || 'null');
+  
+  if (!userData) {
+    // User belum registrasi
+    alert('Silakan registrasi terlebih dahulu untuk menyimpan favorit!\n\nKlik OK untuk menuju halaman registrasi.');
+    window.location.href = 'register.html';
+    return;
+  }
+  
+  // Toggle love
+  if (icon.classList.contains('far')) {
+    // Tambah favorit
+    icon.classList.remove('far');
+    icon.classList.add('fas');
+    btn.style.background = '#e74c3c';
+    icon.style.color = 'white';
+    
+    saveFavorite(propertyData);
+  } else {
+    // Hapus favorit
+    icon.classList.remove('fas');
+    icon.classList.add('far');
+    btn.style.background = 'rgba(255,255,255,0.95)';
+    icon.style.color = '#e74c3c';
+    
+    removeFavorite(propertyData);
+  }
+}
+
+function saveFavorite(property) {
+  const favorites = JSON.parse(localStorage.getItem('bmpro_favorites') || '[]');
+  
+  // Cek duplikat
+  const exists = favorites.find(f => 
+    f['nama property'] === property['nama property'] && 
+    f._tab === property._tab
+  );
+  
+  if (!exists) {
+    favorites.unshift(property);
+    localStorage.setItem('bmpro_favorites', JSON.stringify(favorites));
+    console.log('Favorit disimpan:', property['nama property']);
+  }
+}
+
+function removeFavorite(property) {
+  let favorites = JSON.parse(localStorage.getItem('bmpro_favorites') || '[]');
+  favorites = favorites.filter(f => 
+    !(f['nama property'] === property['nama property'] && f._tab === property._tab)
+  );
+  localStorage.setItem('bmpro_favorites', JSON.stringify(favorites));
+  console.log('Favorit dihapus:', property['nama property']);
+}
+
+function isFavorite(propertyData) {
+  const favorites = JSON.parse(localStorage.getItem('bmpro_favorites') || '[]');
+  return favorites.some(f => 
+    f['nama property'] === propertyData['nama property'] && 
+    f._tab === propertyData._tab
+  );
+}
+
+// ========== NOTIFIKASI WHATSAPP VIA FONNTE ==========
+async function sendNotificationToAllUsers(propertyData) {
+  try {
+    // Ambil semua user dari Sheet "users"
+    const users = await fetchSheetData('users');
+    
+    if (!users || users.length === 0) {
+      console.log('Tidak ada user terdaftar');
+      return;
+    }
+    
+    // Kirim notifikasi ke setiap user
+    for (const user of users) {
+      const phone = convertToWaNumber(user['kontak']);
+      const nama = user['nama'] || 'Pelanggan';
+      const propertyName = propertyData['nama property'] || 'Properti Baru';
+      const propertyPrice = formatPrice(propertyData['harga'] || '0');
+      const propertyLocation = propertyData['lokasi'] || '-';
+      
+      const message = `🏠 *BMpro - Properti Baru!*\n\nHalo ${nama},\n\nAda properti baru nih:\n📌 *${propertyName}*\n💰 ${propertyPrice}\n📍 ${propertyLocation}\n\nKlik link untuk lihat detail:\nhttps://username.github.io/search.html\n\nSalam,\nBMpro Team`;
+      
+      // Kirim via Fonnte API (ganti dengan token Anda)
+      await fetch('https://api.fonnte.com/send', {
+        method: 'POST',
+        headers: {
+          'Authorization': 'YOUR_FONNTE_TOKEN',
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({
+          target: phone,
+          message: message
+        })
+      });
+    }
+    
+    console.log(`Notifikasi terkirim ke ${users.length} user`);
+  } catch (e) {
+    console.error('Error sending notifications:', e);
+  }
+}
