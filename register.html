@@ -194,7 +194,7 @@
         timestamp: new Date().toISOString()
       };
       
-      sessionStorage.setItem('bmpro_user', JSON.stringify(userData));
+      localStorage.setItem('bmpro_user', JSON.stringify(userData));
       
       // Tampilkan pesan sukses
       document.getElementById('registerForm').style.display = 'none';
