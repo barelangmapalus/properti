@@ -4,7 +4,7 @@
 // ============================================================
 
 // ========== KONFIGURASI OPENSHEET ==========
-const SHEET_ID = '1e0-mHb2GCI-eVq8CrrxF3UlAz62CGQEAGlgmGRYBtPA';
+const SHEET_ID = '1mosLZD23_3YDcuzi2diUY2TRNBSigJ2HNiiiFGPWtzo';
 const OPENSHEET_BASE = `https://opensheet.elk.sh/${SHEET_ID}`;
 
 // ========== FORMAT HARGA ==========
