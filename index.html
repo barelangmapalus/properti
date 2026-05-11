@@ -170,39 +170,123 @@
   }
 
   async function loadCarouselSection(tabName) {
-    try {
-      const data = await fetchSheetData(tabName);
+  try {
+    const data = await fetchSheetData(tabName);
+    
+    // Filter yang memiliki gambar utama
+    let validData = data.filter(item => item['gambar utama']);
+    
+    // 🔥 JIKA DATA KOSONG, PAKAI DUMMY DATA
+    if (validData.length === 0) {
+      console.log(`Data ${tabName} kosong, pakai dummy data`);
+      const dummyImage = 'https://lh3.googleusercontent.com/d/1aBSLJypeJm4tqsXRiUhO97NPJpRq-ZcK=w400';
       
-      // Filter yang memiliki gambar utama
-      const validData = data.filter(item => item['gambar utama']);
+      let dummyData = [];
+      if (tabName === 'primary') {
+        dummyData = [{
+          'nama property': 'Ruko Bisnis Strategis',
+          'harga': '99000000',
+          'lokasi': 'Tiban',
+          'kt': '4',
+          'km': '2',
+          'lt': '2',
+          'gambar utama': dummyImage,
+          '_tab': 'primary'
+        }];
+      } else if (tabName === 'secondary') {
+        dummyData = [{
+          'nama property': 'Rumah Mewah 2 Lantai',
+          'harga': '2350000000',
+          'lokasi': 'Batam Center',
+          'kt': '5',
+          'km': '4',
+          'lt': '3',
+          'gambar utama': dummyImage,
+          '_tab': 'secondary'
+        }];
+      } else if (tabName === 'rent') {
+        dummyData = [{
+          'nama property': 'Apartemen Modern',
+          'harga': '850000000',
+          'lokasi': 'Nagoya',
+          'kt': '3',
+          'km': '2',
+          'lt': '1',
+          'gambar utama': dummyImage,
+          '_tab': 'rent'
+        }];
+      }
       
-      // Urutkan berdasarkan timestamp terbaru
-      validData.sort((a, b) => {
-        const timeA = new Date(a['timestamp'] || 0);
-        const timeB = new Date(b['timestamp'] || 0);
-        return timeB - timeA;
-      });
-      
-      // Ambil maksimal 3 data
-      const properties = validData.slice(0, 3).map(item => ({
-        ...item,
-        _tab: tabName,
-        'nama property': item['nama property'] || 'Tanpa Nama',
-        'harga': item['harga'] || '0',
-        'lokasi': item['lokasi'] || '-',
-        'kt': item['kt'] || '0',
-        'km': item['km'] || '0',
-        'lt': item['lt'] || '0',
-        'gambar utama': item['gambar utama'] || ''
-      }));
-      
-      displayCarouselSection(tabName, properties);
-    } catch (e) {
-      console.error(`Error loading ${tabName}:`, e);
-      const dummyData = getDummyProperties().filter(p => p._tab === tabName);
-      displayCarouselSection(tabName, dummyData.length ? dummyData : getDummyProperties().slice(0, 3));
+      displayCarouselSection(tabName, dummyData);
+      return;
     }
+    
+    // Urutkan berdasarkan timestamp terbaru
+    validData.sort((a, b) => {
+      const timeA = new Date(a['timestamp'] || 0);
+      const timeB = new Date(b['timestamp'] || 0);
+      return timeB - timeA;
+    });
+    
+    // Ambil maksimal 3 data
+    const properties = validData.slice(0, 3).map(item => ({
+      ...item,
+      _tab: tabName,
+      'nama property': item['nama property'] || 'Tanpa Nama',
+      'harga': item['harga'] || '0',
+      'lokasi': item['lokasi'] || '-',
+      'kt': item['kt'] || '0',
+      'km': item['km'] || '0',
+      'lt': item['lt'] || '0',
+      'gambar utama': item['gambar utama'] || ''
+    }));
+    
+    displayCarouselSection(tabName, properties);
+  } catch (e) {
+    console.error(`Error loading ${tabName}:`, e);
+    
+    // 🔥 JIKA FETCH GAGAL, PAKAI DUMMY DATA
+    const dummyImage = 'https://lh3.googleusercontent.com/d/1aBSLJypeJm4tqsXRiUhO97NPJpRq-ZcK=w400';
+    
+    let dummyData = [];
+    if (tabName === 'primary') {
+      dummyData = [{
+        'nama property': 'Ruko Bisnis Strategis',
+        'harga': '99000000',
+        'lokasi': 'Tiban',
+        'kt': '4',
+        'km': '2',
+        'lt': '2',
+        'gambar utama': dummyImage,
+        '_tab': 'primary'
+      }];
+    } else if (tabName === 'secondary') {
+      dummyData = [{
+        'nama property': 'Rumah Mewah 2 Lantai',
+        'harga': '2350000000',
+        'lokasi': 'Batam Center',
+        'kt': '5',
+        'km': '4',
+        'lt': '3',
+        'gambar utama': dummyImage,
+        '_tab': 'secondary'
+      }];
+    } else if (tabName === 'rent') {
+      dummyData = [{
+        'nama property': 'Apartemen Modern',
+        'harga': '850000000',
+        'lokasi': 'Nagoya',
+        'kt': '3',
+        'km': '2',
+        'lt': '1',
+        'gambar utama': dummyImage,
+        '_tab': 'rent'
+      }];
+    }
+    
+    displayCarouselSection(tabName, dummyData);
   }
+}
 
   function displayCarouselSection(tabName, properties) {
     const container = document.getElementById(`${tabName}Container`);
