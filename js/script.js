@@ -124,15 +124,16 @@ function toggleFavorite(btn) {
   }
 }
 
+
 // ========== DUMMY DATA ==========
 function getDummyProperties() {
   const defaultImage = 'https://lh3.googleusercontent.com/d/1aBSLJypeJm4tqsXRiUhO97NPJpRq-ZcK=w400';
   
   return [
     { 
-      'nama property': 'Ruko Bisnis Strategis', 
-      'harga': '99000000', 
-      'lokasi': 'Tiban', 
+      'nama property': 'Coming Soon', 
+      'harga': '1234567', 
+      'lokasi': 'Batam', 
       'kt': '4', 
       'km': '2', 
       'lt': '2', 
@@ -143,9 +144,9 @@ function getDummyProperties() {
       '_tab': 'primary' 
     },
     { 
-      'nama property': 'Rumah Mewah 2 Lantai', 
-      'harga': '2350000000', 
-      'lokasi': 'Batam Center', 
+      'nama property': 'Coming Soon', 
+      'harga': '1234567', 
+      'lokasi': 'Batam', 
       'kt': '5', 
       'km': '4', 
       'lt': '3', 
@@ -156,9 +157,9 @@ function getDummyProperties() {
       '_tab': 'secondary' 
     },
     { 
-      'nama property': 'Apartemen Modern', 
-      'harga': '850000000', 
-      'lokasi': 'Nagoya', 
+      'nama property': 'Coming Soon', 
+      'harga': '1234567', 
+      'lokasi': 'Batam', 
       'kt': '3', 
       'km': '2', 
       'lt': '1', 
