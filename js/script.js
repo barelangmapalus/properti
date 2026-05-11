@@ -126,45 +126,47 @@ function toggleFavorite(btn) {
 
 // ========== DUMMY DATA ==========
 function getDummyProperties() {
+  const defaultImage = 'https://lh3.googleusercontent.com/d/1aBSLJypeJm4tqsXRiUhO97NPJpRq-ZcK=w400';
+  
   return [
     { 
-      'nama property': 'Ruko Bisnis', 
+      'nama property': 'Ruko Bisnis Strategis', 
       'harga': '99000000', 
       'lokasi': 'Tiban', 
       'kt': '4', 
-      'km': '10', 
+      'km': '2', 
       'lt': '2', 
-      'sales': 'Toni',
-      'kontak': '081234567899',
-      'spesifikasi': 'Ruko ini untuk bisnis',
-      'gambar utama': 'https://lh3.googleusercontent.com/d/10mZumMZTUW2piz9af9i4s-cUVm4hLQSA=w400',
-      _tab: 'primary' 
+      'sales': 'Marketing BMpro',
+      'kontak': '6281234567890',
+      'spesifikasi': 'Ruko 2 lantai, lokasi strategis dekat pasar',
+      'gambar utama': defaultImage,
+      '_tab': 'primary' 
     },
     { 
-      'nama property': 'Apartemen City View', 
+      'nama property': 'Rumah Mewah 2 Lantai', 
+      'harga': '2350000000', 
+      'lokasi': 'Batam Center', 
+      'kt': '5', 
+      'km': '4', 
+      'lt': '3', 
+      'sales': 'Marketing BMpro',
+      'kontak': '6281234567890',
+      'spesifikasi': 'Rumah mewah dengan fasilitas premium',
+      'gambar utama': defaultImage,
+      '_tab': 'secondary' 
+    },
+    { 
+      'nama property': 'Apartemen Modern', 
       'harga': '850000000', 
       'lokasi': 'Nagoya', 
-      'kt': '2', 
-      'km': '1', 
-      'lt': '1', 
-      'sales': 'Dewi',
-      'kontak': '085678901234',
-      'spesifikasi': 'Apartemen dengan view kota',
-      'gambar utama': 'https://images.unsplash.com/photo-1600607687939-ce8a6c25118c?w=400', 
-      _tab: 'secondary' 
-    },
-    { 
-      'nama property': 'Rumah Minimalis', 
-      'harga': '2100000000', 
-      'lokasi': 'Batam Center', 
       'kt': '3', 
       'km': '2', 
       'lt': '1', 
-      'sales': 'Budi',
-      'kontak': '081298765432',
-      'spesifikasi': 'Rumah minimalis lokasi strategis',
-      'gambar utama': 'https://images.unsplash.com/photo-1600585154340-be6161a56a0c?w=400', 
-      _tab: 'rent' 
+      'sales': 'Marketing BMpro',
+      'kontak': '6281234567890',
+      'spesifikasi': 'Apartemen dengan view kota',
+      'gambar utama': defaultImage,
+      '_tab': 'rent' 
     }
   ];
 }
