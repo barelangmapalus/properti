@@ -90,7 +90,7 @@
   <!-- JS Global dari website Anda -->
   <script src="js/script.js"></script>
   
-  <!-- JS Khusus untuk notif_detail.html (mencari berdasarkan TIMESTAMP) -->
+  <!-- JS Khusus untuk notif_detail.html (WA Notification) -->
   <script>
     (function() {
       // Ambil timestamp dari URL (format: ?id=2026-05-26T04:47:15.644Z)
@@ -229,7 +229,7 @@
       }
       
       async function loadDetail() {
-        console.log('loadDetail starting, timestamp:', timestamp);
+        console.log('🔍 WA Notification - Mencari properti dengan timestamp:', timestamp);
         
         if (!timestamp) {
           showError('Timestamp properti tidak ditemukan');
@@ -238,7 +238,7 @@
         
         try {
           for (const sheetName of SHEETS) {
-            console.log('Fetching sheet:', sheetName);
+            console.log(`📁 Mengecek sheet: ${sheetName}`);
             const data = await fetchSheetData(sheetName);
             
             if (data && data.length > 0) {
@@ -248,7 +248,7 @@
               if (property && property['nama property'] && property['nama property'].trim() !== '') {
                 foundProperty = property;
                 foundCategory = sheetName;
-                console.log('Property found in', sheetName, ':', property['nama property']);
+                console.log(`✅ Properti ditemukan di ${sheetName}: ${property['nama property']}`);
                 break;
               }
             }
@@ -257,12 +257,12 @@
           if (foundProperty) {
             displayDetail(foundProperty, foundCategory);
           } else {
-            console.log('Property not found for timestamp:', timestamp);
+            console.log(`❌ Properti dengan timestamp "${timestamp}" tidak ditemukan`);
             showError('Data properti tidak ditemukan');
           }
           
         } catch (error) {
-          console.error('Error:', error);
+          console.error('❌ Error:', error);
           showError('Gagal memuat data properti');
         }
       }
