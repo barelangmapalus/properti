@@ -90,17 +90,18 @@
   <!-- JS Global dari website Anda -->
   <script src="js/script.js"></script>
   
-  <!-- JS Khusus untuk notif_detail.html -->
+  <!-- JS Khusus untuk notif_detail.html (mencari berdasarkan TIMESTAMP) -->
   <script>
     (function() {
-      // Ambil ID dari URL
+      // Ambil timestamp dari URL (format: ?id=2026-05-26T04:47:15.644Z)
       const urlParams = new URLSearchParams(window.location.search);
-      const imageId = urlParams.get('id');
+      const timestamp = urlParams.get('id');
       
       let allImages = [];
+      let foundProperty = null;
+      let foundCategory = '';
       
-      // Gunakan SHEET_ID dari script global (sudah dideklarasikan di js/script.js)
-      // Jadi tidak perlu deklarasi ulang!
+      // Gunakan SHEET_ID dari script global (js/script.js)
       const SHEETS = ['primary', 'secondary', 'rent'];
       
       function showError(message) {
@@ -108,7 +109,7 @@
           <div class="empty-state">
             <i class="fas fa-exclamation-triangle"></i>
             <p>${message}</p>
-            <p style="font-size:12px; margin-top:10px;">ID: ${imageId || 'tidak ada'}</p>
+            <p style="font-size:12px; margin-top:10px;">Timestamp: ${timestamp || 'tidak ada'}</p>
             <a href="index.html" style="display:inline-block;margin-top:16px;color:var(--secondary);">Kembali ke Beranda</a>
           </div>
         `;
@@ -228,36 +229,26 @@
       }
       
       async function loadDetail() {
-        console.log('loadDetail starting, imageId:', imageId);
+        console.log('loadDetail starting, timestamp:', timestamp);
         
-        if (!imageId) {
-          showError('ID properti tidak ditemukan');
+        if (!timestamp) {
+          showError('Timestamp properti tidak ditemukan');
           return;
         }
         
         try {
-          let foundProperty = null;
-          let foundCategory = '';
-          
           for (const sheetName of SHEETS) {
             console.log('Fetching sheet:', sheetName);
             const data = await fetchSheetData(sheetName);
             
             if (data && data.length > 0) {
-              const property = data.find(row => {
-                const g1 = row['gambar utama'] || '';
-                const g2 = row['gambar2'] || '';
-                const g3 = row['gambar3'] || '';
-                const g4 = row['gambar4'] || '';
-                const g5 = row['gambar5'] || '';
-                
-                return g1.includes(imageId) || g2.includes(imageId) || g3.includes(imageId) || g4.includes(imageId) || g5.includes(imageId);
-              });
+              // 🔥 CARI BERDASARKAN TIMESTAMP 🔥
+              const property = data.find(row => row['timestamp'] === timestamp);
               
               if (property && property['nama property'] && property['nama property'].trim() !== '') {
                 foundProperty = property;
                 foundCategory = sheetName;
-                console.log('Property found:', property['nama property']);
+                console.log('Property found in', sheetName, ':', property['nama property']);
                 break;
               }
             }
@@ -266,7 +257,7 @@
           if (foundProperty) {
             displayDetail(foundProperty, foundCategory);
           } else {
-            console.log('Property not found for ID:', imageId);
+            console.log('Property not found for timestamp:', timestamp);
             showError('Data properti tidak ditemukan');
           }
           
@@ -276,7 +267,7 @@
         }
       }
       
-      // Jalankan setelah DOM siap dan script global loaded
+      // Jalankan setelah DOM siap
       if (document.readyState === 'loading') {
         document.addEventListener('DOMContentLoaded', loadDetail);
       } else {
