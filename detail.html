@@ -15,11 +15,7 @@
   <link rel="stylesheet" href="css/style.css">
   
   <style>
-    /* Tambahan khusus detail.html */
-    .detail-page {
-      padding-bottom: 20px;
-    }
-    
+    .detail-page { padding-bottom: 20px; }
     .detail-header {
       position: sticky;
       top: 0;
@@ -31,11 +27,9 @@
       box-shadow: 0 2px 8px rgba(0,0,0,0.05);
       z-index: 100;
     }
-    
     .back-btn {
       color: var(--primary, #2c3e50);
       font-size: 1.2rem;
-      cursor: pointer;
       width: 36px;
       height: 36px;
       display: flex;
@@ -45,222 +39,49 @@
       background: #f0f0f0;
       text-decoration: none;
     }
-    
-    .detail-header h2 {
-      font-size: 1rem;
-      font-weight: 600;
-      flex: 1;
-      white-space: nowrap;
-      overflow: hidden;
-      text-overflow: ellipsis;
-    }
-    
-    /* Loading & Error */
-    .loading {
-      text-align: center;
-      padding: 60px 20px;
-    }
-    .loading i {
-      font-size: 2rem;
-      color: var(--secondary, #3498db);
-      margin-bottom: 12px;
-    }
-    .empty-state {
-      text-align: center;
-      padding: 60px 20px;
-    }
-    .empty-state i {
-      font-size: 3rem;
-      color: #ccc;
-      margin-bottom: 16px;
-    }
-    
-    /* Detail Image */
-    .detail-main-image {
-      position: relative;
-      width: 100%;
-      height: 320px;
-      background: #f0f0f0;
-    }
-    .detail-main-image img {
-      width: 100%;
-      height: 100%;
-      object-fit: cover;
-    }
-    .image-counter {
-      position: absolute;
-      bottom: 12px;
-      right: 12px;
-      background: rgba(0,0,0,0.6);
-      color: white;
-      padding: 4px 10px;
-      border-radius: 20px;
-      font-size: 0.7rem;
-    }
-    
-    /* Thumbnails */
-    .detail-thumbnails {
-      display: flex;
-      gap: 8px;
-      padding: 12px;
-      overflow-x: auto;
-      background: white;
-      border-bottom: 1px solid #eee;
-    }
-    .thumbnail {
-      width: 70px;
-      height: 70px;
-      border-radius: 12px;
-      overflow: hidden;
-      cursor: pointer;
-      border: 2px solid transparent;
-      opacity: 0.7;
-    }
-    .thumbnail.active {
-      border-color: var(--secondary, #3498db);
-      opacity: 1;
-    }
-    .thumbnail img {
-      width: 100%;
-      height: 100%;
-      object-fit: cover;
-    }
-    
-    /* Info Section */
-    .detail-info {
-      padding: 20px;
-      background: white;
-    }
-    .detail-price {
-      font-size: 1.6rem;
-      font-weight: 700;
-      color: var(--secondary, #3498db);
-      margin-bottom: 8px;
-    }
-    .detail-title {
-      font-size: 1.2rem;
-      font-weight: 600;
-      margin-bottom: 6px;
-      color: #2c3e50;
-    }
-    .detail-location {
-      font-size: 0.8rem;
-      color: #7f8c8d;
-      margin-bottom: 16px;
-    }
-    .detail-location i {
-      margin-right: 6px;
-    }
-    
-    /* Features */
-    .detail-features {
-      display: flex;
-      gap: 20px;
-      padding: 15px 0;
-      border-top: 1px solid #eee;
-      border-bottom: 1px solid #eee;
-    }
-    .detail-feature {
-      text-align: center;
-      flex: 1;
-    }
-    .detail-feature i {
-      font-size: 1.3rem;
-      color: var(--secondary, #3498db);
-      margin-bottom: 5px;
-    }
-    .detail-feature .value {
-      font-weight: 700;
-      font-size: 1rem;
-    }
-    .detail-feature .label {
-      font-size: 0.7rem;
-      color: #7f8c8d;
-    }
-    
-    /* Deskripsi */
-    .detail-description {
-      padding: 20px;
-      background: white;
-      margin-top: 10px;
-    }
-    .detail-description h3 {
-      font-size: 0.9rem;
-      font-weight: 600;
-      margin-bottom: 10px;
-      color: #2c3e50;
-    }
-    .detail-description p {
-      font-size: 0.8rem;
-      color: #555;
-      line-height: 1.5;
-    }
-    
-    /* Spesifikasi */
-    .detail-specs {
-      padding: 20px;
-      background: white;
-      margin-top: 10px;
-      display: flex;
-      flex-direction: column;
-      gap: 12px;
-    }
-    .spec-item {
-      display: flex;
-      justify-content: space-between;
-      font-size: 0.8rem;
-    }
-    .spec-label {
-      color: #7f8c8d;
-    }
-    .spec-value {
-      font-weight: 500;
-      color: #2c3e50;
-    }
-    
-    /* Contact Section */
-    .detail-contact {
-      padding: 20px;
-      background: white;
-      margin-top: 10px;
-      margin-bottom: 80px;
-    }
-    .contact-buttons {
-      display: flex;
-      gap: 12px;
-    }
-    .btn-call, .btn-wa {
-      flex: 1;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      gap: 8px;
-      padding: 12px;
-      border-radius: 40px;
-      text-decoration: none;
-      font-weight: 500;
-      font-size: 0.85rem;
-    }
-    .btn-call {
-      background: #2c3e50;
-      color: white;
-    }
-    .btn-wa {
-      background: #25D366;
-      color: white;
-    }
+    .detail-header h2 { font-size: 1rem; font-weight: 600; flex: 1; }
+    .loading { text-align: center; padding: 60px 20px; }
+    .loading i { font-size: 2rem; color: var(--secondary, #3498db); margin-bottom: 12px; }
+    .empty-state { text-align: center; padding: 60px 20px; }
+    .empty-state i { font-size: 3rem; color: #ccc; margin-bottom: 16px; }
+    .detail-main-image { position: relative; width: 100%; height: 320px; background: #f0f0f0; }
+    .detail-main-image img { width: 100%; height: 100%; object-fit: cover; }
+    .image-counter { position: absolute; bottom: 12px; right: 12px; background: rgba(0,0,0,0.6); color: white; padding: 4px 10px; border-radius: 20px; font-size: 0.7rem; }
+    .detail-thumbnails { display: flex; gap: 8px; padding: 12px; overflow-x: auto; background: white; border-bottom: 1px solid #eee; }
+    .thumbnail { width: 70px; height: 70px; border-radius: 12px; overflow: hidden; cursor: pointer; border: 2px solid transparent; opacity: 0.7; }
+    .thumbnail.active { border-color: var(--secondary, #3498db); opacity: 1; }
+    .thumbnail img { width: 100%; height: 100%; object-fit: cover; }
+    .detail-info { padding: 20px; background: white; }
+    .detail-price { font-size: 1.6rem; font-weight: 700; color: var(--secondary, #3498db); margin-bottom: 8px; }
+    .detail-title { font-size: 1.2rem; font-weight: 600; margin-bottom: 6px; color: #2c3e50; }
+    .detail-location { font-size: 0.8rem; color: #7f8c8d; margin-bottom: 16px; }
+    .detail-location i { margin-right: 6px; }
+    .detail-features { display: flex; gap: 20px; padding: 15px 0; border-top: 1px solid #eee; border-bottom: 1px solid #eee; }
+    .detail-feature { text-align: center; flex: 1; }
+    .detail-feature i { font-size: 1.3rem; color: var(--secondary, #3498db); margin-bottom: 5px; }
+    .detail-feature .value { font-weight: 700; font-size: 1rem; }
+    .detail-feature .label { font-size: 0.7rem; color: #7f8c8d; }
+    .detail-description { padding: 20px; background: white; margin-top: 10px; }
+    .detail-description h3 { font-size: 0.9rem; font-weight: 600; margin-bottom: 10px; color: #2c3e50; }
+    .detail-description p { font-size: 0.8rem; color: #555; line-height: 1.5; }
+    .detail-specs { padding: 20px; background: white; margin-top: 10px; display: flex; flex-direction: column; gap: 12px; }
+    .spec-item { display: flex; justify-content: space-between; font-size: 0.8rem; }
+    .spec-label { color: #7f8c8d; }
+    .spec-value { font-weight: 500; color: #2c3e50; }
+    .detail-contact { padding: 20px; background: white; margin-top: 10px; margin-bottom: 80px; }
+    .contact-buttons { display: flex; gap: 12px; }
+    .btn-call, .btn-wa { flex: 1; display: flex; align-items: center; justify-content: center; gap: 8px; padding: 12px; border-radius: 40px; text-decoration: none; font-weight: 500; font-size: 0.85rem; }
+    .btn-call { background: #2c3e50; color: white; }
+    .btn-wa { background: #25D366; color: white; }
   </style>
 </head>
 <body>
   <div class="detail-page">
-    <!-- ========== HEADER ========== -->
     <div class="detail-header">
       <a href="javascript:history.back()" class="back-btn"><i class="fas fa-arrow-left"></i></a>
       <h2 id="detailTitle">Detail Properti</h2>
       <div style="width: 36px;"></div>
     </div>
-    
-    <!-- ========== CONTENT ========== -->
     <div id="detailContent">
       <div class="loading"><i class="fas fa-spinner fa-pulse"></i><p>Memuat detail properti...</p></div>
     </div>
@@ -268,14 +89,13 @@
 
   <script>
     // =====================================================
-    // KONFIGURASI - SESUAIKAN DENGAN SHEET ANDA
+    // KONFIGURASI
     // =====================================================
     const SHEET_ID = '1mosLZD23_3YDcuzi2diUY2TRNBSigJ2HNiiiFGPWtzo';
     const SHEETS = ['primary', 'secondary', 'rent'];
     
-    // Ambil ID dari URL (format: ?id=timestamp atau ?id=kategori_timestamp_0)
     const urlParams = new URLSearchParams(window.location.search);
-    const rawId = urlParams.get('id');
+    const rawId = urlParams.get('id'); // Contoh: primary_1779770975992_0
     
     let allImages = [];
     
@@ -286,11 +106,7 @@
       if (!price) return 'Rp 0';
       let num = parseInt(price.toString().replace(/[^0-9]/g, ''));
       if (isNaN(num)) return 'Rp 0';
-      return new Intl.NumberFormat('id-ID', { 
-        style: 'currency', 
-        currency: 'IDR', 
-        minimumFractionDigits: 0 
-      }).format(num);
+      return new Intl.NumberFormat('id-ID', { style: 'currency', currency: 'IDR', minimumFractionDigits: 0 }).format(num);
     }
     
     // =====================================================
@@ -299,17 +115,13 @@
     function convertToWaNumber(phone) {
       if (!phone) return '';
       let cleaned = phone.toString().replace(/[^0-9]/g, '');
-      if (cleaned.startsWith('0')) {
-        cleaned = '62' + cleaned.substring(1);
-      }
-      if (!cleaned.startsWith('62') && cleaned.length > 0) {
-        cleaned = '62' + cleaned;
-      }
+      if (cleaned.startsWith('0')) cleaned = '62' + cleaned.substring(1);
+      if (!cleaned.startsWith('62') && cleaned.length > 0) cleaned = '62' + cleaned;
       return cleaned;
     }
     
     // =====================================================
-    // FUNGSI UTAMA: MENCARI PROPERTI DARI OPENSHEET
+    // FUNGSI UTAMA: MENCARI BERDASARKAN ID GAMBAR
     // =====================================================
     async function loadDetail() {
       if (!rawId) {
@@ -317,28 +129,34 @@
         return;
       }
       
-      const container = document.getElementById('detailContent');
-      
       try {
         let foundProperty = null;
         let foundCategory = '';
         
-        // Cari di semua sheet (primary, secondary, rent)
+        // Cari di semua sheet
         for (const sheetName of SHEETS) {
           const url = `https://opensheet.elk.sh/${SHEET_ID}/${sheetName}`;
           const response = await fetch(url);
           const data = await response.json();
           
           if (data && data.length > 0) {
-            // Cari berdasarkan timestamp (format asli)
-            let property = data.find(row => row['timestamp'] === rawId);
+            // Cari properti dimana ada gambar yang mengandung ID ini
+            const property = data.find(row => {
+              // Cek di semua kolom gambar
+              const gambarUtama = row['gambar utama'] || '';
+              const gambar2 = row['gambar2'] || '';
+              const gambar3 = row['gambar3'] || '';
+              const gambar4 = row['gambar4'] || '';
+              const gambar5 = row['gambar5'] || '';
+              
+              // Apakah ID (rawId) ada di URL gambar?
+              return gambarUtama.includes(rawId) || 
+                     gambar2.includes(rawId) || 
+                     gambar3.includes(rawId) || 
+                     gambar4.includes(rawId) || 
+                     gambar5.includes(rawId);
+            });
             
-            // Jika tidak ditemukan, coba format ID gabungan (kategori_timestamp_0)
-            if (!property) {
-              property = data.find(row => `${sheetName}_${row['timestamp']?.replace(/[^0-9]/g, '')}_0` === rawId);
-            }
-            
-            // Validasi: pastikan nama property tidak kosong
             if (property && property['nama property'] && property['nama property'].trim() !== '') {
               foundProperty = property;
               foundCategory = sheetName;
@@ -348,7 +166,6 @@
         }
         
         if (foundProperty) {
-          // Tambahkan kategori ke data
           foundProperty._tab = foundCategory;
           displayDetail(foundProperty);
         } else {
@@ -357,15 +174,15 @@
         
       } catch (error) {
         console.error('Error:', error);
-        showError('Gagal memuat data properti. Periksa koneksi internet Anda.');
+        showError('Gagal memuat data properti');
       }
     }
     
     // =====================================================
-    // FUNGSI MENAMPILKAN DETAIL PROPERTI
+    // FUNGSI MENAMPILKAN DETAIL
     // =====================================================
     function displayDetail(property) {
-      // Kumpulkan gambar (filter yang kosong)
+      // Kumpulkan gambar
       allImages = [
         property['gambar utama'],
         property['gambar2'],
@@ -374,19 +191,13 @@
         property['gambar5']
       ].filter(img => img && img.trim() !== '');
       
-      // Jika tidak ada gambar, pakai placeholder
       if (allImages.length === 0) {
         allImages = ['https://images.unsplash.com/photo-1580587771525-78b9dba3b914?w=600'];
       }
       
-      // Update judul header
-      document.getElementById('detailTitle').textContent = 
-        property['nama property'] || 'Detail Properti';
+      document.getElementById('detailTitle').textContent = property['nama property'] || 'Detail Properti';
       
       const content = document.getElementById('detailContent');
-      const hargaValue = property['harga'] || '0';
-      
-      // Kategori label
       const categoryLabel = {
         'primary': 'Primary',
         'secondary': 'Secondary',
@@ -395,12 +206,12 @@
       
       content.innerHTML = `
         <div class="detail-main-image">
-          <img src="${allImages[0]}" alt="${property['nama property'] || 'Properti'}" id="mainImage" onerror="this.src='https://images.unsplash.com/photo-1580587771525-78b9dba3b914?w=600'">
+          <img src="${allImages[0]}" alt="${property['nama property']}" id="mainImage" onerror="this.src='https://images.unsplash.com/photo-1580587771525-78b9dba3b914?w=600'">
           ${allImages.length > 1 ? `<span class="image-counter" id="imageCounter">1/${allImages.length}</span>` : ''}
         </div>
         
         ${allImages.length > 1 ? `
-          <div class="detail-thumbnails" id="thumbnailContainer">
+          <div class="detail-thumbnails">
             ${allImages.map((img, i) => `
               <div class="thumbnail ${i === 0 ? 'active' : ''}" onclick="changeImage(${i})">
                 <img src="${img}" alt="Thumbnail ${i+1}" onerror="this.src='https://images.unsplash.com/photo-1580587771525-78b9dba3b914?w=70'">
@@ -410,102 +221,52 @@
         ` : ''}
         
         <div class="detail-info">
-          <div class="detail-price">${formatPrice(hargaValue)}</div>
+          <div class="detail-price">${formatPrice(property['harga'])}</div>
           <h2 class="detail-title">${escapeHtml(property['nama property'] || '-')}</h2>
-          <div class="detail-location">
-            <i class="fas fa-map-marker-alt"></i> ${escapeHtml(property['lokasi'] || '-')}
-          </div>
+          <div class="detail-location"><i class="fas fa-map-marker-alt"></i> ${escapeHtml(property['lokasi'] || '-')}</div>
           
           <div class="detail-features">
-            <div class="detail-feature">
-              <i class="fas fa-bed"></i>
-              <div class="value">${property['kt'] || '0'}</div>
-              <div class="label">Kamar Tidur</div>
-            </div>
-            <div class="detail-feature">
-              <i class="fas fa-bath"></i>
-              <div class="value">${property['km'] || '0'}</div>
-              <div class="label">Kamar Mandi</div>
-            </div>
-            <div class="detail-feature">
-              <i class="fas fa-vector-square"></i>
-              <div class="value">${property['lt'] || '0'}</div>
-              <div class="label">Luas Tanah</div>
-            </div>
+            <div class="detail-feature"><i class="fas fa-bed"></i><div class="value">${property['kt'] || '0'}</div><div class="label">Kamar Tidur</div></div>
+            <div class="detail-feature"><i class="fas fa-bath"></i><div class="value">${property['km'] || '0'}</div><div class="label">Kamar Mandi</div></div>
+            <div class="detail-feature"><i class="fas fa-vector-square"></i><div class="value">${property['lt'] || '0'}</div><div class="label">Luas Tanah</div></div>
           </div>
         </div>
         
-        ${property['spesifikasi'] ? `
-          <div class="detail-description">
-            <h3>Deskripsi</h3>
-            <p>${escapeHtml(property['spesifikasi'])}</p>
-          </div>
-        ` : ''}
+        ${property['spesifikasi'] ? `<div class="detail-description"><h3>Deskripsi</h3><p>${escapeHtml(property['spesifikasi'])}</p></div>` : ''}
         
         <div class="detail-specs">
-          <div class="spec-item">
-            <span class="spec-label">Kategori</span>
-            <span class="spec-value">${categoryLabel}</span>
-          </div>
-          <div class="spec-item">
-            <span class="spec-label">Sales / Marketing</span>
-            <span class="spec-value">${escapeHtml(property['sales'] || '-')}</span>
-          </div>
-          <div class="spec-item">
-            <span class="spec-label">Kontak</span>
-            <span class="spec-value">${escapeHtml(property['kontak'] || '-')}</span>
-          </div>
+          <div class="spec-item"><span class="spec-label">Kategori</span><span class="spec-value">${categoryLabel}</span></div>
+          <div class="spec-item"><span class="spec-label">Sales / Marketing</span><span class="spec-value">${escapeHtml(property['sales'] || '-')}</span></div>
+          <div class="spec-item"><span class="spec-label">Kontak</span><span class="spec-value">${escapeHtml(property['kontak'] || '-')}</span></div>
         </div>
         
         <div class="detail-contact">
-          <h3 style="margin-bottom:12px;">Hubungi Marketing</h3>
+          <h3>Hubungi Marketing</h3>
           <div class="contact-buttons">
-            <a href="tel:${property['kontak'] || ''}" class="btn-call">
-              <i class="fas fa-phone"></i> Telepon
-            </a>
-            <a href="https://wa.me/${convertToWaNumber(property['kontak'])}?text=Halo%20saya%20tertarik%20dengan%20properti%20${encodeURIComponent(property['nama property'] || '')}" class="btn-wa" target="_blank">
-              <i class="fab fa-whatsapp"></i> WhatsApp
-            </a>
+            <a href="tel:${property['kontak'] || ''}" class="btn-call"><i class="fas fa-phone"></i> Telepon</a>
+            <a href="https://wa.me/${convertToWaNumber(property['kontak'])}?text=Halo%20saya%20tertarik%20dengan%20properti%20${encodeURIComponent(property['nama property'] || '')}" class="btn-wa" target="_blank"><i class="fab fa-whatsapp"></i> WhatsApp</a>
           </div>
         </div>
       `;
     }
     
-    // =====================================================
-    // FUNGSI CHANGE IMAGE (UNTUK THUMBNAIL)
-    // =====================================================
     function changeImage(index) {
       if (!allImages[index]) return;
       document.getElementById('mainImage').src = allImages[index];
       const thumbnails = document.querySelectorAll('.thumbnail');
-      if (thumbnails.length) {
-        thumbnails.forEach((thumb, i) => {
-          thumb.classList.toggle('active', i === index);
-        });
-      }
+      thumbnails.forEach((thumb, i) => thumb.classList.toggle('active', i === index));
       const counter = document.getElementById('imageCounter');
       if (counter) counter.textContent = `${index + 1}/${allImages.length}`;
     }
     
-    // =====================================================
-    // FUNGSI ESCAPE HTML (XSS PROTECTION)
-    // =====================================================
     function escapeHtml(str) {
       if (!str) return '';
-      return str.replace(/[&<>]/g, function(m) {
-        if (m === '&') return '&amp;';
-        if (m === '<') return '&lt;';
-        if (m === '>') return '&gt;';
-        return m;
-      });
+      return str.replace(/[&<>]/g, m => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;' }[m]));
     }
     
-    // =====================================================
-    // FUNGSI SHOW ERROR
-    // =====================================================
     function showError(message) {
       document.getElementById('detailContent').innerHTML = `
-        <div class="empty-state" style="margin-top: 40px;">
+        <div class="empty-state">
           <i class="fas fa-exclamation-triangle"></i>
           <p>${message}</p>
           <a href="index.html" style="display: inline-block; margin-top: 16px; color: var(--secondary, #3498db);">Kembali ke Beranda</a>
@@ -513,9 +274,7 @@
       `;
     }
     
-    // =====================================================
     // EKSEKUSI
-    // =====================================================
     loadDetail();
   </script>
 </body>
