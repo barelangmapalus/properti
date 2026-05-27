@@ -200,6 +200,9 @@ input:checked + .slider:before {
   <script src="js/script.js"></script>
   
   <script>
+    const API_URL =
+'https://script.google.com/macros/s/AKfycbzAk1YktUsUWsgJH-QQN7lFdTghO0jKqBcDM_A9RME97iV6rEaLFJMnxQAJVUtBzfqR/exec';
+    
     // ========== LOAD PROFIL ==========
     function loadProfile() {
       const userData = JSON.parse(localStorage.getItem('bmpro_user') || 'null');
