@@ -78,7 +78,9 @@
 <body>
   <div class="detail-page">
     <div class="detail-header">
-      <a href="javascript:history.back()" class="back-btn"><i class="fas fa-arrow-left"></i></a>
+      <a href="index.html" class="back-btn" onclick="handleBack(event)">
+        <i class="fas fa-arrow-left"></i>
+      </a>
       <h2 id="detailTitle">Detail Properti</h2>
       <div style="width: 36px;"></div>
     </div>
@@ -273,7 +275,19 @@
       } else {
         loadDetail();
       }
-    })();
+
+      window.handleBack = function(event) {
+        event.preventDefault();
+
+        // Jika ada history sebelumnya
+        if (window.history.length > 1) {
+          window.history.back();
+        } else {
+          // Jika dibuka langsung dari WhatsApp
+          window.location.href = 'index.html';
+        }
+      };
+})();
   </script>
 </body>
 </html>
