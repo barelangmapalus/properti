@@ -274,12 +274,6 @@ input:checked + .slider:before {
         status
       );
 
-      alert(
-        status === 'on'
-        ? '🔔 Notifikasi diaktifkan'
-        : '🔕 Notifikasi dimatikan'
-      );
-
     } else {
 
       alert(result.message);
@@ -324,35 +318,68 @@ updateNotificationText(isEnabled);
 
 async function toggleNotification() {
 
+const toggle =
+  document.getElementById('notifToggle');
+
 const enabled =
-  document.getElementById('notifToggle').checked;
+  toggle.checked;
 
 const status =
   enabled ? 'on' : 'off';
 
-// update text
-updateNotificationText(enabled);
+// disable toggle saat loading
+toggle.disabled = true;
 
-// simpan local
-localStorage.setItem(
-  'bmpro_notification',
-  status
-);
+// tampilkan loading text
+const text =
+  document.getElementById('notifStatusText');
 
-// kirim ke GAS
-await toggleNotif(status);
+text.textContent =
+  '⏳ Menyimpan pengaturan...';
+
+try {
+
+  // update server
+  await toggleNotif(status);
+
+  // update tampilan
+  updateNotificationText(enabled);
+
+} catch(error) {
+
+  // rollback toggle jika gagal
+  toggle.checked = !enabled;
+
+  alert(
+    '❌ Gagal menyimpan pengaturan'
+  );
+
+  console.log(error);
+
+}
+
+// aktifkan kembali toggle
+toggle.disabled = false;
 
 }
 
 function updateNotificationText(enabled) {
-  const text = document.getElementById('notifStatusText');
+
+  const text =
+    document.getElementById(
+      'notifStatusText'
+    );
 
   if (enabled) {
+
     text.textContent =
-      'Anda akan menerima notifikasi listing baru';
+      '🔔 Anda akan menerima notifikasi listing baru';
+
   } else {
+
     text.textContent =
-      'Notifikasi listing baru telah dimatikan';
+      '🔕 Notifikasi listing baru dimatikan';
+
   }
 }
   </script>
