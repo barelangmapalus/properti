@@ -38,18 +38,22 @@ function convertDriveUrl(url) {
 
 // ========== KONVERSI NOMOR UNTUK WHATSAPP ==========
 function convertToWaNumber(phone) {
+
   if (!phone) return '6281234567890';
-  
-  let cleaned = phone.toString().replace(/\D/g, '');
-  
+
+  let cleaned =
+    phone.toString().replace(/\D/g, '');
+
+  // 0812 -> 62812
   if (cleaned.startsWith('0')) {
     cleaned = '62' + cleaned.substring(1);
   }
-  
-  if (cleaned.startsWith('+62')) {
-    cleaned = cleaned.substring(1);
+
+  // 8123 -> 628123
+  if (!cleaned.startsWith('62')) {
+    cleaned = '62' + cleaned;
   }
-  
+
   return cleaned;
 }
 
