@@ -112,6 +112,49 @@
     .btn-logout:active {
       background: #c0392b;
     }
+
+    .switch {
+  position: relative;
+  display: inline-block;
+  width: 48px;
+  height: 26px;
+}
+
+.switch input {
+  opacity: 0;
+  width: 0;
+  height: 0;
+}
+
+.slider {
+  position: absolute;
+  cursor: pointer;
+  inset: 0;
+  background-color: #ccc;
+  transition: .3s;
+  border-radius: 34px;
+}
+
+.slider:before {
+  position: absolute;
+  content: "";
+  height: 20px;
+  width: 20px;
+  left: 3px;
+  bottom: 3px;
+  background-color: white;
+  transition: .3s;
+  border-radius: 50%;
+}
+
+input:checked + .slider {
+  background-color: #25D366;
+}
+
+input:checked + .slider:before {
+  transform: translateX(22px);
+}
+
   </style>
 </head>
 <body>
@@ -135,9 +178,20 @@
           <span class="spec-label">Status</span>
           <span class="spec-value" style="color: #27ae60;">✅ Terdaftar</span>
         </div>
+        <div class="spec-item" style="align-items:center;">
+          <span class="spec-label">Notifikasi WhatsApp</span>
+        
+          <label class="switch">
+            <input type="checkbox" id="notifToggle" onchange="toggleNotification()">
+            <span class="slider"></span>
+          </label>
+        </div>
+        
         <div class="spec-item">
-          <span class="spec-label">Notifikasi</span>
-          <span class="spec-value">WhatsApp Aktif</span>
+          <span class="spec-label">Keterangan</span>
+          <span class="spec-value" id="notifStatusText" style="font-size: 0.7rem; color: #888;">
+            Anda akan menerima notifikasi listing baru
+          </span>
         </div>
         <div class="spec-item">
             <span class="spec-label">Keterangan</span>
@@ -180,7 +234,50 @@
         }
     }
     
-    document.addEventListener('DOMContentLoaded', loadProfile);
+    document.addEventListener('DOMContentLoaded', () => {
+      loadProfile();
+      loadNotificationSetting();
+    });
+
+    function loadNotificationSetting() {
+  const notifEnabled = localStorage.getItem('bmpro_notification');
+
+  // Default ON
+  const isEnabled = notifEnabled !== 'off';
+
+  document.getElementById('notifToggle').checked = isEnabled;
+
+  updateNotificationText(isEnabled);
+}
+
+function toggleNotification() {
+  const enabled = document.getElementById('notifToggle').checked;
+
+  localStorage.setItem(
+    'bmpro_notification',
+    enabled ? 'on' : 'off'
+  );
+
+  updateNotificationText(enabled);
+
+  alert(
+    enabled
+      ? '✅ Notifikasi WhatsApp diaktifkan'
+      : '🔕 Notifikasi WhatsApp dimatikan'
+  );
+}
+
+function updateNotificationText(enabled) {
+  const text = document.getElementById('notifStatusText');
+
+  if (enabled) {
+    text.textContent =
+      'Anda akan menerima notifikasi listing baru';
+  } else {
+    text.textContent =
+      'Notifikasi listing baru telah dimatikan';
+  }
+}
   </script>
 </body>
 </html>
