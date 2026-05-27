@@ -269,6 +269,11 @@ input:checked + .slider:before {
         JSON.stringify(userData)
       );
 
+      localStorage.setItem(
+        'bmpro_notification',
+        status
+      );
+
       alert(
         status === 'on'
         ? '🔔 Notifikasi diaktifkan'
@@ -296,32 +301,47 @@ document.addEventListener(
 loadProfile
 );
 
-    function loadNotificationSetting() {
-  const notifEnabled = localStorage.getItem('bmpro_notification');
+function loadNotificationSetting() {
 
-  // Default ON
-  const isEnabled = notifEnabled !== 'off';
+const userData =
+  JSON.parse(
+    localStorage.getItem('bmpro_user')
+  );
 
-  document.getElementById('notifToggle').checked = isEnabled;
+const notif =
+  userData?.notif || 'on';
 
-  updateNotificationText(isEnabled);
+const isEnabled =
+  notif === 'on';
+
+document.getElementById(
+  'notifToggle'
+).checked = isEnabled;
+
+updateNotificationText(isEnabled);
+
 }
 
-function toggleNotification() {
-  const enabled = document.getElementById('notifToggle').checked;
+async function toggleNotification() {
 
-  localStorage.setItem(
-    'bmpro_notification',
-    enabled ? 'on' : 'off'
-  );
+const enabled =
+  document.getElementById('notifToggle').checked;
 
-  updateNotificationText(enabled);
+const status =
+  enabled ? 'on' : 'off';
 
-  alert(
-    enabled
-      ? '✅ Notifikasi WhatsApp diaktifkan'
-      : '🔕 Notifikasi WhatsApp dimatikan'
-  );
+// update text
+updateNotificationText(enabled);
+
+// simpan local
+localStorage.setItem(
+  'bmpro_notification',
+  status
+);
+
+// kirim ke GAS
+await toggleNotif(status);
+
 }
 
 function updateNotificationText(enabled) {
