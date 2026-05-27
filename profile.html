@@ -233,6 +233,67 @@ input:checked + .slider:before {
       loadNotificationSetting();
     });
 
+
+    // ========== TOGGLE NOTIF ==========
+  async function toggleNotif(status) {
+
+  const userData =
+    JSON.parse(
+      localStorage.getItem('bmpro_user')
+    );
+
+  try {
+
+    const formData = new FormData();
+
+    formData.append('action', 'updateNotif');
+    formData.append('kontak', userData.kontak);
+    formData.append('notif', status);
+
+    const response = await fetch(API_URL, {
+      method: 'POST',
+      body: formData
+    });
+
+    const result = await response.json();
+
+    if (result.success) {
+
+      // update localStorage
+      userData.notif = status;
+
+      localStorage.setItem(
+        'bmpro_user',
+        JSON.stringify(userData)
+      );
+
+      alert(
+        status === 'on'
+        ? '🔔 Notifikasi diaktifkan'
+        : '🔕 Notifikasi dimatikan'
+      );
+
+    } else {
+
+      alert(result.message);
+
+    }
+
+  } catch(error) {
+
+    alert('Gagal update notif');
+
+    console.log(error);
+
+  }
+
+}
+
+document.addEventListener(
+'DOMContentLoaded',
+loadProfile
+);
+
     function loadNotificationSetting() {
   const notifEnabled = localStorage.getItem('bmpro_notification');
 
