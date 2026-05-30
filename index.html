@@ -324,6 +324,10 @@
             <div class="card-content">
               <div class="property-price">${formatPrice(p['harga'])}</div>
               <h3 class="property-title">${p['nama property'] || 'Nama Properti'}</h3>
+              <div class="property-viewers">
+                <i class="fas fa-eye"></i>
+                ${p['viewer'] || 0} Dilihat
+              </div>
               <div class="property-address">
                 <i class="fas fa-map-marker-alt"></i>
                 <span>${p['lokasi'] || 'Alamat tidak tersedia'}</span>
