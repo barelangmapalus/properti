@@ -73,6 +73,13 @@
     .btn-call, .btn-wa { flex: 1; display: flex; align-items: center; justify-content: center; gap: 8px; padding: 12px; border-radius: 40px; text-decoration: none; font-weight: 500; font-size: 0.85rem; }
     .btn-call { background: #2c3e50; color: white; }
     .btn-wa { background: #25D366; color: white; }
+
+    .detail-viewer {
+      font-size: 13px;
+      color: #777;
+      margin-top: 4px;
+      margin-bottom: 10px;
+    }
   </style>
 </head>
 <body>
@@ -151,12 +158,25 @@
             ${allImages.length > 1 ? `<span class="image-counter" id="imageCounter">1/${allImages.length}</span>` : ''}
           </div>
           ${thumbnailHtml}
+
           <div class="detail-info">
-            <div class="detail-price">${formatPrice(property['harga'])}</div>
-            <h2 class="detail-title">${escapeHtml(property['nama property'] || '-')}</h2>
-            <div class="detail-location">
-              <i class="fas fa-map-marker-alt"></i> ${escapeHtml(property['lokasi'] || '-')}
+            <div class="detail-price">
+              ${formatPrice(property['harga'])}
             </div>
+
+            <h2 class="detail-title">
+              ${escapeHtml(property['nama property'] || '-')}
+            </h2>
+
+            <div class="detail-viewer">
+              👁️ ${property['viewer'] || '0'}x dilihat
+            </div>
+
+            <div class="detail-location">
+              <i class="fas fa-map-marker-alt"></i>
+              ${escapeHtml(property['lokasi'] || '-')}
+            </div>
+
             <div class="detail-features">
               <div class="detail-feature">
                 <i class="fas fa-bed"></i>
@@ -257,8 +277,76 @@
           }
           
           if (foundProperty) {
-            displayDetail(foundProperty, foundCategory);
-          } else {
+
+        // =====================================================
+        // VIEWER ANTI REFRESH
+        // =====================================================
+        try {
+
+        const viewerKey =
+          'viewer_' + timestamp;
+
+        const alreadyViewed =
+          sessionStorage.getItem(viewerKey);
+
+        if (!alreadyViewed) {
+
+          fetch(SCRIPT_URL, {
+            method: 'POST',
+            headers: {
+              'Content-Type':
+                'application/x-www-form-urlencoded'
+            },
+            body: new URLSearchParams({
+              action: 'incrementViewer',
+              category: foundCategory,
+              timestamp: timestamp
+            })
+          })
+          .then(res => res.json())
+          .then(result => {
+
+            console.log(
+              '👁️ Viewer updated:',
+              result
+            );
+
+            // Tandai sudah dihitung
+            sessionStorage.setItem(
+              viewerKey,
+              'true'
+            );
+
+          })
+          .catch(err => {
+
+            console.log(
+              '❌ Viewer gagal:',
+              err
+            );
+
+          });
+
+        } else {
+
+          console.log(
+            '⚠️ Viewer sudah dihitung sebelumnya'
+          );
+
+        }
+
+        } catch(err) {
+
+        console.log(
+          '❌ Error viewer:',
+          err
+        );
+
+        }
+
+        displayDetail(foundProperty, foundCategory);
+
+        } else {
             console.log(`❌ Properti dengan timestamp "${timestamp}" tidak ditemukan`);
             showError('Data properti tidak ditemukan');
           }
