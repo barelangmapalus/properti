@@ -54,6 +54,13 @@
       overflow: hidden;
       text-overflow: ellipsis;
     }
+
+    .detail-viewer {
+      font-size: 13px;
+      color: #777;
+      margin-top: 4px;
+      margin-bottom: 10px;
+    }
   </style>
 </head>
 <body>
@@ -98,10 +105,83 @@
       }
       
       try {
+
         const property = JSON.parse(storedData);
+
         currentProperty = property;
+
+        // =====================================================
+        // VIEWER ANTI REFRESH
+        // =====================================================
+
+        // ID unik property
+        const propertyKey =
+          `${property['nama property']}_${property._tab}_${property.timestamp}`;
+
+        // Key localStorage
+        const viewedKey = `bmpro_viewed_${propertyKey}`;
+
+        // Cek apakah sudah pernah dilihat
+        const alreadyViewed =
+          localStorage.getItem(viewedKey);
+
+        if (!alreadyViewed) {
+
+          // Tandai sudah pernah lihat
+          localStorage.setItem(viewedKey, 'true');
+
+          // Tambah viewer ke server
+          fetch(SCRIPT_URL, {
+            method: 'POST',
+            headers: {
+              'Content-Type':
+                'application/x-www-form-urlencoded'
+            },
+            body: new URLSearchParams({
+              action: 'incrementViewer',
+              category: property._tab || 'primary',
+              timestamp: property.timestamp
+            })
+          })
+          .then(res => res.json())
+          .then(result => {
+
+            console.log(
+              '👁️ Viewer updated:',
+              result
+            );
+
+            // Tambah viewer di tampilan langsung
+            property['viewer'] =
+              parseInt(property['viewer'] || 0) + 1;
+
+            const viewerEl =
+              document.getElementById('viewerCount');
+
+            if (viewerEl) {
+              viewerEl.textContent =
+                property['viewer'];
+            }
+
+          })
+          .catch(err => {
+            console.log(
+              '❌ Viewer gagal:',
+              err
+            );
+          });
+
+        } else {
+
+          console.log(
+            '👁️ Viewer tidak ditambah karena sudah pernah melihat property ini'
+          );
+
+        }
+
         displayDetail(property);
-      } catch (e) {
+
+        } catch (e) {
         showError('Gagal memuat data properti');
       }
     }
@@ -149,10 +229,24 @@
         ` : ''}
         
         <div class="detail-info">
-          <div class="detail-price">${formatPrice(hargaValue)}</div>
-          <h2 class="detail-title">${property['nama property'] || '-'}</h2>
+          <div class="detail-price">
+            ${formatPrice(hargaValue)}
+          </div>
+
+          <h2 class="detail-title">
+            ${property['nama property'] || '-'}
+          </h2>
+
+          <div class="detail-viewer">
+            <i class="fas fa-eye"></i>
+            <span id="viewerCount">
+              ${property['viewer'] || '0'}
+            </span>x dilihat
+          </div>
+
           <div class="detail-location">
-            <i class="fas fa-map-marker-alt"></i> ${property['lokasi'] || '-'}
+            <i class="fas fa-map-marker-alt"></i>
+            ${property['lokasi'] || '-'}
           </div>
           
           <div class="detail-features">
