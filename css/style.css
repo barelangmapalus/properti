@@ -1001,3 +1001,18 @@
   .carousel-arrow:hover i {
     color: rgba(44, 62, 80, 1);
   }
+
+  .property-viewers{
+    display:flex;
+    align-items:center;
+    gap:6px;
+    font-size:12px;
+    color:#666;
+    margin-top:4px;
+    margin-bottom:6px;
+  }
+  
+  .property-viewers i{
+    color:#3498db;
+    font-size:11px;
+  }
