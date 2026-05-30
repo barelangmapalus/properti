@@ -91,6 +91,9 @@
   
   <!-- JavaScript Khusus Detail -->
   <script>
+    const SCRIPT_URL =
+      'https://script.google.com/macros/s/AKfycbz8l3QhpQ0vVOGLpWTXbFoo0PF_CM6EopBCEetNubj7HDiV4tSgbnXD6Cz27SK_vyck/exec';
+
     let allImages = [];
     let currentImageIndex = 0;
     let currentProperty = null;
@@ -119,78 +122,91 @@
         currentProperty = property;
 
         // =====================================================
-        // VIEWER ANTI REFRESH
-        // =====================================================
+      // VIEWER ANTI REFRESH
+      // =====================================================
 
-        // ID unik property
-        const propertyKey =
-          `${property['nama property']}_${property._tab}_${property.timestamp}`;
+      // ID unik property
+      const propertyKey =
+        `${property['nama property']}_${property._tab}_${property.timestamp}`;
 
-        // Key localStorage
-        const viewedKey = `bmpro_viewed_${propertyKey}`;
+      // Key localStorage
+      const viewedKey =
+        `bmpro_viewed_${propertyKey}`;
 
-        // Cek apakah sudah pernah dilihat
-        const alreadyViewed =
-          localStorage.getItem(viewedKey);
+      // Cek apakah sudah pernah dilihat
+      const alreadyViewed =
+        localStorage.getItem(viewedKey);
 
-        if (!alreadyViewed) {
+      // 🔥 TAMPILKAN DETAIL DULU
+      displayDetail(property);
 
-          // Tandai sudah pernah lihat
-          localStorage.setItem(viewedKey, 'true');
+      if (!alreadyViewed) {
 
-          // Tambah viewer ke server
-          fetch(SCRIPT_URL, {
-            method: 'POST',
-            headers: {
-              'Content-Type':
-                'application/x-www-form-urlencoded'
-            },
-            body: new URLSearchParams({
-              action: 'incrementViewer',
-              category: property._tab || 'primary',
-              timestamp: property.timestamp
-            })
+        // Tandai sudah pernah lihat
+        localStorage.setItem(
+          viewedKey,
+          'true'
+        );
+
+        // Tambah viewer ke server
+        fetch(SCRIPT_URL, {
+          method: 'POST',
+          headers: {
+            'Content-Type':
+              'application/x-www-form-urlencoded'
+          },
+          body: new URLSearchParams({
+            action: 'incrementViewer',
+            category: property._tab || 'primary',
+            timestamp: property.timestamp
           })
-          .then(res => res.json())
-          .then(result => {
-
-            console.log(
-              '👁️ Viewer updated:',
-              result
-            );
-
-            // Tambah viewer di tampilan langsung
-            property['viewer'] =
-              parseInt(property['viewer'] || 0) + 1;
-
-            const viewerEl =
-              document.getElementById('viewerCount');
-
-            if (viewerEl) {
-              viewerEl.textContent =
-                property['viewer'];
-            }
-
-          })
-          .catch(err => {
-            console.log(
-              '❌ Viewer gagal:',
-              err
-            );
-          });
-
-        } else {
+        })
+        .then(res => res.json())
+        .then(result => {
 
           console.log(
-            '👁️ Viewer tidak ditambah karena sudah pernah melihat property ini'
+            '👁️ Viewer updated:',
+            result
           );
 
-        }
+          // Tambah viewer di tampilan langsung
+          property['viewer'] =
+            parseInt(property['viewer'] || 0) + 1;
 
-        displayDetail(property);
+          const viewerEl =
+            document.getElementById('viewerCount');
 
-        } catch (e) {
-        showError('Gagal memuat data properti');
+          if (viewerEl) {
+
+            viewerEl.textContent =
+              property['viewer'];
+
+          }
+
+        })
+        .catch(err => {
+
+          console.log(
+            '❌ Viewer gagal:',
+            err
+          );
+
+        });
+
+      } else {
+
+        console.log(
+          '👁️ Viewer tidak ditambah karena sudah pernah melihat property ini'
+        );
+
+      }
+
+      } catch (e) {
+
+        showError(
+          'Gagal memuat data properti'
+        );
+
       }
     }
     
@@ -246,8 +262,7 @@
           </h2>
 
           <div class="detail-viewer">
-            <i class="fas fa-eye"></i>
-            <span id="viewerCount">
+            👁️ <span id="viewerCount">
               ${property['viewer'] || '0'}
             </span>x dilihat
           </div>
