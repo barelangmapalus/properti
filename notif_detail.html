@@ -74,20 +74,12 @@
     .btn-call { background: #2c3e50; color: white; }
     .btn-wa { background: #25D366; color: white; }
 
-    .detail-viewer{
-    display:flex;
-    align-items:center;
-    gap:6px;
-    font-size:12px;
-    color:#666;
-    margin-top:4px;
-    margin-bottom:6px;
-  }
-  
-  .detail-viewer i{
-    color:#3498db;
-    font-size:11px;
-  }
+    .detail-viewer {
+      font-size: 13px;
+      color: #777;
+      margin-top: 4px;
+      margin-bottom: 10px;
+    }
   </style>
 </head>
 <body>
@@ -109,6 +101,11 @@
   
   <!-- JS Khusus untuk notif_detail.html (WA Notification) -->
   <script>
+
+const SCRIPT_URL =
+      'https://script.google.com/macros/s/AKfycbz8l3QhpQ0vVOGLpWTXbFoo0PF_CM6EopBCEetNubj7HDiV4tSgbnXD6Cz27SK_vyck/exec';
+
+
     (function() {
       // Ambil timestamp dari URL (format: ?id=2026-05-26T04:47:15.644Z)
       const urlParams = new URLSearchParams(window.location.search);
@@ -177,7 +174,9 @@
             </h2>
 
             <div class="detail-viewer">
-              👁️ ${property['viewer'] || '0'}x dilihat
+              👁️ <span id="viewerCount">
+                ${property['viewer'] || '0'}
+              </span>x dilihat
             </div>
 
             <div class="detail-location">
@@ -286,74 +285,95 @@
           
           if (foundProperty) {
 
-        // =====================================================
-        // VIEWER ANTI REFRESH
-        // =====================================================
-        try {
+            if (foundProperty) {
 
-        const viewerKey =
-          'viewer_' + timestamp;
+    // =====================================================
+    // TAMPILKAN DETAIL DULU
+    // =====================================================
+    displayDetail(foundProperty, foundCategory);
 
-        const alreadyViewed =
-          sessionStorage.getItem(viewerKey);
+    // =====================================================
+    // VIEWER ANTI REFRESH
+    // =====================================================
+    try {
 
-        if (!alreadyViewed) {
+      const propertyKey =
+        `${foundProperty['nama property']}_${foundCategory}_${timestamp}`;
 
-          fetch(SCRIPT_URL, {
-            method: 'POST',
-            headers: {
-              'Content-Type':
-                'application/x-www-form-urlencoded'
-            },
-            body: new URLSearchParams({
-              action: 'incrementViewer',
-              category: foundCategory,
-              timestamp: timestamp
-            })
-          })
-          .then(res => res.json())
-          .then(result => {
+      const viewerKey =
+        `bmpro_viewed_${propertyKey}`;
 
-            console.log(
-              '👁️ Viewer updated:',
-              result
-            );
+      const alreadyViewed =
+        localStorage.getItem(viewerKey);
 
-            // Tandai sudah dihitung
-            sessionStorage.setItem(
-              viewerKey,
-              'true'
-            );
+      if (!alreadyViewed) {
 
-          })
-          .catch(err => {
-
-            console.log(
-              '❌ Viewer gagal:',
-              err
-            );
-
-          });
-
-        } else {
-
-          console.log(
-            '⚠️ Viewer sudah dihitung sebelumnya'
-          );
-
-        }
-
-        } catch(err) {
-
-        console.log(
-          '❌ Error viewer:',
-          err
+        localStorage.setItem(
+          viewerKey,
+          'true'
         );
 
-        }
+        fetch(SCRIPT_URL, {
+          method: 'POST',
+          headers: {
+            'Content-Type':
+              'application/x-www-form-urlencoded'
+          },
+          body: new URLSearchParams({
+            action: 'incrementViewer',
+            category: foundCategory,
+            timestamp: timestamp
+          })
+        })
+        .then(res => res.json())
+        .then(result => {
 
-        displayDetail(foundProperty, foundCategory);
+          console.log(
+            '👁️ Viewer updated:',
+            result
+          );
 
+          foundProperty['viewer'] =
+            parseInt(foundProperty['viewer'] || 0) + 1;
+
+          const viewerEl =
+            document.getElementById('viewerCount');
+
+          if (viewerEl) {
+
+            viewerEl.textContent =
+              foundProperty['viewer'];
+
+          }
+
+        })
+        .catch(err => {
+
+          console.log(
+            '❌ Viewer gagal:',
+            err
+          );
+
+        });
+
+      } else {
+
+        console.log(
+          '👁️ Viewer tidak ditambah karena sudah pernah melihat property ini'
+        );
+
+      }
+
+    } catch(err) {
+
+      console.log(
+        '❌ Error viewer:',
+        err
+      );
+
+    }
+
+    }
         } else {
             console.log(`❌ Properti dengan timestamp "${timestamp}" tidak ditemukan`);
             showError('Data properti tidak ditemukan');
