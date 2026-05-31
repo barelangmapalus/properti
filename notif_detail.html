@@ -80,8 +80,9 @@
       margin-top: 4px;
       margin-bottom: 10px;
     }
+
     .posted-date{
-    margin: 18px 0 10px 6px;
+    padding: 10px 16px 6px;
     font-size: 11px;
     color: #777;
     font-weight: 500;
@@ -177,6 +178,10 @@ const SCRIPT_URL =
         }
         
         content.innerHTML = `
+        <div class="posted-date">
+            Diposting ${formattedDate.replace(',', ' •')}
+          </div>
+
           <div class="detail-main-image">
             <img src="${allImages[0]}" alt="${escapeHtml(property['nama property'])}" id="mainImage" onerror="this.src='https://images.unsplash.com/photo-1580587771525-78b9dba3b914?w=600'">
             ${allImages.length > 1 ? `<span class="image-counter" id="imageCounter">1/${allImages.length}</span>` : ''}
@@ -228,10 +233,6 @@ const SCRIPT_URL =
             </div>
           ` : ''}
 
-          <div class="posted-date">
-            Diposting ${formattedDate.replace(',', ' •')}
-          </div>
-          
           <div class="detail-specs">
             <div class="spec-item">
               <span class="spec-label">Kategori</span>
