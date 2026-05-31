@@ -69,6 +69,14 @@
     color:#3498db;
     font-size:11px;
   }
+
+  .posted-date{
+  margin: 18px 0 10px 6px;
+  font-size: 11px;
+  color: #777;
+  font-weight: 500;
+  }
+
   </style>
 </head>
 <body>
@@ -234,6 +242,19 @@
       
       const content = document.getElementById('detailContent');
       const hargaValue = property['harga'] || '0';
+
+      const rawTimestamp = property.timestamp || '';
+
+      const date = new Date(rawTimestamp);
+
+      const formattedDate = date.toLocaleString('id-ID', {
+        day: '2-digit',
+        month: 'long',
+        year: 'numeric',
+        hour: '2-digit',
+        minute: '2-digit',
+        timeZone: 'Asia/Jakarta'
+      }) + ' WIB';
       
       content.innerHTML = `
         <div class="detail-main-image">
@@ -298,6 +319,10 @@
           </div>
         ` : ''}
         
+        <div class="posted-date">
+          Diposting ${formattedDate.replace(',', ' •')}
+        </div>
+
         <div class="detail-specs">
           <div class="spec-item">
             <span class="spec-label">Kategori</span>
