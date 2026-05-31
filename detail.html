@@ -71,7 +71,7 @@
   }
 
   .posted-date{
-  margin: 18px 0 10px 6px;
+  padding: 10px 16px 6px;
   font-size: 11px;
   color: #777;
   font-weight: 500;
@@ -257,6 +257,9 @@
       }) + ' WIB';
       
       content.innerHTML = `
+      <div class="posted-date">
+          Diposting ${formattedDate.replace(',', ' •')}
+        </div>
         <div class="detail-main-image">
           <img src="${allImages[0] || 'https://images.unsplash.com/photo-1580587771525-78b9dba3b914?w=600'}" 
                alt="${property['nama property']}" id="mainImage">
@@ -318,11 +321,7 @@
             <p>${property['spesifikasi']}</p>
           </div>
         ` : ''}
-        
-        <div class="posted-date">
-          Diposting ${formattedDate.replace(',', ' •')}
-        </div>
-
+      
         <div class="detail-specs">
           <div class="spec-item">
             <span class="spec-label">Kategori</span>
