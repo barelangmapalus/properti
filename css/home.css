@@ -619,10 +619,10 @@ body.home-page > .home-fixed-nav {
   bottom: max(6px, env(safe-area-inset-bottom, 0px));
   margin: 0;
   border-radius: 14px;
-  background: rgba(255, 255, 255, 0.95);
+  background: rgba(248, 191, 3, 0.95);
   backdrop-filter: blur(20px);
   -webkit-backdrop-filter: blur(20px);
-  border: 1px solid rgba(15, 23, 42, 0.08);
+  border: 1px solid rgba(42, 15, 15, 0.08);
   box-shadow: 0 4px 20px rgba(15, 23, 42, 0.1);
   padding: 5px 10px;
   z-index: 3000;
@@ -642,7 +642,7 @@ body.home-page > .home-fixed-nav .nav-item {
   font-size: 0.52rem;
   font-weight: 500;
   gap: 1px;
-  padding: 4px 6px;
+  padding: 3px 9px;
   margin: 0 2px;
   border-radius: 10px;
   transition: color 0.2s, background 0.2s;
@@ -653,6 +653,10 @@ body.home-page > .home-fixed-nav .nav-item {
   flex-direction: column;
   align-items: center;
   text-decoration: none;
+  -webkit-transition: color 0.2s, background 0.2s;
+  -moz-transition: color 0.2s, background 0.2s;
+  -ms-transition: color 0.2s, background 0.2s;
+  -o-transition: color 0.2s, background 0.2s;
 }
 
 body.home-page > .home-fixed-nav .nav-item.active {
