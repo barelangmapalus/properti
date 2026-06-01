@@ -502,14 +502,28 @@ body.home-page {
 .home-page .carousel-arrow {
   width: 36px;
   height: 36px;
-  background: var(--home-surface);
-  box-shadow: var(--home-shadow);
+  background: rgba(255, 255, 255, 0.35);
+  backdrop-filter: blur(6px);
+  -webkit-backdrop-filter: blur(6px);
+  border: 1px solid rgba(255, 255, 255, 0.45);
+  box-shadow: 0 2px 8px rgba(15, 23, 42, 0.12);
   bottom: 50%;
+  transition: background 0.2s ease, border-color 0.2s ease;
+}
+
+.home-page .carousel-arrow:hover {
+  background: rgba(255, 255, 255, 0.55);
+  border-color: rgba(255, 255, 255, 0.7);
 }
 
 .home-page .carousel-arrow i {
   font-size: 0.75rem;
-  color: var(--home-primary);
+  color: rgba(255, 255, 255, 0.95);
+  text-shadow: 0 1px 3px rgba(15, 23, 42, 0.5);
+}
+
+.home-page .carousel-arrow:hover i {
+  color: #fff;
 }
 
 /* ---------- Trust banner ---------- */
@@ -619,10 +633,10 @@ body.home-page > .home-fixed-nav {
   bottom: max(6px, env(safe-area-inset-bottom, 0px));
   margin: 0;
   border-radius: 14px;
-  background: rgba(248, 191, 3, 0.95);
+  background: rgba(255, 196, 2, 0.95);
   backdrop-filter: blur(20px);
   -webkit-backdrop-filter: blur(20px);
-  border: 1px solid rgba(42, 15, 15, 0.08);
+  border: 3px solid rgba(42, 15, 15, 0.08);
   box-shadow: 0 4px 20px rgba(15, 23, 42, 0.1);
   padding: 5px 10px;
   z-index: 3000;
@@ -687,8 +701,8 @@ body.home-page > .home-fixed-nav .nav-item span {
 /* Area sentuh minimal 44px (standar mobile) */
 .home-page .hamburger-btn,
 .home-page .carousel-arrow {
-  min-height: 44px;
-  min-width: 44px;
+  min-height: 30px;
+  min-width: 30px;
 }
 
 .home-page .search-box .filter-btn-inside {
