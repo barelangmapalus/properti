@@ -1,683 +1,586 @@
-/* ============================================================
-   BMpro - Home Page (index.html) — MOBILE ONLY
-   ============================================================ */
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+  <meta name="theme-color" content="#0f172a">
+  <meta name="mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="format-detection" content="telephone=no">
+  
+  <title>BMpro - Properti Batam</title>
+  
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" type="text/css" href="css/style.css">
+</head>
+<body class="home-page">
 
-html {
-  -webkit-text-size-adjust: 100%;
-  text-size-adjust: 100%;
-}
+  <!-- Frame mobile: semua UI dibatasi lebar layar ponsel -->
+  <div class="mobile-shell">
 
-body.home-page {
-  margin: 0;
-  padding: 0;
-  overflow-x: hidden;
-  background: #0f172a;
-  min-height: 100dvh;
-  overscroll-behavior: none;
-  -webkit-tap-highlight-color: transparent;
-}
+  <!-- SIDEBAR -->
+  <div class="menu-overlay" id="menuOverlay"></div>
+  
+  <div class="sidebar-menu" id="sidebarMenu">
+    <div class="sidebar-header">
+      <div class="sidebar-header-top">
+        <div class="sidebar-logo">
+          <img src="https://drive.google.com/thumbnail?id=1a3cJptxJTSHksm9D7tN3us_7Ii7dQxxG&sz=w100" 
+               alt="BMpro Logo"
+               onerror="this.src='https://via.placeholder.com/100x100/0f172a/ffffff?text=BM'">
+        </div>
+        <h3>BMpro</h3>
+      </div>
+      <p>Temukan properti impian Anda di Batam</p>
+    </div>
+    
+    <div class="sidebar-nav">
+      <a href="index.html" class="menu-item"><i class="fas fa-home"></i><span>Beranda</span></a>
+      <a href="search.html" class="menu-item"><i class="fas fa-search"></i><span>Cari Properti</span></a>
+      <a href="#" class="menu-item" onclick="goToFavorite(event)"><i class="fas fa-heart"></i><span>Favorit Saya</span></a>
+      <a href="search.html?tab=primary" class="menu-item"><i class="fas fa-building"></i><span>Primary</span></a>
+      <a href="search.html?tab=secondary" class="menu-item"><i class="fas fa-home"></i><span>Secondary</span></a>
+      <a href="search.html?tab=rent" class="menu-item"><i class="fas fa-key"></i><span>Rent</span></a>
+      <a href="contact.html" class="menu-item"><i class="fas fa-headset"></i><span>Hubungi Kami</span></a>
+    </div>
+    
+    <div class="sidebar-footer">
+      <p>© 2025 BMpro • Properti Batam</p>
+    </div>
+  </div>
 
-/* Shell = layar ponsel; fixed/sticky mengacu ke sini */
-.mobile-shell {
-  --mobile-max: 430px;
-  --home-bg: #f4f6f9;
-  --home-surface: #ffffff;
-  --home-primary: #0f172a;
-  --home-accent: #c41e3a;
-  --home-accent-soft: rgba(196, 30, 58, 0.12);
-  --home-blue: #2563eb;
-  --home-blue-soft: rgba(37, 99, 235, 0.1);
-  --home-orange: #ea580c;
-  --home-green: #059669;
-  --home-radius: 20px;
-  --home-shadow: 0 8px 32px rgba(15, 23, 42, 0.08);
-  --home-shadow-lg: 0 20px 48px rgba(15, 23, 42, 0.12);
+  <!-- HERO -->
+  <header class="mobile-header">
+    <div class="header-overlay"></div>
+    
+    <button class="hamburger-btn" id="hamburgerBtn" aria-label="Menu">
+      <i class="fas fa-bars"></i>
+    </button>
+    
+    <div class="header-content">
+      <span class="badge"><i class="fas fa-star"></i> Agen Properti Terpercaya</span>
+      <h1>Temukan Properti<br>Impian Anda</h1>
+      <div class="header-stats">
+        <span class="header-stat"><i class="fas fa-map-marker-alt"></i> Batam, Kepulauan Riau</span>
+        <span class="dot" aria-hidden="true"></span>
+        <span class="header-stat"><i class="fas fa-building"></i> 150+ Listing</span>
+      </div>
+    </div>
+  </header>
 
-  font-family: 'Plus Jakarta Sans', 'Poppins', sans-serif;
-  width: 100%;
-  max-width: var(--mobile-max);
-  margin: 0 auto;
-  min-height: 100dvh;
-  background: var(--home-bg);
-  color: var(--home-primary);
-  position: relative;
-  transform: translateZ(0);
-  overflow-x: hidden;
-  padding-bottom: calc(88px + env(safe-area-inset-bottom, 0px));
-}
+  <!-- SEARCH -->
+  <div class="search-section">
+    <div class="search-box">
+      <i class="fas fa-search"></i>
+      <input type="text" placeholder="Cari properti, lokasi, atau harga..." id="searchInput">
+      <button type="button" id="searchBtn">Cari</button>
+      <button type="button" class="filter-btn-inside" id="filterBtn" aria-label="Filter"><i class="fas fa-sliders-h"></i></button>
+    </div>
+  </div>
 
-.home-page {
-  color: var(--home-primary);
-}
+  <!-- QUICK CATEGORIES -->
+  <nav class="home-categories" aria-label="Kategori properti">
+    <a href="search.html?tab=primary" class="category-chip primary">
+      <i class="fas fa-building"></i> Primary
+    </a>
+    <a href="search.html?tab=secondary" class="category-chip secondary">
+      <i class="fas fa-home"></i> Secondary
+    </a>
+    <a href="search.html?tab=rent" class="category-chip rent">
+      <i class="fas fa-key"></i> Sewa
+    </a>
+    <a href="#" class="category-chip fav" onclick="goToFavorite(event)">
+      <i class="fas fa-heart"></i> Favorit
+    </a>
+  </nav>
 
-/* Di layar lebar (desktop): tampilkan sebagai frame ponsel di tengah */
-@media (min-width: 431px) {
-  body.home-page {
-    display: flex;
-    justify-content: center;
-    align-items: flex-start;
-    padding: env(safe-area-inset-top, 0) 0 env(safe-area-inset-bottom, 0);
+  <!-- PRIMARY -->
+  <div class="section-container">
+    <div class="section-header">
+      <h4>
+        <span class="section-icon primary"><i class="fas fa-building"></i></span>
+        Properti Primary
+      </h4>
+      <a href="search.html?tab=primary">Lihat Semua <i class="fas fa-chevron-right"></i></a>
+    </div>
+    
+    <div class="featured-carousel" id="primaryCarousel">
+      <div class="carousel-container" id="primaryContainer">
+        <div class="loading"><i class="fas fa-spinner"></i><p>Memuat properti...</p></div>
+      </div>
+      <div class="carousel-arrow prev" id="primaryPrev" role="button" aria-label="Sebelumnya"><i class="fas fa-chevron-left"></i></div>
+      <div class="carousel-arrow next" id="primaryNext" role="button" aria-label="Berikutnya"><i class="fas fa-chevron-right"></i></div>
+    </div>
+    <div class="carousel-indicators" id="primaryIndicators"></div>
+  </div>
+
+  <!-- SECONDARY -->
+  <div class="section-container">
+    <div class="section-header">
+      <h4>
+        <span class="section-icon secondary"><i class="fas fa-home"></i></span>
+        Properti Secondary
+      </h4>
+      <a href="search.html?tab=secondary">Lihat Semua <i class="fas fa-chevron-right"></i></a>
+    </div>
+    
+    <div class="featured-carousel" id="secondaryCarousel">
+      <div class="carousel-container" id="secondaryContainer">
+        <div class="loading"><i class="fas fa-spinner"></i><p>Memuat properti...</p></div>
+      </div>
+      <div class="carousel-arrow prev" id="secondaryPrev" role="button" aria-label="Sebelumnya"><i class="fas fa-chevron-left"></i></div>
+      <div class="carousel-arrow next" id="secondaryNext" role="button" aria-label="Berikutnya"><i class="fas fa-chevron-right"></i></div>
+    </div>
+    <div class="carousel-indicators" id="secondaryIndicators"></div>
+  </div>
+
+  <!-- RENT -->
+  <div class="section-container">
+    <div class="section-header">
+      <h4>
+        <span class="section-icon rent"><i class="fas fa-key"></i></span>
+        Properti Sewa
+      </h4>
+      <a href="search.html?tab=rent">Lihat Semua <i class="fas fa-chevron-right"></i></a>
+    </div>
+    
+    <div class="featured-carousel" id="rentCarousel">
+      <div class="carousel-container" id="rentContainer">
+        <div class="loading"><i class="fas fa-spinner"></i><p>Memuat properti...</p></div>
+      </div>
+      <div class="carousel-arrow prev" id="rentPrev" role="button" aria-label="Sebelumnya"><i class="fas fa-chevron-left"></i></div>
+      <div class="carousel-arrow next" id="rentNext" role="button" aria-label="Berikutnya"><i class="fas fa-chevron-right"></i></div>
+    </div>
+    <div class="carousel-indicators" id="rentIndicators"></div>
+  </div>
+
+  <!-- TRUST BANNER -->
+  <aside class="home-trust">
+    <div class="home-trust-icon"><i class="fas fa-shield-halved"></i></div>
+    <div>
+      <h5>Barelang Mapalus Properti</h5>
+      <p>Mitra terpercaya untuk jual, beli, dan sewa properti di Batam sejak bertahun-tahun.</p>
+    </div>
+  </aside>
+
+  <!-- FOOTER -->
+  <footer class="home-footer">
+    <div class="home-footer-brand">Barelang Mapalus Properti</div>
+    <p>Mall Apartemen Pollux Batam Lantai 1</p>
+    <p>Jl. Jend. A. Yani, Taman Baloi, Batam Kota, Kepulauan Riau 29444</p>
+    <p>+62 823 8574 5630 · barelangmapalus@gmail.com</p>
+    <div class="home-footer-contact">
+      <a href="tel:+6282385745630" aria-label="Telepon"><i class="fas fa-phone"></i></a>
+      <a href="mailto:barelangmapalus@gmail.com" aria-label="Email"><i class="fas fa-envelope"></i></a>
+      <a href="contact.html" aria-label="Hubungi"><i class="fas fa-headset"></i></a>
+    </div>
+    <div class="home-footer-copy">&copy; 2025 Barelang Mapalus Properti</div>
+  </footer>
+
+  <!-- BOTTOM NAV -->
+  <nav class="bottom-nav">
+    <a href="index.html" class="nav-item active"><i class="fas fa-home"></i><span>Beranda</span></a>
+    <a href="search.html" class="nav-item"><i class="fas fa-search"></i><span>Cari</span></a>
+    <a href="#" class="nav-item" onclick="goToFavorite(event)"><i class="fas fa-heart"></i><span>Favorit</span></a>
+    <a href="#" class="nav-item" onclick="goToProfile(event)"><i class="fas fa-user"></i><span>Profil</span></a>
+  </nav>
+
+  </div><!-- /.mobile-shell -->
+
+  <script src="js/script.js"></script>
+
+<script>
+  const carouselState = {
+    primary: { current: 0, total: 0, interval: null },
+    secondary: { current: 0, total: 0, interval: null },
+    rent: { current: 0, total: 0, interval: null }
+  };
+
+  async function loadAllSections() {
+    await Promise.all([
+      loadCarouselSection('primary'),
+      loadCarouselSection('secondary'),
+      loadCarouselSection('rent')
+    ]);
   }
 
-  .mobile-shell {
-    box-shadow: 0 0 0 1px rgba(255, 255, 255, 0.06), 0 24px 64px rgba(0, 0, 0, 0.45);
-    min-height: 100dvh;
-  }
-}
-
-/* ---------- Sidebar & overlay (terkunci di dalam frame) ---------- */
-.mobile-shell .menu-overlay {
-  position: fixed;
-  inset: 0;
-  width: 100%;
-  height: 100%;
-}
-
-.mobile-shell .sidebar-menu {
-  position: fixed;
-  top: 0;
-  width: min(300px, 85%);
-  max-width: 300px;
-  height: 100%;
-  height: 100dvh;
-  left: -100%;
-  right: auto;
-  z-index: 2000;
-}
-
-.mobile-shell .sidebar-menu.active {
-  left: 0;
-}
-
-/* ---------- Hero ---------- */
-.home-page .mobile-header {
-  width: 100%;
-  height: 42dvh;
-  min-height: 240px;
-  max-height: 340px;
-  border-radius: 0 0 32px 32px;
-  background:
-    linear-gradient(160deg, rgba(15, 23, 42, 0.75) 0%, rgba(15, 23, 42, 0.45) 45%, rgba(196, 30, 58, 0.35) 100%),
-    url('https://images.unsplash.com/photo-1600596542815-ffad4c1539a9?w=1200&q=80');
-  background-size: cover;
-  background-position: center 30%;
-  box-shadow: var(--home-shadow-lg);
-}
-
-.home-page .header-overlay {
-  background:
-    radial-gradient(ellipse 80% 60% at 100% 0%, rgba(37, 99, 235, 0.25), transparent),
-    radial-gradient(ellipse 60% 50% at 0% 100%, rgba(196, 30, 58, 0.2), transparent);
-}
-
-.home-page .hamburger-btn {
-  top: max(16px, env(safe-area-inset-top));
-  left: 16px;
-  width: 48px;
-  height: 48px;
-  border-radius: 14px;
-  background: rgba(255, 255, 255, 0.15);
-  backdrop-filter: blur(16px);
-  border: 1px solid rgba(255, 255, 255, 0.25);
-  box-shadow: none;
-}
-
-.home-page .hamburger-btn i {
-  color: #fff;
-  font-size: 20px;
-}
-
-.home-page .header-content {
-  bottom: 32px;
-  padding: 0 24px;
-}
-
-.home-page .header-content .badge {
-  background: rgba(255, 255, 255, 0.18);
-  backdrop-filter: blur(8px);
-  border: 1px solid rgba(255, 255, 255, 0.3);
-  color: #fff;
-  font-size: 11px;
-  font-weight: 600;
-  letter-spacing: 0.06em;
-  padding: 6px 14px;
-  border-radius: 100px;
-  margin-bottom: 12px;
-}
-
-.home-page .header-content .badge i {
-  color: #fbbf24;
-  margin-right: 4px;
-}
-
-.home-page .header-content h1 {
-  font-size: clamp(1.75rem, 5vw, 2.25rem);
-  font-weight: 700;
-  letter-spacing: -0.02em;
-  line-height: 1.15;
-  margin-bottom: 10px;
-}
-
-.home-page .header-stats {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 8px 16px;
-  margin-top: 4px;
-}
-
-.home-page .header-stat {
-  display: inline-flex;
-  align-items: center;
-  gap: 6px;
-  font-size: 0.8rem;
-  font-weight: 500;
-  color: rgba(255, 255, 255, 0.92);
-}
-
-.home-page .header-stat i {
-  font-size: 0.75rem;
-  opacity: 0.85;
-}
-
-.home-page .header-stat .dot {
-  width: 4px;
-  height: 4px;
-  border-radius: 50%;
-  background: rgba(255, 255, 255, 0.5);
-}
-
-/* ---------- Search ---------- */
-.home-page .search-section {
-  padding: 0 16px;
-  margin-top: -28px;
-  margin-bottom: 8px;
-}
-
-.home-page .search-box {
-  background: var(--home-surface);
-  border-radius: 16px;
-  padding: 6px 6px 6px 14px;
-  box-shadow: var(--home-shadow-lg);
-  border: 1px solid rgba(15, 23, 42, 0.06);
-  gap: 4px;
-}
-
-.home-page .search-box > i.fa-search {
-  color: var(--home-primary);
-  opacity: 0.4;
-  font-size: 0.9rem;
-  margin-left: 0;
-}
-
-.home-page .search-box input {
-  font-size: 16px; /* cegah zoom otomatis di iOS */
-  padding: 12px 8px;
-}
-
-.home-page .search-box input::placeholder {
-  color: #94a3b8;
-  font-size: 0.82rem;
-}
-
-.home-page .search-box button#searchBtn {
-  background: linear-gradient(135deg, #1e40af, #2563eb);
-  padding: 10px 18px;
-  border-radius: 12px;
-  font-size: 0.8rem;
-  font-weight: 600;
-  box-shadow: 0 4px 14px rgba(37, 99, 235, 0.35);
-}
-
-.home-page .search-box .filter-btn-inside {
-  width: 42px;
-  height: 42px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  background: var(--home-bg);
-  border-radius: 12px;
-  padding: 0;
-}
-
-.home-page .search-box .filter-btn-inside i {
-  color: var(--home-primary);
-  font-size: 0.95rem;
-}
-
-/* ---------- Category chips ---------- */
-.home-categories {
-  display: flex;
-  gap: 10px;
-  padding: 12px 16px 4px;
-  overflow-x: auto;
-  scrollbar-width: none;
-  -ms-overflow-style: none;
-}
-
-.home-categories::-webkit-scrollbar {
-  display: none;
-}
-
-.category-chip {
-  flex-shrink: 0;
-  display: inline-flex;
-  align-items: center;
-  gap: 8px;
-  padding: 10px 16px;
-  background: var(--home-surface);
-  border-radius: 100px;
-  text-decoration: none;
-  color: var(--home-primary);
-  font-size: 0.8rem;
-  font-weight: 600;
-  box-shadow: 0 2px 12px rgba(15, 23, 42, 0.06);
-  border: 1px solid rgba(15, 23, 42, 0.06);
-  transition: transform 0.2s, box-shadow 0.2s;
-}
-
-.category-chip:active {
-  transform: scale(0.97);
-}
-
-.category-chip i {
-  width: 28px;
-  height: 28px;
-  border-radius: 10px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-size: 0.75rem;
-}
-
-.category-chip.primary i {
-  background: var(--home-blue-soft);
-  color: var(--home-blue);
-}
-
-.category-chip.secondary i {
-  background: rgba(234, 88, 12, 0.12);
-  color: var(--home-orange);
-}
-
-.category-chip.rent i {
-  background: rgba(5, 150, 105, 0.12);
-  color: var(--home-green);
-}
-
-.category-chip.fav i {
-  background: var(--home-accent-soft);
-  color: var(--home-accent);
-}
-
-/* ---------- Sections ---------- */
-.home-page .section-container {
-  padding: 20px 16px 8px;
-}
-
-.home-page .section-header {
-  margin-bottom: 16px;
-  align-items: center;
-}
-
-.home-page .section-header h4 {
-  font-size: 1rem;
-  font-weight: 700;
-  letter-spacing: -0.01em;
-  gap: 10px;
-}
-
-.home-page .section-header .section-icon {
-  width: 36px;
-  height: 36px;
-  border-radius: 12px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-size: 0.85rem;
-}
-
-.home-page .section-header .section-icon.primary {
-  background: var(--home-blue-soft);
-  color: var(--home-blue);
-}
-
-.home-page .section-header .section-icon.secondary {
-  background: rgba(234, 88, 12, 0.12);
-  color: var(--home-orange);
-}
-
-.home-page .section-header .section-icon.rent {
-  background: rgba(5, 150, 105, 0.12);
-  color: var(--home-green);
-}
-
-.home-page .section-header a {
-  display: inline-flex;
-  align-items: center;
-  gap: 4px;
-  font-size: 0.78rem;
-  font-weight: 600;
-  color: var(--home-blue);
-  padding: 6px 12px;
-  background: var(--home-blue-soft);
-  border-radius: 100px;
-  transition: background 0.2s;
-}
-
-.home-page .section-header a i {
-  font-size: 0.55rem;
-}
-
-/* ---------- Carousel & cards ---------- */
-.home-page .featured-carousel {
-  border-radius: var(--home-radius);
-  padding: 0;
-}
-
-.home-page .carousel-slide {
-  padding: 4px 2px 16px;
-}
-
-.home-page .carousel-slide .property-card {
-  border-radius: var(--home-radius);
-  box-shadow: var(--home-shadow);
-  border: 1px solid rgba(15, 23, 42, 0.05);
-  overflow: hidden;
-}
-
-@media (hover: hover) {
-  .home-page .carousel-slide .property-card:hover {
-    transform: translateY(-4px);
-    box-shadow: var(--home-shadow-lg);
+  async function loadCarouselSection(tabName) {
+  try {
+    const data = await fetchSheetData(tabName);
+    
+    let validData = data.filter(item => item['gambar utama']);
+    
+    if (validData.length === 0) {
+      console.log(`Data ${tabName} kosong, pakai dummy data`);
+      const dummyImage = 'https://lh3.googleusercontent.com/d/1aBSLJypeJm4tqsXRiUhO97NPJpRq-ZcK=w400';
+      
+      let dummyData = [];
+      if (tabName === 'primary') {
+        dummyData = [{
+          'nama property': 'Coming Soon',
+          'harga': '1234567',
+          'lokasi': 'Batam',
+          'kt': '4',
+          'km': '2',
+          'lt': '2',
+          'gambar utama': dummyImage,
+          '_tab': 'primary'
+        }];
+      } else if (tabName === 'secondary') {
+        dummyData = [{
+          'nama property': 'Coming Soon',
+          'harga': '1234567',
+          'lokasi': 'Batam',
+          'kt': '5',
+          'km': '4',
+          'lt': '3',
+          'gambar utama': dummyImage,
+          '_tab': 'secondary'
+        }];
+      } else if (tabName === 'rent') {
+        dummyData = [{
+          'nama property': 'Coming Soon',
+          'harga': '1234567',
+          'lokasi': 'Batam',
+          'kt': '3',
+          'km': '2',
+          'lt': '1',
+          'gambar utama': dummyImage,
+          '_tab': 'rent'
+        }];
+      }
+      
+      displayCarouselSection(tabName, dummyData);
+      return;
+    }
+    
+    validData.sort((a, b) => {
+      const timeA = new Date(a['timestamp'] || 0);
+      const timeB = new Date(b['timestamp'] || 0);
+      return timeB - timeA;
+    });
+    
+    const properties = validData.slice(0, 3).map(item => ({
+      ...item,
+      _tab: tabName,
+      'nama property': item['nama property'] || 'Tanpa Nama',
+      'harga': item['harga'] || '0',
+      'lokasi': item['lokasi'] || '-',
+      'kt': item['kt'] || '0',
+      'km': item['km'] || '0',
+      'lt': item['lt'] || '0',
+      'gambar utama': item['gambar utama'] || ''
+    }));
+    
+    displayCarouselSection(tabName, properties);
+  } catch (e) {
+    console.error(`Error loading ${tabName}:`, e);
+    
+    const dummyImage = 'https://lh3.googleusercontent.com/d/1aBSLJypeJm4tqsXRiUhO97NPJpRq-ZcK=w400';
+    
+    let dummyData = [];
+    if (tabName === 'primary') {
+      dummyData = [{
+        'nama property': 'Ruko Bisnis Strategis',
+        'harga': '99000000',
+        'lokasi': 'Tiban',
+        'kt': '4',
+        'km': '2',
+        'lt': '2',
+        'gambar utama': dummyImage,
+        '_tab': 'primary'
+      }];
+    } else if (tabName === 'secondary') {
+      dummyData = [{
+        'nama property': 'Rumah Mewah 2 Lantai',
+        'harga': '2350000000',
+        'lokasi': 'Batam Center',
+        'kt': '5',
+        'km': '4',
+        'lt': '3',
+        'gambar utama': dummyImage,
+        '_tab': 'secondary'
+      }];
+    } else if (tabName === 'rent') {
+      dummyData = [{
+        'nama property': 'Apartemen Modern',
+        'harga': '850000000',
+        'lokasi': 'Nagoya',
+        'kt': '3',
+        'km': '2',
+        'lt': '1',
+        'gambar utama': dummyImage,
+        '_tab': 'rent'
+      }];
+    }
+    
+    displayCarouselSection(tabName, dummyData);
   }
 }
 
-.home-page .carousel-slide .property-card:active {
-  transform: scale(0.98);
+  function displayCarouselSection(tabName, properties) {
+    const container = document.getElementById(`${tabName}Container`);
+    const indicators = document.getElementById(`${tabName}Indicators`);
+    
+    if (!container || !indicators) return;
+    
+    if (!properties || properties.length === 0) {
+      container.innerHTML = `<div class="empty-state"><i class="fas fa-home"></i><p>Belum ada properti</p></div>`;
+      indicators.innerHTML = '';
+      return;
+    }
+    
+    carouselState[tabName].total = properties.length;
+    
+    container.innerHTML = properties.map((p, i) => {
+      const detailId = `${tabName}_${Date.now()}_${i}`;
+      sessionStorage.setItem(detailId, JSON.stringify(p));
+      
+      return `
+        <div class="carousel-slide" data-index="${i}">
+          <a href="detail.html?id=${detailId}" class="property-card" style="text-decoration: none; color: inherit;">
+            <div class="card-image">
+              <img src="${convertDriveUrl(p['gambar utama']) || 'https://images.unsplash.com/photo-1580587771525-78b9dba3b914?w=400'}" 
+                   alt="${p['nama property'] || 'Properti'}"
+                   onerror="this.src='https://images.unsplash.com/photo-1580587771525-78b9dba3b914?w=400';">
+              <span class="card-badge">${i === 0 ? 'HOT' : 'NEW'}</span>
+              <span class="tab-badge">${p._tab || tabName}</span>
+              <div class="favorite-btn" id="loveBtn_${detailId}" onclick="event.preventDefault(); event.stopPropagation(); toggleLove(this, ${JSON.stringify(p).replace(/"/g, '&quot;')})">
+                  <i class="${isLocalFavorite(p) ? 'fas' : 'far'} fa-heart"></i>
+                </div>
+            </div>
+            
+            <div class="card-content">
+              <div class="property-price">${formatPrice(p['harga'])}</div>
+              <h3 class="property-title">${p['nama property'] || 'Nama Properti'}</h3>
+              <div class="property-viewers">
+                <i class="fas fa-eye"></i>
+                ${p['viewer'] || 0} Dilihat
+              </div>
+              <div class="property-address">
+                <i class="fas fa-map-marker-alt"></i>
+                <span>${p['lokasi'] || 'Alamat tidak tersedia'}</span>
+              </div>
+              <div class="property-features">
+                <span class="feature"><i class="fas fa-bed"></i> ${p['kt'] || '0'} KT</span>
+                <span class="feature"><i class="fas fa-bath"></i> ${p['km'] || '0'} KM</span>
+                <span class="feature"><i class="fas fa-layer-group"></i> ${p['lt'] || '0'} Lt</span>
+              </div>
+            </div>
+          </a>
+        </div>
+      `;
+    }).join('');
+    
+    indicators.innerHTML = properties.map((_, i) => `
+      <span class="carousel-dot ${i === 0 ? 'active' : ''}" onclick="goToSlide('${tabName}', ${i})"></span>
+    `).join('');
+    
+    carouselState[tabName].current = 0;
+    updateCarouselPosition(tabName);
+    startAutoSlide(tabName);
+    setupCarouselControls(tabName);
+  }
+
+  function updateCarouselPosition(tabName) {
+    const container = document.getElementById(`${tabName}Container`);
+    if (!container) return;
+    
+    container.style.transform = `translateX(-${carouselState[tabName].current * 100}%)`;
+    
+    const indicators = document.getElementById(`${tabName}Indicators`);
+    if (indicators) {
+      indicators.querySelectorAll('.carousel-dot').forEach((dot, i) => {
+        dot.classList.toggle('active', i === carouselState[tabName].current);
+      });
+    }
+  }
+
+  function goToSlide(tabName, index) {
+    carouselState[tabName].current = index;
+    updateCarouselPosition(tabName);
+    resetAutoSlide(tabName);
+  }
+
+  function nextSlide(tabName) {
+    const state = carouselState[tabName];
+    if (state.total === 0) return;
+    state.current = (state.current + 1) % state.total;
+    updateCarouselPosition(tabName);
+    resetAutoSlide(tabName);
+  }
+
+  function prevSlide(tabName) {
+    const state = carouselState[tabName];
+    if (state.total === 0) return;
+    state.current = (state.current - 1 + state.total) % state.total;
+    updateCarouselPosition(tabName);
+    resetAutoSlide(tabName);
+  }
+
+  function startAutoSlide(tabName) {
+    stopAutoSlide(tabName);
+    if (carouselState[tabName].total > 1) {
+      carouselState[tabName].interval = setInterval(() => {
+        nextSlide(tabName);
+      }, 4000);
+    }
+  }
+
+  function stopAutoSlide(tabName) {
+    if (carouselState[tabName].interval) {
+      clearInterval(carouselState[tabName].interval);
+      carouselState[tabName].interval = null;
+    }
+  }
+
+  function resetAutoSlide(tabName) {
+    stopAutoSlide(tabName);
+    startAutoSlide(tabName);
+  }
+
+  function setupCarouselControls(tabName) {
+    const prevBtn = document.getElementById(`${tabName}Prev`);
+    const nextBtn = document.getElementById(`${tabName}Next`);
+    const carousel = document.getElementById(`${tabName}Carousel`);
+    
+    if (prevBtn) {
+      prevBtn.replaceWith(prevBtn.cloneNode(true));
+      const newPrevBtn = document.getElementById(`${tabName}Prev`);
+      newPrevBtn.addEventListener('click', () => prevSlide(tabName));
+    }
+    
+    if (nextBtn) {
+      nextBtn.replaceWith(nextBtn.cloneNode(true));
+      const newNextBtn = document.getElementById(`${tabName}Next`);
+      newNextBtn.addEventListener('click', () => nextSlide(tabName));
+    }
+    
+    if (carousel) {
+      let touchStartX = 0;
+      
+      carousel.addEventListener('touchstart', (e) => {
+        touchStartX = e.changedTouches[0].screenX;
+        stopAutoSlide(tabName);
+      }, { passive: true });
+      
+      carousel.addEventListener('touchend', (e) => {
+        const touchEndX = e.changedTouches[0].screenX;
+        const diff = touchStartX - touchEndX;
+        
+        if (Math.abs(diff) > 50) {
+          if (diff > 0) {
+            nextSlide(tabName);
+          } else {
+            prevSlide(tabName);
+          }
+        }
+        startAutoSlide(tabName);
+      });
+    }
+  }
+
+  document.addEventListener('DOMContentLoaded', function() {
+    const searchBtn = document.getElementById('searchBtn');
+    const filterBtn = document.getElementById('filterBtn');
+    const searchInput = document.getElementById('searchInput');
+    
+    if (searchBtn) {
+      searchBtn.addEventListener('click', function() {
+        const term = searchInput?.value || '';
+        window.location.href = `search.html?q=${encodeURIComponent(term)}`;
+      });
+    }
+    
+    if (filterBtn) {
+      filterBtn.addEventListener('click', function() {
+        window.location.href = 'search.html?filter=open';
+      });
+    }
+    
+    if (searchInput) {
+      searchInput.addEventListener('keypress', function(e) {
+        if (e.key === 'Enter') {
+          window.location.href = `search.html?q=${encodeURIComponent(e.target.value)}`;
+        }
+      });
+    }
+
+    loadAllSections();
+  });
+
+function toggleLove(btn, propertyData) {
+  const icon = btn.querySelector('i');
+  const userData = JSON.parse(localStorage.getItem('bmpro_user') || 'null');
+  
+  if (!userData) {
+    alert('Silakan registrasi terlebih dahulu untuk menyimpan favorit!\n\nKlik OK untuk menuju halaman registrasi.');
+    window.location.href = 'register.html';
+    return;
+  }
+  
+  if (icon.classList.contains('far')) {
+    icon.classList.remove('far');
+    icon.classList.add('fas');
+    btn.style.background = '#c41e3a';
+    icon.style.color = 'white';
+    saveLocalFavorite(propertyData);
+  } else {
+    icon.classList.remove('fas');
+    icon.classList.add('far');
+    btn.style.background = 'rgba(255,255,255,0.95)';
+    icon.style.color = '#c41e3a';
+    removeLocalFavorite(propertyData);
+  }
 }
 
-.home-page .card-image {
-  height: 200px;
+function saveLocalFavorite(property) {
+  const favorites = JSON.parse(localStorage.getItem('bmpro_favorites') || '[]');
+  const exists = favorites.find(f => 
+    f['nama property'] === property['nama property'] && f._tab === property._tab
+  );
+  if (!exists) {
+    favorites.unshift(property);
+    localStorage.setItem('bmpro_favorites', JSON.stringify(favorites));
+  }
 }
 
-.home-page .card-image::after {
-  content: '';
-  position: absolute;
-  inset: 0;
-  background: linear-gradient(to top, rgba(15, 23, 42, 0.5) 0%, transparent 50%);
-  pointer-events: none;
+function removeLocalFavorite(property) {
+  let favorites = JSON.parse(localStorage.getItem('bmpro_favorites') || '[]');
+  favorites = favorites.filter(f => 
+    !(f['nama property'] === property['nama property'] && f._tab === property._tab)
+  );
+  localStorage.setItem('bmpro_favorites', JSON.stringify(favorites));
 }
 
-.home-page .card-badge {
-  top: 12px;
-  left: 12px;
-  background: linear-gradient(135deg, #dc2626, #c41e3a);
-  padding: 5px 12px;
-  border-radius: 8px;
-  font-size: 0.65rem;
-  letter-spacing: 0.04em;
-  z-index: 2;
+function isLocalFavorite(propertyData) {
+  const favorites = JSON.parse(localStorage.getItem('bmpro_favorites') || '[]');
+  return favorites.some(f => 
+    f['nama property'] === propertyData['nama property'] && f._tab === propertyData._tab
+  );
 }
 
-.home-page .tab-badge {
-  top: 12px;
-  right: 12px;
-  background: rgba(255, 255, 255, 0.2);
-  backdrop-filter: blur(8px);
-  border: 1px solid rgba(255, 255, 255, 0.3);
-  z-index: 2;
+function goToFavorite(event) {
+  event.preventDefault();
+  const userData = JSON.parse(localStorage.getItem('bmpro_user') || 'null');
+  if (!userData) {
+    window.location.href = 'register.html';
+  } else {
+    window.location.href = 'favorite.html';
+  }
 }
 
-.home-page .favorite-btn {
-  width: 38px;
-  height: 38px;
-  bottom: 12px;
-  right: 12px;
-  z-index: 2;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+function goToProfile(event) {
+  event.preventDefault();
+  const userData = JSON.parse(localStorage.getItem('bmpro_user') || 'null');
+  if (!userData) {
+    window.location.href = 'register.html';
+  } else {
+    window.location.href = 'profile.html';
+  }
 }
-
-.home-page .card-content {
-  padding: 16px 18px 18px;
-}
-
-.home-page .property-price {
-  font-size: 1.15rem;
-  font-weight: 700;
-  color: var(--home-accent);
-  letter-spacing: -0.02em;
-}
-
-.home-page .property-title {
-  font-size: 0.95rem;
-  font-weight: 600;
-  color: var(--home-primary);
-  margin-bottom: 6px;
-}
-
-.home-page .property-viewers {
-  font-size: 0.72rem;
-  color: #64748b;
-}
-
-.home-page .property-viewers i {
-  color: var(--home-blue);
-}
-
-.home-page .property-address {
-  font-size: 0.75rem;
-  color: #64748b;
-}
-
-.home-page .property-features {
-  border-top-color: #f1f5f9;
-  gap: 16px;
-}
-
-.home-page .feature {
-  background: var(--home-bg);
-  padding: 6px 10px;
-  border-radius: 8px;
-  font-size: 0.72rem;
-  font-weight: 500;
-}
-
-.home-page .carousel-dot {
-  height: 6px;
-  background: #cbd5e1;
-}
-
-.home-page .carousel-dot.active {
-  background: linear-gradient(90deg, #1e40af, #2563eb);
-}
-
-.home-page .carousel-arrow {
-  width: 36px;
-  height: 36px;
-  background: var(--home-surface);
-  box-shadow: var(--home-shadow);
-  bottom: 50%;
-}
-
-.home-page .carousel-arrow i {
-  font-size: 0.75rem;
-  color: var(--home-primary);
-}
-
-/* ---------- Trust banner ---------- */
-.home-trust {
-  margin: 8px 16px 0;
-  padding: 20px;
-  background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
-  border-radius: var(--home-radius);
-  color: #fff;
-  display: flex;
-  align-items: center;
-  gap: 16px;
-  box-shadow: var(--home-shadow);
-}
-
-.home-trust-icon {
-  width: 48px;
-  height: 48px;
-  flex-shrink: 0;
-  background: rgba(255, 255, 255, 0.1);
-  border-radius: 14px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-size: 1.25rem;
-  color: #fbbf24;
-}
-
-.home-trust h5 {
-  font-size: 0.9rem;
-  font-weight: 600;
-  margin-bottom: 4px;
-}
-
-.home-trust p {
-  font-size: 0.75rem;
-  opacity: 0.8;
-  line-height: 1.4;
-}
-
-/* ---------- Footer ---------- */
-.home-footer {
-  margin: 24px 16px 16px;
-  padding: 24px 20px;
-  background: linear-gradient(160deg, #7f1d1d 0%, #991b1b 50%, #b91c1c 100%);
-  border-radius: var(--home-radius);
-  color: #fff;
-  text-align: center;
-  box-shadow: var(--home-shadow);
-}
-
-.home-footer-brand {
-  font-size: 0.95rem;
-  font-weight: 600;
-  margin-bottom: 12px;
-  letter-spacing: 0.02em;
-}
-
-.home-footer p {
-  font-size: 0.72rem;
-  line-height: 1.5;
-  opacity: 0.9;
-  margin: 4px 0;
-}
-
-.home-footer-contact {
-  margin-top: 12px;
-  display: flex;
-  justify-content: center;
-  gap: 12px;
-  flex-wrap: wrap;
-}
-
-.home-footer-contact a {
-  color: #fff;
-  text-decoration: none;
-  font-size: 0.8rem;
-  width: 40px;
-  height: 40px;
-  border-radius: 12px;
-  background: rgba(255, 255, 255, 0.15);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  transition: background 0.2s;
-}
-
-.home-footer-contact a:hover {
-  background: rgba(255, 255, 255, 0.25);
-}
-
-.home-footer-copy {
-  margin-top: 16px;
-  padding-top: 14px;
-  border-top: 1px solid rgba(255, 255, 255, 0.2);
-  font-size: 0.68rem;
-  opacity: 0.75;
-}
-
-/* ---------- Bottom nav (floating, dalam frame) ---------- */
-.mobile-shell .bottom-nav {
-  position: fixed;
-  left: 12px;
-  right: 12px;
-  bottom: max(10px, env(safe-area-inset-bottom, 0px));
-  width: auto;
-  max-width: calc(var(--mobile-max) - 24px);
-  margin: 0 auto;
-  border-radius: 20px;
-  background: rgba(255, 255, 255, 0.95);
-  backdrop-filter: blur(20px);
-  -webkit-backdrop-filter: blur(20px);
-  border: 1px solid rgba(15, 23, 42, 0.08);
-  box-shadow: 0 8px 32px rgba(15, 23, 42, 0.12);
-  padding: 8px 4px calc(8px + env(safe-area-inset-bottom, 0px));
-  z-index: 100;
-}
-
-.home-page .nav-item {
-  flex: 1;
-  min-height: 48px;
-  font-size: 0.62rem;
-  font-weight: 500;
-  gap: 2px;
-  padding: 6px 4px;
-  border-radius: 14px;
-  transition: color 0.2s, background 0.2s;
-  justify-content: center;
-  -webkit-user-select: none;
-  user-select: none;
-}
-
-.home-page .nav-item.active {
-  color: var(--home-blue);
-  background: var(--home-blue-soft);
-}
-
-.home-page .nav-item.active i {
-  color: var(--home-blue);
-}
-
-.home-page .nav-item i {
-  font-size: 1.15rem;
-  margin-bottom: 3px;
-}
-
-/* ---------- Sidebar polish on home ---------- */
-.home-page .sidebar-header {
-  background: linear-gradient(135deg, #0f172a, #1e40af);
-}
-
-/* Area sentuh minimal 44px (standar mobile) */
-.home-page .hamburger-btn,
-.home-page .carousel-arrow {
-  min-height: 44px;
-  min-width: 44px;
-}
-
-.home-page .search-box .filter-btn-inside {
-  min-width: 44px;
-  min-height: 44px;
-}
-
-.category-chip {
-  min-height: 44px;
-}
-
-.home-page .menu-item {
-  min-height: 48px;
-}
-
-/* Semua section tetap lebar penuh frame, tanpa layout desktop */
-.home-page .section-container,
-.home-categories,
-.home-page .search-section,
-.home-trust,
-.home-footer {
-  max-width: 100%;
-}
+</script>
+</body>
+</html>
