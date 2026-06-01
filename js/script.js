@@ -1,6 +1,7 @@
 // ============================================================
 // BMpro - JAVASCRIPT GLOBAL
-// Fungsi-fungsi yang digunakan di semua halaman
+// Hosting: GitHub Pages (situs statis, tanpa server sendiri)
+// Gunakan path relatif di HTML/CSS; data via fetch ke layanan eksternal.
 // ============================================================
 
 // ========== KONFIGURASI OPENSHEET ==========
