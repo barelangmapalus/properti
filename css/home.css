@@ -615,7 +615,7 @@ body.home-page > .home-fixed-nav {
   left: 50%;
   right: auto;
   transform: translateX(-50%);
-  width: min(calc(100vw - 32px), calc(var(--mobile-max) - 32px));
+  width: min(calc(100vw - 16px), calc(var(--mobile-max) - 16px));
   bottom: max(6px, env(safe-area-inset-bottom, 0px));
   margin: 0;
   border-radius: 14px;
@@ -624,22 +624,26 @@ body.home-page > .home-fixed-nav {
   -webkit-backdrop-filter: blur(20px);
   border: 1px solid rgba(15, 23, 42, 0.08);
   box-shadow: 0 4px 20px rgba(15, 23, 42, 0.1);
-  padding: 4px 2px;
+  padding: 5px 10px;
   z-index: 3000;
   display: flex;
-  justify-content: space-around;
+  justify-content: space-between;
   align-items: center;
+  gap: 6px;
   border-top: none;
   min-height: 0;
+  box-sizing: border-box;
 }
 
 body.home-page > .home-fixed-nav .nav-item {
   flex: 1;
+  min-width: 0;
   min-height: 40px;
   font-size: 0.52rem;
   font-weight: 500;
   gap: 1px;
-  padding: 4px 2px;
+  padding: 4px 6px;
+  margin: 0 2px;
   border-radius: 10px;
   transition: color 0.2s, background 0.2s;
   justify-content: center;
