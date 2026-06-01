@@ -3,20 +3,18 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=yes, viewport-fit=cover">
-  <meta name="theme-color" content="#2c3e50">
+  <meta name="theme-color" content="#0f172a">
   
   <title>BMpro - Properti Batam</title>
   
-  <!-- Font Awesome -->
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-  <!-- Google Fonts -->
-  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
-  <!-- CSS Global -->
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="css/style.css">
+  <link rel="stylesheet" href="css/home.css">
 </head>
-<body>
+<body class="home-page">
 
-  <!-- ========== SIDEBAR MENU ========== -->
+  <!-- SIDEBAR -->
   <div class="menu-overlay" id="menuOverlay"></div>
   
   <div class="sidebar-menu" id="sidebarMenu">
@@ -25,7 +23,7 @@
         <div class="sidebar-logo">
           <img src="https://drive.google.com/thumbnail?id=1a3cJptxJTSHksm9D7tN3us_7Ii7dQxxG&sz=w100" 
                alt="BMpro Logo"
-               onerror="this.src='https://via.placeholder.com/100x100/2c3e50/ffffff?text=BM'">
+               onerror="this.src='https://via.placeholder.com/100x100/0f172a/ffffff?text=BM'">
         </div>
         <h3>BMpro</h3>
       </div>
@@ -35,7 +33,7 @@
     <div class="sidebar-nav">
       <a href="index.html" class="menu-item"><i class="fas fa-home"></i><span>Beranda</span></a>
       <a href="search.html" class="menu-item"><i class="fas fa-search"></i><span>Cari Properti</span></a>
-      <a href="#" class="menu-item"><i class="fas fa-heart"></i><span>Favorit Saya</span></a>
+      <a href="#" class="menu-item" onclick="goToFavorite(event)"><i class="fas fa-heart"></i><span>Favorit Saya</span></a>
       <a href="search.html?tab=primary" class="menu-item"><i class="fas fa-building"></i><span>Primary</span></a>
       <a href="search.html?tab=secondary" class="menu-item"><i class="fas fa-home"></i><span>Secondary</span></a>
       <a href="search.html?tab=rent" class="menu-item"><i class="fas fa-key"></i><span>Rent</span></a>
@@ -47,120 +45,151 @@
     </div>
   </div>
 
-  <!-- ========== HEADER ========== -->
+  <!-- HERO -->
   <header class="mobile-header">
     <div class="header-overlay"></div>
     
-    <button class="hamburger-btn" id="hamburgerBtn">
+    <button class="hamburger-btn" id="hamburgerBtn" aria-label="Menu">
       <i class="fas fa-bars"></i>
     </button>
     
     <div class="header-content">
-      <span class="badge"><i class="fas fa-star"></i> Premium</span>
+      <span class="badge"><i class="fas fa-star"></i> Agen Properti Terpercaya</span>
       <h1>Temukan Properti<br>Impian Anda</h1>
-      <p><i class="fas fa-map-pin"></i> Batam, Kepulauan Riau <i class="fas fa-circle" style="font-size: 3px; margin: 0 6px;"></i> 150+ Properti</p>
+      <div class="header-stats">
+        <span class="header-stat"><i class="fas fa-map-marker-alt"></i> Batam, Kepulauan Riau</span>
+        <span class="dot" aria-hidden="true"></span>
+        <span class="header-stat"><i class="fas fa-building"></i> 150+ Listing</span>
+      </div>
     </div>
   </header>
 
-  <!-- ========== SEARCH SECTION ========== -->
+  <!-- SEARCH -->
   <div class="search-section">
     <div class="search-box">
       <i class="fas fa-search"></i>
       <input type="text" placeholder="Cari properti, lokasi, atau harga..." id="searchInput">
-      <button id="searchBtn">Cari</button>
-      <button class="filter-btn-inside" id="filterBtn"><i class="fas fa-sliders-h"></i></button>
+      <button type="button" id="searchBtn">Cari</button>
+      <button type="button" class="filter-btn-inside" id="filterBtn" aria-label="Filter"><i class="fas fa-sliders-h"></i></button>
     </div>
   </div>
 
-  <!-- ========== PROPERTY LISTINGS (HOME) ========== -->
-  <!-- ========== PRIMARY SECTION (PROPERTI BARU) ========== -->
-<div class="section-container">
-  <div class="section-header">
-    <h4><i class="fas fa-building" style="color: #3498db;"></i> Primary</h4>
-    <a href="search.html?tab=primary">Lihat Semua <i class="fas fa-chevron-right" style="font-size: 0.6rem;"></i></a>
+  <!-- QUICK CATEGORIES -->
+  <nav class="home-categories" aria-label="Kategori properti">
+    <a href="search.html?tab=primary" class="category-chip primary">
+      <i class="fas fa-building"></i> Primary
+    </a>
+    <a href="search.html?tab=secondary" class="category-chip secondary">
+      <i class="fas fa-home"></i> Secondary
+    </a>
+    <a href="search.html?tab=rent" class="category-chip rent">
+      <i class="fas fa-key"></i> Sewa
+    </a>
+    <a href="#" class="category-chip fav" onclick="goToFavorite(event)">
+      <i class="fas fa-heart"></i> Favorit
+    </a>
+  </nav>
+
+  <!-- PRIMARY -->
+  <div class="section-container">
+    <div class="section-header">
+      <h4>
+        <span class="section-icon primary"><i class="fas fa-building"></i></span>
+        Properti Primary
+      </h4>
+      <a href="search.html?tab=primary">Lihat Semua <i class="fas fa-chevron-right"></i></a>
+    </div>
+    
+    <div class="featured-carousel" id="primaryCarousel">
+      <div class="carousel-container" id="primaryContainer">
+        <div class="loading"><i class="fas fa-spinner"></i><p>Memuat properti...</p></div>
+      </div>
+      <div class="carousel-arrow prev" id="primaryPrev" role="button" aria-label="Sebelumnya"><i class="fas fa-chevron-left"></i></div>
+      <div class="carousel-arrow next" id="primaryNext" role="button" aria-label="Berikutnya"><i class="fas fa-chevron-right"></i></div>
+    </div>
+    <div class="carousel-indicators" id="primaryIndicators"></div>
   </div>
-  
-  <div class="featured-carousel" id="primaryCarousel">
-    <div class="carousel-container" id="primaryContainer">
-      <div class="loading"><i class="fas fa-spinner"></i><p>Memuat properti...</p></div>
+
+  <!-- SECONDARY -->
+  <div class="section-container">
+    <div class="section-header">
+      <h4>
+        <span class="section-icon secondary"><i class="fas fa-home"></i></span>
+        Properti Secondary
+      </h4>
+      <a href="search.html?tab=secondary">Lihat Semua <i class="fas fa-chevron-right"></i></a>
     </div>
-    <div class="carousel-arrow prev" id="primaryPrev"><i class="fas fa-chevron-left"></i></div>
-    <div class="carousel-arrow next" id="primaryNext"><i class="fas fa-chevron-right"></i></div>
+    
+    <div class="featured-carousel" id="secondaryCarousel">
+      <div class="carousel-container" id="secondaryContainer">
+        <div class="loading"><i class="fas fa-spinner"></i><p>Memuat properti...</p></div>
+      </div>
+      <div class="carousel-arrow prev" id="secondaryPrev" role="button" aria-label="Sebelumnya"><i class="fas fa-chevron-left"></i></div>
+      <div class="carousel-arrow next" id="secondaryNext" role="button" aria-label="Berikutnya"><i class="fas fa-chevron-right"></i></div>
+    </div>
+    <div class="carousel-indicators" id="secondaryIndicators"></div>
   </div>
-  <div class="carousel-indicators" id="primaryIndicators"></div>
-</div>
 
-<!-- ========== SECONDARY SECTION (RUMAH BEKAS) ========== -->
-<div class="section-container">
-      <div class="section-header">
-        <h4><i class="fas fa-home" style="color: #e67e22;"></i> Secondary</h4>
-        <a href="search.html?tab=secondary">Lihat Semua <i class="fas fa-chevron-right" style="font-size: 0.6rem;"></i></a>
-      </div>
-      
-      <div class="featured-carousel" id="secondaryCarousel">
-        <div class="carousel-container" id="secondaryContainer">
-          <div class="loading"><i class="fas fa-spinner"></i><p>Memuat properti...</p></div>
-        </div>
-        <div class="carousel-arrow prev" id="secondaryPrev"><i class="fas fa-chevron-left"></i></div>
-        <div class="carousel-arrow next" id="secondaryNext"><i class="fas fa-chevron-right"></i></div>
-      </div>
-      <div class="carousel-indicators" id="secondaryIndicators"></div>
+  <!-- RENT -->
+  <div class="section-container">
+    <div class="section-header">
+      <h4>
+        <span class="section-icon rent"><i class="fas fa-key"></i></span>
+        Properti Sewa
+      </h4>
+      <a href="search.html?tab=rent">Lihat Semua <i class="fas fa-chevron-right"></i></a>
     </div>
+    
+    <div class="featured-carousel" id="rentCarousel">
+      <div class="carousel-container" id="rentContainer">
+        <div class="loading"><i class="fas fa-spinner"></i><p>Memuat properti...</p></div>
+      </div>
+      <div class="carousel-arrow prev" id="rentPrev" role="button" aria-label="Sebelumnya"><i class="fas fa-chevron-left"></i></div>
+      <div class="carousel-arrow next" id="rentNext" role="button" aria-label="Berikutnya"><i class="fas fa-chevron-right"></i></div>
+    </div>
+    <div class="carousel-indicators" id="rentIndicators"></div>
+  </div>
 
-    <!-- ========== RENT SECTION (SEWA) ========== -->
-    <div class="section-container">
-      <div class="section-header">
-        <h4><i class="fas fa-key" style="color: #27ae60;"></i> Rent</h4>
-        <a href="search.html?tab=rent">Lihat Semua <i class="fas fa-chevron-right" style="font-size: 0.6rem;"></i></a>
-      </div>
-      
-      <div class="featured-carousel" id="rentCarousel">
-        <div class="carousel-container" id="rentContainer">
-          <div class="loading"><i class="fas fa-spinner"></i><p>Memuat properti...</p></div>
-        </div>
-        <div class="carousel-arrow prev" id="rentPrev"><i class="fas fa-chevron-left"></i></div>
-        <div class="carousel-arrow next" id="rentNext"><i class="fas fa-chevron-right"></i></div>
-      </div>
-      <div class="carousel-indicators" id="rentIndicators"></div>
+  <!-- TRUST BANNER -->
+  <aside class="home-trust">
+    <div class="home-trust-icon"><i class="fas fa-shield-halved"></i></div>
+    <div>
+      <h5>Barelang Mapalus Properti</h5>
+      <p>Mitra terpercaya untuk jual, beli, dan sewa properti di Batam sejak bertahun-tahun.</p>
     </div>
+  </aside>
 
-
-    <!-- ========== FOOTER ========== -->
-  <footer style="background-color: #8B0000; color: white; padding: 16px 12px; margin-top: 20px; text-align: center;">
-    <div class="footer-content">
-      <h3 style="font-size: 11px; font-weight: 500; margin-bottom: 6px; letter-spacing: 0.5px;">Barelang Mapalus Properti</h3>
-      <p style="font-size: 9px; margin: 3px 0; line-height: 1.3;">Alamat: Mall Apartemen Pollux Batam Lantai 1</p>
-      <p style="font-size: 9px; margin: 3px 0; line-height: 1.3;">Jl. Jend. A. Yani, Taman Baloi, Kec. Batam Kota, Kepulauan Riau 29444</p>
-      <p style="font-size: 9px; margin: 3px 0; line-height: 1.3;">
-        Phone +62 823 8574 5630 | E-mail: barelangmapalus@gmail.com
-      </p>
+  <!-- FOOTER -->
+  <footer class="home-footer">
+    <div class="home-footer-brand">Barelang Mapalus Properti</div>
+    <p>Mall Apartemen Pollux Batam Lantai 1</p>
+    <p>Jl. Jend. A. Yani, Taman Baloi, Batam Kota, Kepulauan Riau 29444</p>
+    <p>+62 823 8574 5630 · barelangmapalus@gmail.com</p>
+    <div class="home-footer-contact">
+      <a href="tel:+6282385745630" aria-label="Telepon"><i class="fas fa-phone"></i></a>
+      <a href="mailto:barelangmapalus@gmail.com" aria-label="Email"><i class="fas fa-envelope"></i></a>
+      <a href="contact.html" aria-label="Hubungi"><i class="fas fa-headset"></i></a>
     </div>
-    <div style="margin-top: 10px; padding-top: 8px; border-top: 1px solid rgba(255,255,255,0.2); font-size: 8px;">
-      <p>&copy; 2025 Barelang Mapalus Properti</p>
-    </div>
+    <div class="home-footer-copy">&copy; 2025 Barelang Mapalus Properti</div>
   </footer>
 
-  <!-- ========== BOTTOM NAVIGATION ========== -->
-    <nav class="bottom-nav">
-      <a href="index.html" class="nav-item active"><i class="fas fa-home"></i><span>Beranda</span></a>
-      <a href="search.html" class="nav-item"><i class="fas fa-search"></i><span>Cari</span></a>
-      <a href="#" class="nav-item" onclick="goToFavorite(event)"><i class="fas fa-heart"></i><span>Favorit</span></a>
-      <a href="#" class="nav-item" onclick="goToProfile(event)"><i class="fas fa-user"></i><span>Profil</span></a>
-    </nav>
+  <!-- BOTTOM NAV -->
+  <nav class="bottom-nav">
+    <a href="index.html" class="nav-item active"><i class="fas fa-home"></i><span>Beranda</span></a>
+    <a href="search.html" class="nav-item"><i class="fas fa-search"></i><span>Cari</span></a>
+    <a href="#" class="nav-item" onclick="goToFavorite(event)"><i class="fas fa-heart"></i><span>Favorit</span></a>
+    <a href="#" class="nav-item" onclick="goToProfile(event)"><i class="fas fa-user"></i><span>Profil</span></a>
+  </nav>
 
-  <!-- JavaScript Global -->
-<script src="js/script.js"></script>
+  <script src="js/script.js"></script>
 
-<!-- JavaScript Khusus Home -->
 <script>
-  // ========== CAROUSEL STATE ==========
   const carouselState = {
     primary: { current: 0, total: 0, interval: null },
     secondary: { current: 0, total: 0, interval: null },
     rent: { current: 0, total: 0, interval: null }
   };
 
-  // ========== LOAD ALL SECTIONS ==========
   async function loadAllSections() {
     await Promise.all([
       loadCarouselSection('primary'),
@@ -173,10 +202,8 @@
   try {
     const data = await fetchSheetData(tabName);
     
-    // Filter yang memiliki gambar utama
     let validData = data.filter(item => item['gambar utama']);
     
-    // 🔥 JIKA DATA KOSONG, PAKAI DUMMY DATA
     if (validData.length === 0) {
       console.log(`Data ${tabName} kosong, pakai dummy data`);
       const dummyImage = 'https://lh3.googleusercontent.com/d/1aBSLJypeJm4tqsXRiUhO97NPJpRq-ZcK=w400';
@@ -221,14 +248,12 @@
       return;
     }
     
-    // Urutkan berdasarkan timestamp terbaru
     validData.sort((a, b) => {
       const timeA = new Date(a['timestamp'] || 0);
       const timeB = new Date(b['timestamp'] || 0);
       return timeB - timeA;
     });
     
-    // Ambil maksimal 3 data
     const properties = validData.slice(0, 3).map(item => ({
       ...item,
       _tab: tabName,
@@ -245,7 +270,6 @@
   } catch (e) {
     console.error(`Error loading ${tabName}:`, e);
     
-    // 🔥 JIKA FETCH GAGAL, PAKAI DUMMY DATA
     const dummyImage = 'https://lh3.googleusercontent.com/d/1aBSLJypeJm4tqsXRiUhO97NPJpRq-ZcK=w400';
     
     let dummyData = [];
@@ -302,7 +326,6 @@
     
     carouselState[tabName].total = properties.length;
     
-    // Buat slide
     container.innerHTML = properties.map((p, i) => {
       const detailId = `${tabName}_${Date.now()}_${i}`;
       sessionStorage.setItem(detailId, JSON.stringify(p));
@@ -343,19 +366,13 @@
       `;
     }).join('');
     
-    // Buat indicators
     indicators.innerHTML = properties.map((_, i) => `
       <span class="carousel-dot ${i === 0 ? 'active' : ''}" onclick="goToSlide('${tabName}', ${i})"></span>
     `).join('');
     
-    // Reset posisi
     carouselState[tabName].current = 0;
     updateCarouselPosition(tabName);
-    
-    // Mulai auto-slide
     startAutoSlide(tabName);
-    
-    // Setup event listeners
     setupCarouselControls(tabName);
   }
 
@@ -433,7 +450,6 @@
       newNextBtn.addEventListener('click', () => nextSlide(tabName));
     }
     
-    // Swipe support
     if (carousel) {
       let touchStartX = 0;
       
@@ -458,26 +474,6 @@
     }
   }
 
-  // ========== GALLERY ==========
-  function displayGallery() {
-    const container = document.getElementById('galleryList');
-    if (!container) return;
-    
-    const dummyImages = [
-      { name: 'Interior 1', url: 'https://images.unsplash.com/photo-1600210492493-0946911123ea?w=400' },
-      { name: 'Interior 2', url: 'https://images.unsplash.com/photo-1600607687939-ce8a6c25118c?w=400' },
-      { name: 'Eksterior 1', url: 'https://images.unsplash.com/photo-1600585154340-be6161a56a0c?w=400' },
-      { name: 'Kamar Tidur', url: 'https://images.unsplash.com/photo-1600566753086-00f18fb6b3ea?w=400' }
-    ];
-    container.innerHTML = dummyImages.map((img, i) => `
-      <div class="gallery-item">
-        <img src="${img.url}" alt="${img.name}">
-        <div class="overlay"><i class="fas fa-home"></i> Properti ${i+1}</div>
-      </div>
-    `).join('');
-  }
-
-  // ========== NAVIGASI ==========
   document.addEventListener('DOMContentLoaded', function() {
     const searchBtn = document.getElementById('searchBtn');
     const filterBtn = document.getElementById('filterBtn');
@@ -503,19 +499,10 @@
         }
       });
     }
-  });
 
-  // ========== INIT ==========
-  document.addEventListener('DOMContentLoaded', function() {
     loadAllSections();
-    displayGallery();
   });
 
-
-
-
-
-  // ========== FAVORIT / LOVE (LOKAL UNTUK HOME) ==========
 function toggleLove(btn, propertyData) {
   const icon = btn.querySelector('i');
   const userData = JSON.parse(localStorage.getItem('bmpro_user') || 'null');
@@ -529,14 +516,14 @@ function toggleLove(btn, propertyData) {
   if (icon.classList.contains('far')) {
     icon.classList.remove('far');
     icon.classList.add('fas');
-    btn.style.background = '#e74c3c';
+    btn.style.background = '#c41e3a';
     icon.style.color = 'white';
     saveLocalFavorite(propertyData);
   } else {
     icon.classList.remove('fas');
     icon.classList.add('far');
     btn.style.background = 'rgba(255,255,255,0.95)';
-    icon.style.color = '#e74c3c';
+    icon.style.color = '#c41e3a';
     removeLocalFavorite(propertyData);
   }
 }
@@ -567,7 +554,6 @@ function isLocalFavorite(propertyData) {
   );
 }
 
-// ========== NAVIGASI FAVORIT & PROFIL ==========
 function goToFavorite(event) {
   event.preventDefault();
   const userData = JSON.parse(localStorage.getItem('bmpro_user') || 'null');
@@ -589,4 +575,4 @@ function goToProfile(event) {
 }
 </script>
 </body>
-</html>1
+</html>
