@@ -215,10 +215,17 @@ const SCRIPT_URL =
 
             ${property['youtube'] ? `
               <div class="youtube-preview">
-                <a href="${property['youtube']}" target="_blank" class="youtube-btn">
-                  <i class="fab fa-youtube"></i>
-                  Tonton Video Properti
-                </a>
+
+                <div class="youtube-frame">
+                  <iframe
+                    src="${convertYoutubeEmbed(property['youtube'])}"
+                    title="Video Properti"
+                    frameborder="0"
+                    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                    allowfullscreen>
+                  </iframe>
+                </div>
+
               </div>
             ` : ''}
 
