@@ -204,27 +204,23 @@ const SCRIPT_URL =
         }
         
         content.innerHTML = `
-      <div class="posted-date">
-          Diposting ${formattedDate.replace(',', ' •')}
-        </div>
-        <div class="detail-main-image">
-            <img src="${allImages[0] || 'https://images.unsplash.com/photo-1580587771525-78b9dba3b914?w=600'}" 
-                alt="${property['nama property']}" id="mainImage">
-                
-            ${allImages.length > 1 ? `<span class="image-counter" id="imageCounter">1/${allImages.length}</span>` : ''}
+        <div class="posted-date">
+            Diposting ${formattedDate.replace(',', ' •')}
           </div>
 
-          ${property['youtube'] ? `
-            <div class="youtube-wrapper">
-              <iframe
-                src="${convertYoutubeEmbed(property['youtube'])}"
-                title="YouTube video"
-                frameborder="0"
-                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-                allowfullscreen>
-              </iframe>
+          <div class="detail-main-image">
+              <img src="${allImages[0]}" alt="${escapeHtml(property['nama property'])}" id="mainImage" onerror="this.src='https://images.unsplash.com/photo-1580587771525-78b9dba3b914?w=600'">
+              ${allImages.length > 1 ? `<span class="image-counter" id="imageCounter">1/${allImages.length}</span>` : ''}
             </div>
-          ` : ''}
+
+            ${property['youtube'] ? `
+              <div class="youtube-preview">
+                <a href="${property['youtube']}" target="_blank" class="youtube-btn">
+                  <i class="fab fa-youtube"></i>
+                  Tonton Video Properti
+                </a>
+              </div>
+            ` : ''}
 
             ${thumbnailHtml}
 
