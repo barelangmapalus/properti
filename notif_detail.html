@@ -88,20 +88,30 @@
     font-weight: 500;
     }
 
-    .youtube-wrapper{
-    margin:16px;
-    border-radius:16px;
-    overflow:hidden;
-    background:#000;
-    box-shadow:0 4px 12px rgba(0,0,0,0.12);
-  }
+    .youtube-preview{
+  padding: 14px 16px 4px;
+  background: #fff;
+}
 
-  .youtube-wrapper iframe{
-    width:100%;
-    height:220px;
-    display:block;
-    border:none;
-  }
+.youtube-btn{
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  gap:10px;
+  width:100%;
+  padding:14px;
+  border-radius:14px;
+  background:#ff0000;
+  color:#fff;
+  text-decoration:none;
+  font-weight:600;
+  font-size:14px;
+  box-shadow:0 4px 12px rgba(255,0,0,0.2);
+}
+
+.youtube-btn i{
+  font-size:18px;
+}
 
   </style>
 </head>
@@ -126,7 +136,7 @@
   <script>
 
 const SCRIPT_URL =
-      'https://script.google.com/macros/s/AKfycbxWqS9Hdc9khCZKSeqi27A_9bkZOiskCe_iKKWeArhvhHhmUuviS04abtmlR1qujfSz/exec';
+      'https://script.google.com/macros/s/AKfycbxUbylqFmLDu4dTUgN9AZqZfnBJI1yTzOUsEBm8KAycWLJmmTT2MKOJ0w1wVuvMn_64/exec';
 
 
     (function() {
@@ -194,14 +204,15 @@ const SCRIPT_URL =
         }
         
         content.innerHTML = `
-        <div class="posted-date">
-            Diposting ${formattedDate.replace(',', ' •')}
+      <div class="posted-date">
+          Diposting ${formattedDate.replace(',', ' •')}
+        </div>
+        <div class="detail-main-image">
+            <img src="${allImages[0] || 'https://images.unsplash.com/photo-1580587771525-78b9dba3b914?w=600'}" 
+                alt="${property['nama property']}" id="mainImage">
+                
+            ${allImages.length > 1 ? `<span class="image-counter" id="imageCounter">1/${allImages.length}</span>` : ''}
           </div>
-
-          <div class="detail-main-image">
-              <img src="${allImages[0]}" alt="${escapeHtml(property['nama property'])}" id="mainImage" onerror="this.src='https://images.unsplash.com/photo-1580587771525-78b9dba3b914?w=600'">
-              ${allImages.length > 1 ? `<span class="image-counter" id="imageCounter">1/${allImages.length}</span>` : ''}
-             </div>
 
           ${property['youtube'] ? `
             <div class="youtube-wrapper">
@@ -213,7 +224,7 @@ const SCRIPT_URL =
                 allowfullscreen>
               </iframe>
             </div>
-            ` : ''}
+          ` : ''}
 
             ${thumbnailHtml}
 
