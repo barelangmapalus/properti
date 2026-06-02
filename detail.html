@@ -92,6 +92,12 @@
     border:none;
   }
 
+  .detail-description p{
+  white-space: pre-line;
+  line-height: 1.7;
+  word-wrap: break-word;
+  }
+
   </style>
 </head>
 <body>
@@ -346,7 +352,7 @@
         ${property['spesifikasi'] ? `
           <div class="detail-description">
             <h3>Deskripsi</h3>
-            <p>${property['spesifikasi']}</p>
+            <p>${property['spesifikasi'] || '-'}</p>
           </div>
         ` : ''}
       
