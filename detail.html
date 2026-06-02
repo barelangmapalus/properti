@@ -77,6 +77,21 @@
   font-weight: 500;
   }
 
+  .youtube-wrapper{
+    margin:16px;
+    border-radius:16px;
+    overflow:hidden;
+    background:#000;
+    box-shadow:0 4px 12px rgba(0,0,0,0.12);
+  }
+
+  .youtube-wrapper iframe{
+    width:100%;
+    height:220px;
+    display:block;
+    border:none;
+  }
+
   </style>
 </head>
 <body>
@@ -261,10 +276,23 @@
           Diposting ${formattedDate.replace(',', ' •')}
         </div>
         <div class="detail-main-image">
-          <img src="${allImages[0] || 'https://images.unsplash.com/photo-1580587771525-78b9dba3b914?w=600'}" 
-               alt="${property['nama property']}" id="mainImage">
-          ${allImages.length > 1 ? `<span class="image-counter" id="imageCounter">1/${allImages.length}</span>` : ''}
-        </div>
+            <img src="${allImages[0] || 'https://images.unsplash.com/photo-1580587771525-78b9dba3b914?w=600'}" 
+                alt="${property['nama property']}" id="mainImage">
+                
+            ${allImages.length > 1 ? `<span class="image-counter" id="imageCounter">1/${allImages.length}</span>` : ''}
+          </div>
+
+          ${property['youtube'] ? `
+            <div class="youtube-wrapper">
+              <iframe
+                src="${convertYoutubeEmbed(property['youtube'])}"
+                title="YouTube video"
+                frameborder="0"
+                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                allowfullscreen>
+              </iframe>
+            </div>
+          ` : ''}
         
         ${allImages.length > 1 ? `
           <div class="detail-thumbnails">
@@ -359,6 +387,36 @@
       });
       const counter = document.getElementById('imageCounter');
       if (counter) counter.textContent = `${index + 1}/${allImages.length}`;
+    }
+
+    function convertYoutubeEmbed(url) {
+
+      if (!url) return '';
+
+      // youtu.be/xxxx
+      if (url.includes('youtu.be/')) {
+
+        const id =
+          url.split('youtu.be/')[1]
+          .split('?')[0];
+
+        return `https://www.youtube.com/embed/${id}`;
+
+      }
+
+      // youtube.com/watch?v=xxxx
+      if (url.includes('watch?v=')) {
+
+        const id =
+          url.split('watch?v=')[1]
+          .split('&')[0];
+
+        return `https://www.youtube.com/embed/${id}`;
+
+      }
+
+      return url;
+
     }
     
     // ========== INIT ==========
