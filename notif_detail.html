@@ -87,6 +87,32 @@
     color: #777;
     font-weight: 500;
     }
+
+    .youtube-preview{
+  padding: 14px 16px 4px;
+  background: #fff;
+}
+
+.youtube-btn{
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  gap:10px;
+  width:100%;
+  padding:14px;
+  border-radius:14px;
+  background:#ff0000;
+  color:#fff;
+  text-decoration:none;
+  font-weight:600;
+  font-size:14px;
+  box-shadow:0 4px 12px rgba(255,0,0,0.2);
+}
+
+.youtube-btn i{
+  font-size:18px;
+}
+
   </style>
 </head>
 <body>
@@ -183,10 +209,20 @@ const SCRIPT_URL =
           </div>
 
           <div class="detail-main-image">
-            <img src="${allImages[0]}" alt="${escapeHtml(property['nama property'])}" id="mainImage" onerror="this.src='https://images.unsplash.com/photo-1580587771525-78b9dba3b914?w=600'">
-            ${allImages.length > 1 ? `<span class="image-counter" id="imageCounter">1/${allImages.length}</span>` : ''}
-          </div>
-          ${thumbnailHtml}
+              <img src="${allImages[0]}" alt="${escapeHtml(property['nama property'])}" id="mainImage" onerror="this.src='https://images.unsplash.com/photo-1580587771525-78b9dba3b914?w=600'">
+              ${allImages.length > 1 ? `<span class="image-counter" id="imageCounter">1/${allImages.length}</span>` : ''}
+            </div>
+
+            ${property['youtube'] ? `
+              <div class="youtube-preview">
+                <a href="${property['youtube']}" target="_blank" class="youtube-btn">
+                  <i class="fab fa-youtube"></i>
+                  Tonton Video Properti
+                </a>
+              </div>
+            ` : ''}
+
+            ${thumbnailHtml}
 
           <div class="detail-info">
             <div class="detail-price">
