@@ -131,374 +131,239 @@
   
   <!-- JS Khusus untuk notif_detail.html (WA Notification) -->
   <script>
+  const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbx4qXEG_UdM4j3SYeZ5k46dkmpy-CdCAMVqjDd2145Y0xIHvQ3b4VRWsahSVqWVlLAD/exec';
 
-const SCRIPT_URL =
-      'https://script.google.com/macros/s/AKfycbxhBFaTZ1UVC_4oXp_JvEHOWIq9vz6VxWtYcYkd2fgTRdIn5bPH2a-8DxXwI_poJskV/exec';
-
-
-    (function() {
-      // Ambil timestamp dari URL (format: ?id=2026-05-26T04:47:15.644Z)
-      const urlParams = new URLSearchParams(window.location.search);
-      const timestamp = urlParams.get('id');
+  (function() {
+    // 🔥 PERUBAHAN 1: Ambil property_id dari URL
+    const urlParams = new URLSearchParams(window.location.search);
+    const propertyId = urlParams.get('id');
+    
+    let allImages = [];
+    let foundProperty = null;
+    let foundCategory = '';
+    
+    const SHEETS = ['primary', 'secondary', 'rent'];
+    
+    function showError(message) {
+      document.getElementById('detailContent').innerHTML = `
+        <div class="empty-state">
+          <i class="fas fa-exclamation-triangle"></i>
+          <p>${message}</p>
+          <p style="font-size:12px; margin-top:10px;">Property ID: ${propertyId || 'tidak ada'}</p>
+          <a href="index.html" style="display:inline-block;margin-top:16px;color:var(--secondary);">Kembali ke Beranda</a>
+        </div>
+      `;
+    }
+    
+    function displayDetail(property, category) {
+      // Kumpulkan gambar
+      allImages = [];
+      if (property['gambar utama']) allImages.push(convertDriveUrl(property['gambar utama']));
+      if (property['gambar2']) allImages.push(convertDriveUrl(property['gambar2']));
+      if (property['gambar3']) allImages.push(convertDriveUrl(property['gambar3']));
+      if (property['gambar4']) allImages.push(convertDriveUrl(property['gambar4']));
+      if (property['gambar5']) allImages.push(convertDriveUrl(property['gambar5']));
       
-      let allImages = [];
-      let foundProperty = null;
-      let foundCategory = '';
-      
-      // Gunakan SHEET_ID dari script global (js/script.js)
-      const SHEETS = ['primary', 'secondary', 'rent'];
-      
-      function showError(message) {
-        document.getElementById('detailContent').innerHTML = `
-          <div class="empty-state">
-            <i class="fas fa-exclamation-triangle"></i>
-            <p>${message}</p>
-            <p style="font-size:12px; margin-top:10px;">Timestamp: ${timestamp || 'tidak ada'}</p>
-            <a href="index.html" style="display:inline-block;margin-top:16px;color:var(--secondary);">Kembali ke Beranda</a>
-          </div>
-        `;
+      if (allImages.length === 0) {
+        allImages = ['https://images.unsplash.com/photo-1580587771525-78b9dba3b914?w=600'];
       }
       
-      function displayDetail(property, category) {
-        // Kumpulkan gambar
-        allImages = [];
-        if (property['gambar utama']) allImages.push(convertDriveUrl(property['gambar utama']));
-        if (property['gambar2']) allImages.push(convertDriveUrl(property['gambar2']));
-        if (property['gambar3']) allImages.push(convertDriveUrl(property['gambar3']));
-        if (property['gambar4']) allImages.push(convertDriveUrl(property['gambar4']));
-        if (property['gambar5']) allImages.push(convertDriveUrl(property['gambar5']));
-        
-        if (allImages.length === 0) {
-          allImages = ['https://images.unsplash.com/photo-1580587771525-78b9dba3b914?w=600'];
-        }
-        
-        document.getElementById('detailTitle').textContent = property['nama property'] || 'Detail Properti';
-        
-        const content = document.getElementById('detailContent');
-
-        const rawTimestamp = property.timestamp || '';
-
-        const date = new Date(rawTimestamp);
-
-        const formattedDate = date.toLocaleString('id-ID', {
-          day: '2-digit',
-          month: 'long',
-          year: 'numeric',
-          hour: '2-digit',
-          minute: '2-digit',
-          timeZone: 'Asia/Jakarta'
-        }) + ' WIB';
-        
-        let thumbnailHtml = '';
-        if (allImages.length > 1) {
-          thumbnailHtml = `<div class="detail-thumbnails">
-            ${allImages.map((img, i) => `
-              <div class="thumbnail ${i === 0 ? 'active' : ''}" onclick="window.changeImage(${i})">
-                <img src="${img}" alt="Thumbnail ${i+1}">
-              </div>
-            `).join('')}
-          </div>`;
-        }
-        
-        content.innerHTML = `
+      document.getElementById('detailTitle').textContent = property['nama property'] || 'Detail Properti';
+      
+      const content = document.getElementById('detailContent');
+      const rawTimestamp = property.timestamp || '';
+      const date = new Date(rawTimestamp);
+      const formattedDate = date.toLocaleString('id-ID', {
+        day: '2-digit',
+        month: 'long',
+        year: 'numeric',
+        hour: '2-digit',
+        minute: '2-digit',
+        timeZone: 'Asia/Jakarta'
+      }) + ' WIB';
+      
+      let thumbnailHtml = '';
+      if (allImages.length > 1) {
+        thumbnailHtml = `<div class="detail-thumbnails">
+          ${allImages.map((img, i) => `
+            <div class="thumbnail ${i === 0 ? 'active' : ''}" onclick="window.changeImage(${i})">
+              <img src="${img}" alt="Thumbnail ${i+1}">
+            </div>
+          `).join('')}
+        </div>`;
+      }
+      
+      content.innerHTML = `
         <div class="posted-date">
-            Diposting ${formattedDate.replace(',', ' •')}
-          </div>
-
-          <div class="detail-main-image">
-              <img src="${allImages[0]}" alt="${escapeHtml(property['nama property'])}" id="mainImage" onerror="this.src='https://images.unsplash.com/photo-1580587771525-78b9dba3b914?w=600'">
-              ${allImages.length > 1 ? `<span class="image-counter" id="imageCounter">1/${allImages.length}</span>` : ''}
-            </div>
-
-            ${property['youtube'] ? `
-              <div class="youtube-preview">
-
-                <div class="youtube-frame">
-                  <iframe
-                    src="${convertYoutubeEmbed(property['youtube'])}"
-                    title="Video Properti"
-                    frameborder="0"
-                    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-                    allowfullscreen>
-                  </iframe>
-                </div>
-
-              </div>
-            ` : ''}
-
-            ${thumbnailHtml}
-
-          <div class="detail-info">
-            <div class="detail-price">
-              ${formatPrice(property['harga'])}
-            </div>
-
-            <h2 class="detail-title">
-              ${escapeHtml(property['nama property'] || '-')}
-            </h2>
-
-            <div class="detail-viewer">
-              👁️ <span id="viewerCount">
-                ${property['viewer'] || '0'}
-              </span>x dilihat
-            </div>
-
-            <div class="detail-location">
-              <i class="fas fa-map-marker-alt"></i>
-              ${escapeHtml(property['lokasi'] || '-')}
-            </div>
-
-            <div class="detail-features">
-              <div class="detail-feature">
-                <i class="fas fa-bed"></i>
-                <div class="value">${property['kt'] || '0'}</div>
-                <div class="label">Kamar Tidur</div>
-              </div>
-              <div class="detail-feature">
-                <i class="fas fa-bath"></i>
-                <div class="value">${property['km'] || '0'}</div>
-                <div class="label">Kamar Mandi</div>
-              </div>
-              <div class="detail-feature">
-                <i class="fas fa-layer-group"></i>
-                <div class="value">${property['lt'] || '0'}</div>
-                <div class="label">Luas Tanah</div>
-              </div>
+          Diposting ${formattedDate.replace(',', ' •')}
+        </div>
+        <div class="detail-main-image">
+          <img src="${allImages[0]}" alt="${escapeHtml(property['nama property'])}" id="mainImage" onerror="this.src='https://images.unsplash.com/photo-1580587771525-78b9dba3b914?w=600'">
+          ${allImages.length > 1 ? `<span class="image-counter" id="imageCounter">1/${allImages.length}</span>` : ''}
+        </div>
+        ${property['youtube'] ? `
+          <div class="youtube-preview">
+            <div class="youtube-frame">
+              <iframe src="${convertYoutubeEmbed(property['youtube'])}" title="Video Properti" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
             </div>
           </div>
-          ${property['spesifikasi'] ? `
-            <div class="detail-description">
-              <h3>Deskripsi</h3>
-              <p>${escapeHtml(property['spesifikasi'])}</p>
-            </div>
-          ` : ''}
-
-          <div class="detail-specs">
-            <div class="spec-item">
-              <span class="spec-label">Kategori</span>
-              <span class="spec-value">${category || property._tab || 'primary'}</span>
-            </div>
-            <div class="spec-item">
-              <span class="spec-label">Sales</span>
-              <span class="spec-value">${escapeHtml(property['sales'] || '-')}</span>
-            </div>
-            <div class="spec-item">
-              <span class="spec-label">Kontak</span>
-              <span class="spec-value">${escapeHtml(property['kontak'] || '-')}</span>
-            </div>
+        ` : ''}
+        ${thumbnailHtml}
+        <div class="detail-info">
+          <div class="detail-price">${formatPrice(property['harga'])}</div>
+          <h2 class="detail-title">${escapeHtml(property['nama property'] || '-')}</h2>
+          <div class="detail-viewer">👁️ <span id="viewerCount">${property['viewer'] || '0'}</span>x dilihat</div>
+          <div class="detail-location"><i class="fas fa-map-marker-alt"></i> ${escapeHtml(property['lokasi'] || '-')}</div>
+          <div class="detail-features">
+            <div class="detail-feature"><i class="fas fa-bed"></i><div class="value">${property['kt'] || '0'}</div><div class="label">Kamar Tidur</div></div>
+            <div class="detail-feature"><i class="fas fa-bath"></i><div class="value">${property['km'] || '0'}</div><div class="label">Kamar Mandi</div></div>
+            <div class="detail-feature"><i class="fas fa-layer-group"></i><div class="value">${property['lt'] || '0'}</div><div class="label">Luas Tanah</div></div>
           </div>
-          <div class="detail-contact">
-            <h3 style="margin-bottom:12px;">Hubungi Marketing</h3>
-            <div class="contact-buttons">
-              <a href="tel:${property['kontak'] || ''}" class="btn-call">
-                <i class="fas fa-phone"></i> Telepon
-              </a>
-              <a href="https://wa.me/${convertToWaNumber(property['kontak'])}?text=Halo, saya tertarik dengan properti ${encodeURIComponent(property['nama property'] || '')}" class="btn-wa" target="_blank">
-                <i class="fab fa-whatsapp"></i> WhatsApp
-              </a>
-            </div>
+        </div>
+        ${property['spesifikasi'] ? `
+          <div class="detail-description">
+            <h3>Deskripsi</h3>
+            <p>${escapeHtml(property['spesifikasi'])}</p>
           </div>
-        `;
-      }
-      
-      window.changeImage = function(index) {
-        if (!allImages[index]) return;
-        document.getElementById('mainImage').src = allImages[index];
-        const thumbnails = document.querySelectorAll('.thumbnail');
-        thumbnails.forEach((thumb, i) => {
-          thumb.classList.toggle('active', i === index);
-        });
-        const counter = document.getElementById('imageCounter');
-        if (counter) counter.textContent = `${index + 1}/${allImages.length}`;
-      };
-      
-      function escapeHtml(str) {
-        if (!str) return '';
-        return str.replace(/[&<>]/g, function(m) {
-          if (m === '&') return '&amp;';
-          if (m === '<') return '&lt;';
-          if (m === '>') return '&gt;';
-          return m;
-        });
-      }
-
-      function convertYoutubeEmbed(url) {
-
+        ` : ''}
+        <div class="detail-specs">
+          <div class="spec-item"><span class="spec-label">Kategori</span><span class="spec-value">${category || property._tab || 'primary'}</span></div>
+          <div class="spec-item"><span class="spec-label">Sales</span><span class="spec-value">${escapeHtml(property['sales'] || '-')}</span></div>
+          <div class="spec-item"><span class="spec-label">Kontak</span><span class="spec-value">${escapeHtml(property['kontak'] || '-')}</span></div>
+        </div>
+        <div class="detail-contact">
+          <h3 style="margin-bottom:12px;">Hubungi Marketing</h3>
+          <div class="contact-buttons">
+            <a href="tel:${property['kontak'] || ''}" class="btn-call"><i class="fas fa-phone"></i> Telepon</a>
+            <a href="https://wa.me/${convertToWaNumber(property['kontak'])}?text=Halo, saya tertarik dengan properti ${encodeURIComponent(property['nama property'] || '')}" class="btn-wa" target="_blank"><i class="fab fa-whatsapp"></i> WhatsApp</a>
+          </div>
+        </div>
+      `;
+    }
+    
+    window.changeImage = function(index) {
+      if (!allImages[index]) return;
+      document.getElementById('mainImage').src = allImages[index];
+      const thumbnails = document.querySelectorAll('.thumbnail');
+      thumbnails.forEach((thumb, i) => {
+        thumb.classList.toggle('active', i === index);
+      });
+      const counter = document.getElementById('imageCounter');
+      if (counter) counter.textContent = `${index + 1}/${allImages.length}`;
+    };
+    
+    function escapeHtml(str) {
+      if (!str) return '';
+      return str.replace(/[&<>]/g, function(m) {
+        if (m === '&') return '&amp;';
+        if (m === '<') return '&lt;';
+        if (m === '>') return '&gt;';
+        return m;
+      });
+    }
+    
+    function convertYoutubeEmbed(url) {
       if (!url) return '';
-
       let videoId = '';
-
-      // youtu.be/xxxx
       if (url.includes('youtu.be/')) {
-
         videoId = url.split('youtu.be/')[1].split('?')[0];
-
-      }
-
-      // youtube.com/watch?v=xxxx
-      else if (url.includes('watch?v=')) {
-
+      } else if (url.includes('watch?v=')) {
         videoId = url.split('watch?v=')[1].split('&')[0];
-
-      }
-
-      // youtube.com/embed/xxxx
-      else if (url.includes('/embed/')) {
-
+      } else if (url.includes('/embed/')) {
         videoId = url.split('/embed/')[1].split('?')[0];
-
       }
-
       return `https://www.youtube.com/embed/${videoId}`;
+    }
+    
+    async function loadDetail() {
+      console.log('🔍 Mencari properti dengan property_id:', propertyId);
+      
+      if (!propertyId) {
+        showError('ID properti tidak ditemukan');
+        return;
       }
       
-      async function loadDetail() {
-        console.log('🔍 WA Notification - Mencari properti dengan timestamp:', timestamp);
-        
-        if (!timestamp) {
-          showError('Timestamp properti tidak ditemukan');
-          return;
-        }
-        
-        try {
-          for (const sheetName of SHEETS) {
-            console.log(`📁 Mengecek sheet: ${sheetName}`);
-            const data = await fetchSheetData(sheetName);
+      try {
+        for (const sheetName of SHEETS) {
+          console.log(`📁 Mengecek sheet: ${sheetName}`);
+          const data = await fetchSheetData(sheetName);
+          
+          if (data && data.length > 0) {
+            // 🔥 PERUBAHAN 2: Cari berdasarkan property_id
+            const property = data.find(row => row['property_id'] === propertyId);
             
-            if (data && data.length > 0) {
-              // 🔥 CARI BERDASARKAN TIMESTAMP 🔥
-              const property = data.find(row => row['timestamp'] === timestamp);
-              
-              if (property && property['nama property'] && property['nama property'].trim() !== '') {
-                foundProperty = property;
-                foundCategory = sheetName;
-                console.log(`✅ Properti ditemukan di ${sheetName}: ${property['nama property']}`);
-                break;
-              }
+            if (property && property['nama property'] && property['nama property'].trim() !== '') {
+              foundProperty = property;
+              foundCategory = sheetName;
+              console.log(`✅ Properti ditemukan di ${sheetName}: ${property['nama property']}`);
+              break;
             }
           }
-          
-          if (foundProperty) {
-
-            if (foundProperty) {
-
-    // =====================================================
-    // TAMPILKAN DETAIL DULU
-    // =====================================================
-    displayDetail(foundProperty, foundCategory);
-
-    // =====================================================
-    // VIEWER ANTI REFRESH
-    // =====================================================
-    try {
-
-      const propertyKey =
-        `${foundProperty['nama property']}_${foundCategory}_${timestamp}`;
-
-      const viewerKey =
-        `bmpro_viewed_${propertyKey}`;
-
-      const alreadyViewed =
-        localStorage.getItem(viewerKey);
-
-      if (!alreadyViewed) {
-
-        localStorage.setItem(
-          viewerKey,
-          'true'
-        );
-
-        fetch(SCRIPT_URL, {
-          method: 'POST',
-          headers: {
-            'Content-Type':
-              'application/x-www-form-urlencoded'
-          },
-          body: new URLSearchParams({
-            action: 'incrementViewer',
-            category: foundCategory,
-            timestamp: timestamp
-          })
-        })
-        .then(res => res.json())
-        .then(result => {
-
-          console.log(
-            '👁️ Viewer updated:',
-            result
-          );
-
-          foundProperty['viewer'] =
-            parseInt(foundProperty['viewer'] || 0) + 1;
-
-          const viewerEl =
-            document.getElementById('viewerCount');
-
-          if (viewerEl) {
-
-            viewerEl.textContent =
-              foundProperty['viewer'];
-
-          }
-
-        })
-        .catch(err => {
-
-          console.log(
-            '❌ Viewer gagal:',
-            err
-          );
-
-        });
-
-      } else {
-
-        console.log(
-          '👁️ Viewer tidak ditambah karena sudah pernah melihat property ini'
-        );
-
-      }
-
-    } catch(err) {
-
-      console.log(
-        '❌ Error viewer:',
-        err
-      );
-
-    }
-
-    }
-        } else {
-            console.log(`❌ Properti dengan timestamp "${timestamp}" tidak ditemukan`);
-            showError('Data properti tidak ditemukan');
-          }
-          
-        } catch (error) {
-          console.error('❌ Error:', error);
-          showError('Gagal memuat data properti');
         }
-      }
-      
-      // Jalankan setelah DOM siap
-      if (document.readyState === 'loading') {
-        document.addEventListener('DOMContentLoaded', loadDetail);
-      } else {
-        loadDetail();
-      }
-
-      window.handleBack = function(event) {
-        event.preventDefault();
-
-        // Jika ada history sebelumnya
-        if (window.history.length > 1) {
-          window.history.back();
+        
+        if (foundProperty) {
+          // Tampilkan detail dulu
+          displayDetail(foundProperty, foundCategory);
+          
+          // 🔥 PERUBAHAN 3: Update viewer dengan property_id
+          try {
+            const propertyKey = `${foundProperty['nama property']}_${foundCategory}_${propertyId}`;
+            const viewerKey = `bmpro_viewed_${propertyKey}`;
+            const alreadyViewed = localStorage.getItem(viewerKey);
+            
+            if (!alreadyViewed) {
+              localStorage.setItem(viewerKey, 'true');
+              
+              fetch(SCRIPT_URL, {
+                method: 'POST',
+                headers: {
+                  'Content-Type': 'application/x-www-form-urlencoded'
+                },
+                body: new URLSearchParams({
+                  action: 'incrementViewer',
+                  category: foundCategory,
+                  property_id: propertyId
+                })
+              })
+              .then(res => res.json())
+              .then(result => {
+                console.log('👁️ Viewer updated:', result);
+                foundProperty['viewer'] = parseInt(foundProperty['viewer'] || 0) + 1;
+                const viewerEl = document.getElementById('viewerCount');
+                if (viewerEl) viewerEl.textContent = foundProperty['viewer'];
+              })
+              .catch(err => console.log('❌ Viewer gagal:', err));
+            } else {
+              console.log('👁️ Viewer tidak ditambah karena sudah pernah melihat property ini');
+            }
+          } catch(err) {
+            console.log('❌ Error viewer:', err);
+          }
         } else {
-          // Jika dibuka langsung dari WhatsApp
-          window.location.href = 'index.html';
+          console.log(`❌ Properti dengan property_id "${propertyId}" tidak ditemukan`);
+          showError('Data properti tidak ditemukan');
         }
-      };
-})();
-  </script>
+      } catch (error) {
+        console.error('❌ Error:', error);
+        showError('Gagal memuat data properti');
+      }
+    }
+    
+    if (document.readyState === 'loading') {
+      document.addEventListener('DOMContentLoaded', loadDetail);
+    } else {
+      loadDetail();
+    }
+    
+    window.handleBack = function(event) {
+      event.preventDefault();
+      if (window.history.length > 1) {
+        window.history.back();
+      } else {
+        window.location.href = 'index.html';
+      }
+    };
+  })();
+</script>
 </body>
 </html>
