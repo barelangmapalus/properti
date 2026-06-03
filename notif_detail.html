@@ -14,10 +14,6 @@
   <!-- CSS Global -->
   <link rel="stylesheet" href="css/style.css">
   
-  <!-- Library untuk PDF -->
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
-  
   <style>
     .detail-page { padding-bottom: 20px; }
     .detail-header {
@@ -85,67 +81,35 @@
       margin-bottom: 10px;
     }
 
-    .posted-date {
-      padding: 10px 16px 6px;
-      font-size: 11px;
-      color: #777;
-      font-weight: 500;
+    .posted-date{
+    padding: 10px 16px 6px;
+    font-size: 11px;
+    color: #777;
+    font-weight: 500;
     }
 
-    .youtube-preview {
-      padding: 14px 16px 4px;
-      background: #fff;
-    }
+    .youtube-preview{
+  padding:14px 16px 4px;
+  background:#fff;
+}
 
-    .youtube-frame {
-      position: relative;
-      width: 100%;
-      padding-top: 56.25%;
-      border-radius: 16px;
-      overflow: hidden;
-      background: #000;
-    }
+.youtube-frame{
+  position:relative;
+  width:100%;
+  padding-top:56.25%;
+  border-radius:16px;
+  overflow:hidden;
+  background:#000;
+}
 
-    .youtube-frame iframe {
-      position: absolute;
-      top: 0;
-      left: 0;
-      width: 100%;
-      height: 100%;
-    }
+.youtube-frame iframe{
+  position:absolute;
+  top:0;
+  left:0;
+  width:100%;
+  height:100%;
+}
 
-    /* ========== SHARE BUTTON STYLES ========== */
-    .share-btn {
-      background: linear-gradient(135deg, #27ae60, #2ecc71);
-      color: white;
-      border: none;
-      padding: 12px 20px;
-      border-radius: 30px;
-      font-size: 0.8rem;
-      font-weight: 600;
-      cursor: pointer;
-      display: inline-flex;
-      align-items: center;
-      justify-content: center;
-      gap: 10px;
-      transition: all 0.3s ease;
-      width: 100%;
-      margin-bottom: 12px;
-    }
-
-    .share-btn:active {
-      transform: scale(0.98);
-    }
-
-    .share-btn:disabled {
-      opacity: 0.6;
-      cursor: not-allowed;
-      transform: none;
-    }
-
-    .share-btn i {
-      font-size: 1rem;
-    }
   </style>
 </head>
 <body>
@@ -165,530 +129,241 @@
   <!-- JS Global dari website Anda -->
   <script src="js/script.js"></script>
   
-  <!-- JS Khusus untuk notif_detail.html -->
+  <!-- JS Khusus untuk notif_detail.html (WA Notification) -->
   <script>
-    const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbx4qXEG_UdM4j3SYeZ5k46dkmpy-CdCAMVqjDd2145Y0xIHvQ3b4VRWsahSVqWVlLAD/exec';
+  const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbx4qXEG_UdM4j3SYeZ5k46dkmpy-CdCAMVqjDd2145Y0xIHvQ3b4VRWsahSVqWVlLAD/exec';
 
-    (function() {
-      // Ambil property_id dari URL
-      const urlParams = new URLSearchParams(window.location.search);
-      const propertyId = urlParams.get('id');
-      
-      let allImages = [];
-      let foundProperty = null;
-      let foundCategory = '';
-      
-      const SHEETS = ['primary', 'secondary', 'rent'];
-      
-      function showError(message) {
-        document.getElementById('detailContent').innerHTML = `
-          <div class="empty-state">
-            <i class="fas fa-exclamation-triangle"></i>
-            <p>${message}</p>
-            <p style="font-size:12px; margin-top:10px;">Property ID: ${propertyId || 'tidak ada'}</p>
-            <a href="index.html" style="display:inline-block;margin-top:16px;color:var(--secondary);">Kembali ke Beranda</a>
-          </div>
-        `;
-      }
-      
-      function displayDetail(property, category) {
-        // Kumpulkan gambar
-        allImages = [];
-        if (property['gambar utama']) allImages.push(convertDriveUrl(property['gambar utama']));
-        if (property['gambar2']) allImages.push(convertDriveUrl(property['gambar2']));
-        if (property['gambar3']) allImages.push(convertDriveUrl(property['gambar3']));
-        if (property['gambar4']) allImages.push(convertDriveUrl(property['gambar4']));
-        if (property['gambar5']) allImages.push(convertDriveUrl(property['gambar5']));
-        
-        if (allImages.length === 0) {
-          allImages = ['https://images.unsplash.com/photo-1580587771525-78b9dba3b914?w=600'];
-        }
-        
-        document.getElementById('detailTitle').textContent = property['nama property'] || 'Detail Properti';
-        
-        const content = document.getElementById('detailContent');
-        const rawTimestamp = property.timestamp || '';
-        const date = new Date(rawTimestamp);
-        const formattedDate = date.toLocaleString('id-ID', {
-          day: '2-digit',
-          month: 'long',
-          year: 'numeric',
-          hour: '2-digit',
-          minute: '2-digit',
-          timeZone: 'Asia/Jakarta'
-        }) + ' WIB';
-        
-        let thumbnailHtml = '';
-        if (allImages.length > 1) {
-          thumbnailHtml = `<div class="detail-thumbnails">
-            ${allImages.map((img, i) => `
-              <div class="thumbnail ${i === 0 ? 'active' : ''}" onclick="window.changeImage(${i})">
-                <img src="${img}" alt="Thumbnail ${i+1}">
-              </div>
-            `).join('')}
-          </div>`;
-        }
-        
-        content.innerHTML = `
-          <div class="posted-date">
-            Diposting ${formattedDate.replace(',', ' •')}
-          </div>
-          <div class="detail-main-image">
-            <img src="${allImages[0]}" alt="${escapeHtml(property['nama property'])}" id="mainImage" onerror="this.src='https://images.unsplash.com/photo-1580587771525-78b9dba3b914?w=600'">
-            ${allImages.length > 1 ? `<span class="image-counter" id="imageCounter">1/${allImages.length}</span>` : ''}
-          </div>
-          ${property['youtube'] ? `
-            <div class="youtube-preview">
-              <div class="youtube-frame">
-                <iframe src="${convertYoutubeEmbed(property['youtube'])}" title="Video Properti" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
-              </div>
-            </div>
-          ` : ''}
-          ${thumbnailHtml}
-          <div class="detail-info">
-            <div class="detail-price">${formatPrice(property['harga'])}</div>
-            <h2 class="detail-title">${escapeHtml(property['nama property'] || '-')}</h2>
-            <div class="detail-viewer">👁️ <span id="viewerCount">${property['viewer'] || '0'}</span>x dilihat</div>
-            <div class="detail-location"><i class="fas fa-map-marker-alt"></i> ${escapeHtml(property['lokasi'] || '-')}</div>
-            <div class="detail-features">
-              <div class="detail-feature"><i class="fas fa-bed"></i><div class="value">${property['kt'] || '0'}</div><div class="label">Kamar Tidur</div></div>
-              <div class="detail-feature"><i class="fas fa-bath"></i><div class="value">${property['km'] || '0'}</div><div class="label">Kamar Mandi</div></div>
-              <div class="detail-feature"><i class="fas fa-layer-group"></i><div class="value">${property['lt'] || '0'}</div><div class="label">Luas Tanah</div></div>
-            </div>
-          </div>
-          ${property['spesifikasi'] ? `
-            <div class="detail-description">
-              <h3>Deskripsi</h3>
-              <p>${escapeHtml(property['spesifikasi'])}</p>
-            </div>
-          ` : ''}
-          <div class="detail-specs">
-            <div class="spec-item"><span class="spec-label">Kategori</span><span class="spec-value">${category || property._tab || 'primary'}</span></div>
-            <div class="spec-item"><span class="spec-label">Sales</span><span class="spec-value">${escapeHtml(property['sales'] || '-')}</span></div>
-            <div class="spec-item"><span class="spec-label">Kontak</span><span class="spec-value">${escapeHtml(property['kontak'] || '-')}</span></div>
-          </div>
-          <div class="detail-contact">
-            <h3 style="margin-bottom:12px;">Hubungi Marketing</h3>
-            <button class="share-btn" id="sharePdfBtn" onclick="generateAndSharePDF()">
-              <i class="fas fa-file-pdf"></i> Share PDF Properti
-            </button>
-            <div class="contact-buttons">
-              <a href="tel:${property['kontak'] || ''}" class="btn-call"><i class="fas fa-phone"></i> Telepon</a>
-              <a href="https://wa.me/${convertToWaNumber(property['kontak'])}?text=Halo, saya tertarik dengan properti ${encodeURIComponent(property['nama property'] || '')}" class="btn-wa" target="_blank"><i class="fab fa-whatsapp"></i> WhatsApp</a>
-            </div>
-          </div>
-        `;
-      }
-      
-      window.changeImage = function(index) {
-        if (!allImages[index]) return;
-        document.getElementById('mainImage').src = allImages[index];
-        const thumbnails = document.querySelectorAll('.thumbnail');
-        thumbnails.forEach((thumb, i) => {
-          thumb.classList.toggle('active', i === index);
-        });
-        const counter = document.getElementById('imageCounter');
-        if (counter) counter.textContent = `${index + 1}/${allImages.length}`;
-      };
-      
-      function escapeHtml(str) {
-        if (!str) return '';
-        return str.replace(/[&<>]/g, function(m) {
-          if (m === '&') return '&amp;';
-          if (m === '<') return '&lt;';
-          if (m === '>') return '&gt;';
-          return m;
-        });
-      }
-      
-      function convertYoutubeEmbed(url) {
-        if (!url) return '';
-        let videoId = '';
-        if (url.includes('youtu.be/')) {
-          videoId = url.split('youtu.be/')[1].split('?')[0];
-        } else if (url.includes('watch?v=')) {
-          videoId = url.split('watch?v=')[1].split('&')[0];
-        } else if (url.includes('/embed/')) {
-          videoId = url.split('/embed/')[1].split('?')[0];
-        }
-        return `https://www.youtube.com/embed/${videoId}`;
-      }
-      
-      async function loadDetail() {
-        console.log('🔍 Mencari properti dengan property_id:', propertyId);
-        
-        if (!propertyId) {
-          showError('ID properti tidak ditemukan');
-          return;
-        }
-        
-        try {
-          for (const sheetName of SHEETS) {
-            console.log(`📁 Mengecek sheet: ${sheetName}`);
-            const data = await fetchSheetData(sheetName);
-            
-            if (data && data.length > 0) {
-              const property = data.find(row => row['property_id'] === propertyId);
-              
-              if (property && property['nama property'] && property['nama property'].trim() !== '') {
-                foundProperty = property;
-                foundCategory = sheetName;
-                console.log(`✅ Properti ditemukan di ${sheetName}: ${property['nama property']}`);
-                break;
-              }
-            }
-          }
-          
-          if (foundProperty) {
-            // Tampilkan detail dulu
-            displayDetail(foundProperty, foundCategory);
-            
-            // Update viewer dengan property_id
-            try {
-              const propertyKey = `${foundProperty['nama property']}_${foundCategory}_${propertyId}`;
-              const viewerKey = `bmpro_viewed_${propertyKey}`;
-              const alreadyViewed = localStorage.getItem(viewerKey);
-              
-              if (!alreadyViewed) {
-                localStorage.setItem(viewerKey, 'true');
-                
-                fetch(SCRIPT_URL, {
-                  method: 'POST',
-                  headers: {
-                    'Content-Type': 'application/x-www-form-urlencoded'
-                  },
-                  body: new URLSearchParams({
-                    action: 'incrementViewer',
-                    category: foundCategory,
-                    property_id: propertyId
-                  })
-                })
-                .then(res => res.json())
-                .then(result => {
-                  console.log('👁️ Viewer updated:', result);
-                  foundProperty['viewer'] = parseInt(foundProperty['viewer'] || 0) + 1;
-                  const viewerEl = document.getElementById('viewerCount');
-                  if (viewerEl) viewerEl.textContent = foundProperty['viewer'];
-                })
-                .catch(err => console.log('❌ Viewer gagal:', err));
-              } else {
-                console.log('👁️ Viewer tidak ditambah karena sudah pernah melihat property ini');
-              }
-            } catch(err) {
-              console.log('❌ Error viewer:', err);
-            }
-          } else {
-            console.log(`❌ Properti dengan property_id "${propertyId}" tidak ditemukan`);
-            showError('Data properti tidak ditemukan');
-          }
-        } catch (error) {
-          console.error('❌ Error:', error);
-          showError('Gagal memuat data properti');
-        }
-      }
-      
-      // ========== FUNGSI UNTUK MENGATASI ERROR 429 DAN CORS ==========
-      function getDriveImageUrl(url) {
-        if (!url) return '';
-        if (url.includes('lh3.googleusercontent.com')) return url;
-        
-        let fileId = null;
-        let match = url.match(/\/d\/([a-zA-Z0-9_-]+)/);
-        if (match && match[1]) fileId = match[1];
-        if (!fileId) {
-          match = url.match(/[?&]id=([a-zA-Z0-9_-]+)/);
-          if (match && match[1]) fileId = match[1];
-        }
-        if (!fileId && url.match(/^[a-zA-Z0-9_-]{25,}$/)) fileId = url;
-        
-        if (fileId) {
-          return `https://lh3.googleusercontent.com/d/${fileId}=w800`;
-        }
-        return url;
-      }
-
-      function loadImageWithRetry(src, maxRetries = 3, delay = 1000) {
-        return new Promise((resolve, reject) => {
-          const img = new Image();
-          img.crossOrigin = 'Anonymous';
-          img.referrerPolicy = 'no-referrer';
-          let attempt = 0;
-          
-          function attemptLoad() {
-            img.onload = () => resolve(img);
-            img.onerror = (err) => {
-              if (attempt < maxRetries) {
-                attempt++;
-                console.log(`Gagal memuat ${src}, percobaan ${attempt}/${maxRetries}...`);
-                setTimeout(attemptLoad, delay);
-              } else {
-                reject(new Error(`Gagal memuat gambar: ${src}`));
-              }
-            };
-            img.src = src;
-          }
-          attemptLoad();
-        });
-      }
-
-      // ========== GENERATE PDF DAN SHARE ==========
-      // ========== GENERATE PDF DAN SHARE (KHUSUS CHROME ANDROID) ==========
-let isGeneratingPDF = false;
-
-async function generateAndSharePDF() {
-  if (isGeneratingPDF) {
-    showToast('⏳ Sedang membuat PDF, tunggu sebentar...', 2000);
-    return;
-  }
-  
-  if (!foundProperty && !currentProperty) {
-    showToast('❌ Data properti belum dimuat', 2000);
-    return;
-  }
-  
-  // Gunakan foundProperty untuk notif_detail.html atau currentProperty untuk detail.html
-  const property = foundProperty || currentProperty;
-  
-  isGeneratingPDF = true;
-  const shareBtn = document.getElementById('sharePdfBtn');
-  const originalText = shareBtn.innerHTML;
-  shareBtn.innerHTML = '<i class="fas fa-spinner fa-pulse"></i> Memuat gambar...';
-  shareBtn.disabled = true;
-  
-  showToast('📸 Memuat gambar properti...', 1500);
-  
-  try {
-    // Kumpulkan semua URL gambar
-    const imageUrls = [];
-    const mainImageUrl = getDriveImageUrl(property['gambar utama']);
-    if (mainImageUrl) imageUrls.push(mainImageUrl);
+  (function() {
+    // 🔥 PERUBAHAN 1: Ambil property_id dari URL
+    const urlParams = new URLSearchParams(window.location.search);
+    const propertyId = urlParams.get('id');
     
-    const galleryImages = [];
-    ['gambar2', 'gambar3', 'gambar4', 'gambar5'].forEach(key => {
-      const url = property[key];
-      if (url && url.trim() !== '') {
-        const converted = getDriveImageUrl(url);
-        galleryImages.push(converted);
-        imageUrls.push(converted);
-      }
-    });
+    let allImages = [];
+    let foundProperty = null;
+    let foundCategory = '';
     
-    const logoUrl = 'https://drive.google.com/thumbnail?id=1a3cJptxJTSHksm9D7tN3us_7Ii7dQxxG&sz=w100';
-    imageUrls.push(logoUrl);
+    const SHEETS = ['primary', 'secondary', 'rent'];
     
-    // Muat gambar satu per satu
-    showToast(`📥 Memuat ${imageUrls.length} gambar...`, 2000);
-    for (let i = 0; i < imageUrls.length; i++) {
-      try {
-        console.log(`Memuat gambar ${i+1}/${imageUrls.length}`);
-        await loadImageWithRetry(imageUrls[i], 3, 1500);
-      } catch (err) {
-        console.warn(`Gagal memuat gambar: ${imageUrls[i]}`);
-      }
+    function showError(message) {
+      document.getElementById('detailContent').innerHTML = `
+        <div class="empty-state">
+          <i class="fas fa-exclamation-triangle"></i>
+          <p>${message}</p>
+          <p style="font-size:12px; margin-top:10px;">Property ID: ${propertyId || 'tidak ada'}</p>
+          <a href="index.html" style="display:inline-block;margin-top:16px;color:var(--secondary);">Kembali ke Beranda</a>
+        </div>
+      `;
     }
     
-    showToast('📄 Membuat layout PDF...', 1500);
-    
-    // Buat elemen sementara untuk PDF
-    const pdfElement = document.createElement('div');
-    pdfElement.style.position = 'fixed';
-    pdfElement.style.left = '-9999px';
-    pdfElement.style.top = '0';
-    pdfElement.style.width = '800px';
-    pdfElement.style.backgroundColor = 'white';
-    pdfElement.style.padding = '20px';
-    pdfElement.style.fontFamily = "'Poppins', sans-serif";
-    
-    const hargaFormatted = formatPrice(property['harga']);
-    const date = new Date(property.timestamp || Date.now());
-    const formattedDate = date.toLocaleDateString('id-ID', {
-      day: 'numeric',
-      month: 'long',
-      year: 'numeric'
-    });
-    
-    pdfElement.innerHTML = `
-      <div style="max-width: 600px; margin: 0 auto; background: white;">
-        <div style="text-align: center; margin-bottom: 24px; padding-bottom: 16px; border-bottom: 2px solid #3498db;">
-          <img src="${logoUrl}" style="width: 50px; border-radius: 12px; margin-bottom: 8px;">
-          <h1 style="margin: 0; color: #2c3e50; font-size: 1.5rem;">BMpro</h1>
-          <p style="color: #7f8c8d; font-size: 0.7rem; margin: 4px 0 0;">Properti Batam</p>
+    function displayDetail(property, category) {
+      // Kumpulkan gambar
+      allImages = [];
+      if (property['gambar utama']) allImages.push(convertDriveUrl(property['gambar utama']));
+      if (property['gambar2']) allImages.push(convertDriveUrl(property['gambar2']));
+      if (property['gambar3']) allImages.push(convertDriveUrl(property['gambar3']));
+      if (property['gambar4']) allImages.push(convertDriveUrl(property['gambar4']));
+      if (property['gambar5']) allImages.push(convertDriveUrl(property['gambar5']));
+      
+      if (allImages.length === 0) {
+        allImages = ['https://images.unsplash.com/photo-1580587771525-78b9dba3b914?w=600'];
+      }
+      
+      document.getElementById('detailTitle').textContent = property['nama property'] || 'Detail Properti';
+      
+      const content = document.getElementById('detailContent');
+      const rawTimestamp = property.timestamp || '';
+      const date = new Date(rawTimestamp);
+      const formattedDate = date.toLocaleString('id-ID', {
+        day: '2-digit',
+        month: 'long',
+        year: 'numeric',
+        hour: '2-digit',
+        minute: '2-digit',
+        timeZone: 'Asia/Jakarta'
+      }) + ' WIB';
+      
+      let thumbnailHtml = '';
+      if (allImages.length > 1) {
+        thumbnailHtml = `<div class="detail-thumbnails">
+          ${allImages.map((img, i) => `
+            <div class="thumbnail ${i === 0 ? 'active' : ''}" onclick="window.changeImage(${i})">
+              <img src="${img}" alt="Thumbnail ${i+1}">
+            </div>
+          `).join('')}
+        </div>`;
+      }
+      
+      content.innerHTML = `
+        <div class="posted-date">
+          Diposting ${formattedDate.replace(',', ' •')}
         </div>
-        <div style="margin-bottom: 20px;">
-          <img src="${mainImageUrl}" style="width: 100%; border-radius: 16px; object-fit: cover; aspect-ratio: 16/9;" onerror="this.src='https://via.placeholder.com/600x400?text=No+Image'">
+        <div class="detail-main-image">
+          <img src="${allImages[0]}" alt="${escapeHtml(property['nama property'])}" id="mainImage" onerror="this.src='https://images.unsplash.com/photo-1580587771525-78b9dba3b914?w=600'">
+          ${allImages.length > 1 ? `<span class="image-counter" id="imageCounter">1/${allImages.length}</span>` : ''}
         </div>
-        <div style="margin-bottom: 16px;">
-          <h2 style="color: #3498db; font-size: 1.6rem; margin: 0 0 8px;">${hargaFormatted}</h2>
-          <h3 style="color: #2c3e50; font-size: 1.2rem; margin: 0 0 4px;">${escapeHtml(property['nama property'] || '-')}</h3>
-          <p style="color: #7f8c8d; font-size: 0.75rem; margin: 0;">📍 ${escapeHtml(property['lokasi'] || '-')}</p>
-        </div>
-        <div style="display: flex; gap: 16px; padding: 16px 0; border-top: 1px solid #eee; border-bottom: 1px solid #eee; margin-bottom: 20px;">
-          <div style="flex: 1; text-align: center;"><div style="font-size: 1.5rem;">🛏️</div><div style="font-weight: 700;">${property['kt'] || '0'}</div><div style="font-size: 0.65rem; color: #7f8c8d;">Kamar Tidur</div></div>
-          <div style="flex: 1; text-align: center;"><div style="font-size: 1.5rem;">🚿</div><div style="font-weight: 700;">${property['km'] || '0'}</div><div style="font-size: 0.65rem; color: #7f8c8d;">Kamar Mandi</div></div>
-          <div style="flex: 1; text-align: center;"><div style="font-size: 1.5rem;">📐</div><div style="font-weight: 700;">${property['lt'] || '0'} m²</div><div style="font-size: 0.65rem; color: #7f8c8d;">Luas Tanah</div></div>
-        </div>
-        ${galleryImages.length > 0 ? `
-          <div style="margin-bottom: 20px;">
-            <h4 style="color: #2c3e50; font-size: 0.85rem; margin: 0 0 8px;">📸 Galeri Properti</h4>
-            <div style="display: flex; gap: 8px; flex-wrap: wrap;">
-              ${galleryImages.map(img => `<img src="${img}" style="width: 80px; height: 80px; object-fit: cover; border-radius: 12px;" onerror="this.style.display='none'">`).join('')}
+        ${property['youtube'] ? `
+          <div class="youtube-preview">
+            <div class="youtube-frame">
+              <iframe src="${convertYoutubeEmbed(property['youtube'])}" title="Video Properti" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
             </div>
           </div>
         ` : ''}
+        ${thumbnailHtml}
+        <div class="detail-info">
+          <div class="detail-price">${formatPrice(property['harga'])}</div>
+          <h2 class="detail-title">${escapeHtml(property['nama property'] || '-')}</h2>
+          <div class="detail-viewer">👁️ <span id="viewerCount">${property['viewer'] || '0'}</span>x dilihat</div>
+          <div class="detail-location"><i class="fas fa-map-marker-alt"></i> ${escapeHtml(property['lokasi'] || '-')}</div>
+          <div class="detail-features">
+            <div class="detail-feature"><i class="fas fa-bed"></i><div class="value">${property['kt'] || '0'}</div><div class="label">Kamar Tidur</div></div>
+            <div class="detail-feature"><i class="fas fa-bath"></i><div class="value">${property['km'] || '0'}</div><div class="label">Kamar Mandi</div></div>
+            <div class="detail-feature"><i class="fas fa-layer-group"></i><div class="value">${property['lt'] || '0'}</div><div class="label">Luas Tanah</div></div>
+          </div>
+        </div>
         ${property['spesifikasi'] ? `
-          <div style="margin-bottom: 20px;">
-            <h4 style="color: #2c3e50; font-size: 0.85rem; margin: 0 0 8px;">📋 Deskripsi</h4>
-            <p style="color: #555; font-size: 0.75rem; line-height: 1.5; margin: 0;">${escapeHtml(property['spesifikasi'])}</p>
+          <div class="detail-description">
+            <h3>Deskripsi</h3>
+            <p>${escapeHtml(property['spesifikasi'])}</p>
           </div>
         ` : ''}
-        <div style="background: #f8f9fa; padding: 16px; border-radius: 12px; margin-bottom: 20px;">
-          <table style="width: 100%; font-size: 0.7rem;">
-            <tr><td style="padding: 6px 0;">Kategori</td><td style="text-align: right;">${foundCategory || property._tab || 'primary'}</td></tr>
-            <tr><td style="padding: 6px 0;">Sales Marketing</td><td style="text-align: right;">${escapeHtml(property['sales'] || '-')}</td></tr>
-            <tr><td style="padding: 6px 0;">Kontak</td><td style="text-align: right;">${escapeHtml(property['kontak'] || '-')}</td></tr>
-            <tr><td style="padding: 6px 0;">Diposting</td><td style="text-align: right;">${formattedDate}</td></tr>
-          </table>
+        <div class="detail-specs">
+          <div class="spec-item"><span class="spec-label">Kategori</span><span class="spec-value">${category || property._tab || 'primary'}</span></div>
+          <div class="spec-item"><span class="spec-label">Sales</span><span class="spec-value">${escapeHtml(property['sales'] || '-')}</span></div>
+          <div class="spec-item"><span class="spec-label">Kontak</span><span class="spec-value">${escapeHtml(property['kontak'] || '-')}</span></div>
         </div>
-        <div style="text-align: center; padding-top: 16px; border-top: 1px solid #eee; font-size: 0.6rem; color: #aaa;">
-          Dokumen ini dibuat otomatis oleh BMpro
+        <div class="detail-contact">
+          <h3 style="margin-bottom:12px;">Hubungi Marketing</h3>
+          <div class="contact-buttons">
+            <a href="tel:${property['kontak'] || ''}" class="btn-call"><i class="fas fa-phone"></i> Telepon</a>
+            <a href="https://wa.me/${convertToWaNumber(property['kontak'])}?text=Halo, saya tertarik dengan properti ${encodeURIComponent(property['nama property'] || '')}" class="btn-wa" target="_blank"><i class="fab fa-whatsapp"></i> WhatsApp</a>
+          </div>
         </div>
-      </div>
-    `;
-    
-    document.body.appendChild(pdfElement);
-    
-    showToast('📸 Meng-capture halaman...', 1500);
-    
-    const canvas = await html2canvas(pdfElement, {
-      scale: 2,
-      backgroundColor: '#ffffff',
-      logging: false,
-      useCORS: true,
-      allowTaint: false,
-      imageTimeout: 30000
-    });
-    
-    document.body.removeChild(pdfElement);
-    
-    showToast('📑 Membuat file PDF...', 1500);
-    
-    const imgData = canvas.toDataURL('image/png');
-    const { jsPDF } = window.jspdf;
-    const pdf = new jsPDF({ orientation: 'portrait', unit: 'mm', format: 'a4' });
-    
-    const imgWidth = 190;
-    const pageHeight = 277;
-    const imgHeight = (canvas.height * imgWidth) / canvas.width;
-    let position = 10;
-    
-    pdf.addImage(imgData, 'PNG', 10, position, imgWidth, imgHeight);
-    
-    let heightLeft = imgHeight - pageHeight + position;
-    while (heightLeft > 0) {
-      position = heightLeft - imgHeight;
-      pdf.addPage();
-      pdf.addImage(imgData, 'PNG', 10, position, imgWidth, imgHeight);
-      heightLeft -= pageHeight;
+      `;
     }
     
-    const pdfBlob = pdf.output('blob');
-    const fileName = `${(property['nama property'] || 'properti').replace(/[^a-z0-9]/gi, '_')}_${Date.now()}.pdf`;
-    const pdfFile = new File([pdfBlob], fileName, { type: 'application/pdf' });
+    window.changeImage = function(index) {
+      if (!allImages[index]) return;
+      document.getElementById('mainImage').src = allImages[index];
+      const thumbnails = document.querySelectorAll('.thumbnail');
+      thumbnails.forEach((thumb, i) => {
+        thumb.classList.toggle('active', i === index);
+      });
+      const counter = document.getElementById('imageCounter');
+      if (counter) counter.textContent = `${index + 1}/${allImages.length}`;
+    };
     
-    // ========== CHROME ANDROID SHARE ==========
-    // Chrome Android support penuh share file
-    try {
-      // Buat file object
-      const fileToShare = new File([pdfBlob], fileName, { type: 'application/pdf' });
+    function escapeHtml(str) {
+      if (!str) return '';
+      return str.replace(/[&<>]/g, function(m) {
+        if (m === '&') return '&amp;';
+        if (m === '<') return '&lt;';
+        if (m === '>') return '&gt;';
+        return m;
+      });
+    }
+    
+    function convertYoutubeEmbed(url) {
+      if (!url) return '';
+      let videoId = '';
+      if (url.includes('youtu.be/')) {
+        videoId = url.split('youtu.be/')[1].split('?')[0];
+      } else if (url.includes('watch?v=')) {
+        videoId = url.split('watch?v=')[1].split('&')[0];
+      } else if (url.includes('/embed/')) {
+        videoId = url.split('/embed/')[1].split('?')[0];
+      }
+      return `https://www.youtube.com/embed/${videoId}`;
+    }
+    
+    async function loadDetail() {
+      console.log('🔍 Mencari properti dengan property_id:', propertyId);
       
-      // Cek apakah bisa share file
-      if (navigator.canShare && navigator.canShare({ files: [fileToShare] })) {
-        await navigator.share({
-          title: property['nama property'] || 'Properti BMpro',
-          text: `🏠 ${property['nama property'] || 'Properti'}\n💰 ${hargaFormatted}\n📍 ${property['lokasi'] || '-'}`,
-          files: [fileToShare]
-        });
-        showToast('✅ PDF berhasil dibagikan', 2000);
-      } else {
-        // Fallback: download
-        const link = document.createElement('a');
-        link.href = URL.createObjectURL(pdfBlob);
-        link.download = fileName;
-        link.click();
-        URL.revokeObjectURL(link.href);
-        showToast('✅ PDF berhasil diunduh', 2000);
+      if (!propertyId) {
+        showError('ID properti tidak ditemukan');
+        return;
       }
-    } catch (shareError) {
-      console.error('Share error:', shareError);
-      // Jika user membatalkan share, jangan tampilkan error
-      if (shareError.name !== 'AbortError') {
-        // Fallback: download
-        const link = document.createElement('a');
-        link.href = URL.createObjectURL(pdfBlob);
-        link.download = fileName;
-        link.click();
-        URL.revokeObjectURL(link.href);
-        showToast('✅ PDF berhasil diunduh', 2000);
-      }
-    }
-    
-  } catch (error) {
-    console.error('PDF Error:', error);
-    showToast('❌ Gagal membuat PDF: ' + error.message, 4000);
-  } finally {
-    isGeneratingPDF = false;
-    const btn = document.getElementById('sharePdfBtn');
-    if (btn) {
-      btn.innerHTML = '<i class="fas fa-file-pdf"></i> Share PDF Properti';
-      btn.disabled = false;
-    }
-  }
-}
-
-      function showToast(message, duration = 2000) {
-        let toast = document.getElementById('dynamicToast');
-        if (!toast) {
-          toast = document.createElement('div');
-          toast.id = 'dynamicToast';
-          toast.style.cssText = `
-            position: fixed;
-            bottom: 100px;
-            left: 50%;
-            transform: translateX(-50%);
-            background: #2c3e50;
-            color: white;
-            padding: 10px 20px;
-            border-radius: 30px;
-            font-size: 0.8rem;
-            z-index: 1000;
-            display: none;
-            white-space: nowrap;
-            font-family: 'Poppins', sans-serif;
-          `;
-          document.body.appendChild(toast);
+      
+      try {
+        for (const sheetName of SHEETS) {
+          console.log(`📁 Mengecek sheet: ${sheetName}`);
+          const data = await fetchSheetData(sheetName);
+          
+          if (data && data.length > 0) {
+            // 🔥 PERUBAHAN 2: Cari berdasarkan property_id
+            const property = data.find(row => row['property_id'] === propertyId);
+            
+            if (property && property['nama property'] && property['nama property'].trim() !== '') {
+              foundProperty = property;
+              foundCategory = sheetName;
+              console.log(`✅ Properti ditemukan di ${sheetName}: ${property['nama property']}`);
+              break;
+            }
+          }
         }
-        toast.textContent = message;
-        toast.style.display = 'block';
-        setTimeout(() => {
-          toast.style.display = 'none';
-        }, duration);
-      }
-      
-      if (document.readyState === 'loading') {
-        document.addEventListener('DOMContentLoaded', loadDetail);
-      } else {
-        loadDetail();
-      }
-      
-      window.handleBack = function(event) {
-        event.preventDefault();
-        if (window.history.length > 1) {
-          window.history.back();
+        
+        if (foundProperty) {
+          // Tampilkan detail dulu
+          displayDetail(foundProperty, foundCategory);
+          
+          // 🔥 PERUBAHAN 3: Update viewer dengan property_id
+          try {
+            const propertyKey = `${foundProperty['nama property']}_${foundCategory}_${propertyId}`;
+            const viewerKey = `bmpro_viewed_${propertyKey}`;
+            const alreadyViewed = localStorage.getItem(viewerKey);
+            
+            if (!alreadyViewed) {
+              localStorage.setItem(viewerKey, 'true');
+              
+              fetch(SCRIPT_URL, {
+                method: 'POST',
+                headers: {
+                  'Content-Type': 'application/x-www-form-urlencoded'
+                },
+                body: new URLSearchParams({
+                  action: 'incrementViewer',
+                  category: foundCategory,
+                  property_id: propertyId
+                })
+              })
+              .then(res => res.json())
+              .then(result => {
+                console.log('👁️ Viewer updated:', result);
+                foundProperty['viewer'] = parseInt(foundProperty['viewer'] || 0) + 1;
+                const viewerEl = document.getElementById('viewerCount');
+                if (viewerEl) viewerEl.textContent = foundProperty['viewer'];
+              })
+              .catch(err => console.log('❌ Viewer gagal:', err));
+            } else {
+              console.log('👁️ Viewer tidak ditambah karena sudah pernah melihat property ini');
+            }
+          } catch(err) {
+            console.log('❌ Error viewer:', err);
+          }
         } else {
-          window.location.href = 'index.html';
+          console.log(`❌ Properti dengan property_id "${propertyId}" tidak ditemukan`);
+          showError('Data properti tidak ditemukan');
         }
-      };
-    })();
-  </script>
+      } catch (error) {
+        console.error('❌ Error:', error);
+        showError('Gagal memuat data properti');
+      }
+    }
+    
+    if (document.readyState === 'loading') {
+      document.addEventListener('DOMContentLoaded', loadDetail);
+    } else {
+      loadDetail();
+    }
+    
+    window.handleBack = function(event) {
+      event.preventDefault();
+      if (window.history.length > 1) {
+        window.history.back();
+      } else {
+        window.location.href = 'index.html';
+      }
+    };
+  })();
+</script>
 </body>
 </html>
