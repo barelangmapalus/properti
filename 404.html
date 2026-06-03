@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <title>Redirecting...</title>
+
+  <script>
+
+    (function() {
+
+      const path =
+        window.location.pathname;
+
+      // =====================================================
+      // PROPERTY ROUTING
+      // =====================================================
+
+      if (path.startsWith('/property/')) {
+
+        const slug =
+          path.split('/property/')[1];
+
+        // redirect ke notif_detail.html
+        window.location.replace(
+          `/notif_detail.html?slug=${slug}`
+        );
+
+        return;
+
+      }
+
+      // fallback
+      window.location.replace('/');
+
+    })();
+
+  </script>
+</head>
+<body>
+</body>
+</html>
