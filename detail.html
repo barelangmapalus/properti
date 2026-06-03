@@ -98,6 +98,35 @@
   word-wrap: break-word;
   }
 
+
+  /* ========== SHARE BUTTON STYLES ========== */
+.share-btn {
+  background: linear-gradient(135deg, rgb(78, 78, 78), rgb(78, 78, 78));
+  color: white;
+  border: none;
+  padding: 12px 20px;
+  border-radius: 30px;
+  font-size: 0.8rem;
+  font-weight: 600;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  transition: all 0.3s ease;
+  width: 100%;
+  margin-bottom: 12px;
+}
+
+.share-btn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(39,174,96,0.3);
+}
+
+.share-btn i {
+  font-size: 1rem;
+}
+
   </style>
 </head>
 <body>
@@ -373,6 +402,12 @@
         
         <div class="detail-contact">
           <h3 style="margin-bottom:12px;">Hubungi Marketing</h3>
+
+          <!-- Tombol Share Native -->
+            <button class="share-btn" id="nativeShareBtn" onclick="shareProperty()">
+              <i class="fas fa-share-alt"></i> Bagikan Properti
+            </button>
+
           <div class="contact-buttons">
             <a href="tel:${property['kontak'] || '081234567890'}" class="btn-call">
               <i class="fas fa-phone"></i> Telepon
@@ -384,6 +419,48 @@
         </div>
       `;
     }
+
+
+    // ========== SHARE NATIVE MENGGUNAKAN WEB SHARE API ==========
+async function shareProperty() {
+  if (!currentProperty) {
+    alert('Data properti belum dimuat');
+    return;
+  }
+  
+  // Data yang akan dibagikan
+  const shareData = {
+    title: currentProperty['nama property'] || 'Properti BMpro',
+    text: `${currentProperty['nama property'] || 'Properti'}\n📍 ${currentProperty['lokasi'] || '-'}\n💰 ${formatPrice(currentProperty['harga'])}\n🛏️ ${currentProperty['kt'] || '0'} KT | 🚿 ${currentProperty['km'] || '0'} KM | 📐 ${currentProperty['lt'] || '0'} m²\n\nHubungi: ${currentProperty['kontak'] || '-'}`,
+    url: window.location.href
+  };
+  
+  // Cek apakah browser support Web Share API
+  if (navigator.share) {
+    try {
+      await navigator.share(shareData);
+      console.log('✅ Share berhasil');
+    } catch (error) {
+      if (error.name !== 'AbortError') {
+        console.error('❌ Share gagal:', error);
+        fallbackShare();
+      }
+    }
+  } else {
+    // Fallback untuk browser yang tidak support
+    fallbackShare();
+  }
+}
+
+function fallbackShare() {
+  // Copy link ke clipboard sebagai fallback
+  const url = window.location.href;
+  navigator.clipboard.writeText(url).then(() => {
+    alert('Link telah disalin ke clipboard!\n\nGunakan WhatsApp/Email untuk membagikan.');
+  }).catch(() => {
+    alert(`Bagikan link ini: ${url}`);
+  });
+}
     
     function changeImage(index) {
       currentImageIndex = index;
