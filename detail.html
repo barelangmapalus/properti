@@ -101,7 +101,7 @@
 
   /* ========== SHARE BUTTON STYLES ========== */
 .share-btn {
-  background: linear-gradient(135deg, rgb(78, 78, 78), rgb(78, 78, 78));
+  background: linear-gradient(135deg, #27ae60, #2ecc71);
   color: white;
   border: none;
   padding: 12px 20px;
@@ -118,13 +118,30 @@
   margin-bottom: 12px;
 }
 
-.share-btn:hover {
-  transform: translateY(-2px);
-  box-shadow: 0 4px 12px rgba(39,174,96,0.3);
+.share-btn:active {
+  transform: scale(0.98);
+}
+
+.share-btn:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+  transform: none;
 }
 
 .share-btn i {
   font-size: 1rem;
+}
+
+/* Style untuk elemen PDF yang akan di-capture */
+.pdf-preview {
+  position: fixed;
+  left: -9999px;
+  top: 0;
+  width: 100%;
+  max-width: 800px;
+  background: white;
+  font-family: 'Poppins', sans-serif;
+  z-index: -1;
 }
 
   </style>
@@ -402,12 +419,10 @@
         
         <div class="detail-contact">
           <h3 style="margin-bottom:12px;">Hubungi Marketing</h3>
-
-          <!-- Tombol Share Native -->
-            <button class="share-btn" id="nativeShareBtn" onclick="shareProperty()">
-              <i class="fas fa-share-alt"></i> Bagikan Properti
+          <!-- Tombol Share PDF -->
+            <button class="share-btn" id="sharePdfBtn" onclick="generateAndSharePDF()">
+              <i class="fas fa-file-pdf"></i> Share PDF Properti
             </button>
-
           <div class="contact-buttons">
             <a href="tel:${property['kontak'] || '081234567890'}" class="btn-call">
               <i class="fas fa-phone"></i> Telepon
@@ -421,45 +436,263 @@
     }
 
 
-    // ========== SHARE NATIVE MENGGUNAKAN WEB SHARE API ==========
-async function shareProperty() {
-  if (!currentProperty) {
-    alert('Data properti belum dimuat');
+    // ========== GENERATE PDF DAN SHARE ==========
+let isGeneratingPDF = false;
+
+async function generateAndSharePDF() {
+  if (isGeneratingPDF) {
+    showToast('⏳ Sedang membuat PDF, tunggu sebentar...', 2000);
     return;
   }
   
-  // Data yang akan dibagikan
-  const shareData = {
-    title: currentProperty['nama property'] || 'Properti BMpro',
-    text: `${currentProperty['nama property'] || 'Properti'}\n📍 ${currentProperty['lokasi'] || '-'}\n💰 ${formatPrice(currentProperty['harga'])}\n🛏️ ${currentProperty['kt'] || '0'} KT | 🚿 ${currentProperty['km'] || '0'} KM | 📐 ${currentProperty['lt'] || '0'} m²\n\nHubungi: ${currentProperty['kontak'] || '-'}`,
-    url: window.location.href
-  };
+  if (!currentProperty) {
+    showToast('❌ Data properti belum dimuat', 2000);
+    return;
+  }
   
-  // Cek apakah browser support Web Share API
-  if (navigator.share) {
-    try {
-      await navigator.share(shareData);
-      console.log('✅ Share berhasil');
-    } catch (error) {
-      if (error.name !== 'AbortError') {
-        console.error('❌ Share gagal:', error);
-        fallbackShare();
-      }
+  isGeneratingPDF = true;
+  const shareBtn = document.getElementById('sharePdfBtn');
+  const originalText = shareBtn.innerHTML;
+  shareBtn.innerHTML = '<i class="fas fa-spinner fa-pulse"></i> Membuat PDF...';
+  shareBtn.disabled = true;
+  
+  showToast('📄 Membuat PDF properti...', 2000);
+  
+  try {
+    // Buat elemen sementara untuk PDF
+    const pdfElement = document.createElement('div');
+    pdfElement.className = 'pdf-preview';
+    pdfElement.style.position = 'fixed';
+    pdfElement.style.left = '-9999px';
+    pdfElement.style.top = '0';
+    pdfElement.style.width = '800px';
+    pdfElement.style.backgroundColor = 'white';
+    pdfElement.style.padding = '20px';
+    pdfElement.style.fontFamily = "'Poppins', sans-serif";
+    
+    // Kumpulkan gambar
+    const mainImage = currentProperty['gambar utama'] || '';
+    const galleryImages = [];
+    if (currentProperty['gambar2']) galleryImages.push(currentProperty['gambar2']);
+    if (currentProperty['gambar3']) galleryImages.push(currentProperty['gambar3']);
+    if (currentProperty['gambar4']) galleryImages.push(currentProperty['gambar4']);
+    if (currentProperty['gambar5']) galleryImages.push(currentProperty['gambar5']);
+    
+    // Format harga
+    const hargaFormatted = formatPrice(currentProperty['harga']);
+    
+    // Format tanggal
+    const date = new Date(currentProperty.timestamp || Date.now());
+    const formattedDate = date.toLocaleDateString('id-ID', {
+      day: 'numeric',
+      month: 'long',
+      year: 'numeric'
+    });
+    
+    // Buat HTML untuk PDF (desain mobile friendly)
+    pdfElement.innerHTML = `
+      <div style="max-width: 600px; margin: 0 auto; background: white;">
+        <!-- Header -->
+        <div style="text-align: center; margin-bottom: 24px; padding-bottom: 16px; border-bottom: 2px solid #3498db;">
+          <img src="https://drive.google.com/thumbnail?id=1a3cJptxJTSHksm9D7tN3us_7Ii7dQxxG&sz=w100" 
+               style="width: 50px; border-radius: 12px; margin-bottom: 8px;">
+          <h1 style="margin: 0; color: #2c3e50; font-size: 1.5rem;">BMpro</h1>
+          <p style="color: #7f8c8d; font-size: 0.7rem; margin: 4px 0 0;">Properti Batam</p>
+        </div>
+        
+        <!-- Gambar Utama -->
+        <div style="margin-bottom: 20px;">
+          <img src="${convertDriveUrl(mainImage)}" 
+               style="width: 100%; border-radius: 16px; object-fit: cover; aspect-ratio: 16/9;"
+               onerror="this.src='https://via.placeholder.com/600x400?text=No+Image'">
+        </div>
+        
+        <!-- Harga & Judul -->
+        <div style="margin-bottom: 16px;">
+          <h2 style="color: #3498db; font-size: 1.6rem; margin: 0 0 8px;">${hargaFormatted}</h2>
+          <h3 style="color: #2c3e50; font-size: 1.2rem; margin: 0 0 4px;">${escapeHtml(currentProperty['nama property'] || '-')}</h3>
+          <p style="color: #7f8c8d; font-size: 0.75rem; margin: 0;">
+            <i class="fas fa-map-marker-alt"></i> ${escapeHtml(currentProperty['lokasi'] || '-')}
+          </p>
+        </div>
+        
+        <!-- Spesifikasi Grid -->
+        <div style="display: flex; gap: 16px; padding: 16px 0; border-top: 1px solid #eee; border-bottom: 1px solid #eee; margin-bottom: 20px;">
+          <div style="flex: 1; text-align: center;">
+            <div style="font-size: 1.5rem;">🛏️</div>
+            <div style="font-weight: 700; font-size: 1rem;">${currentProperty['kt'] || '0'}</div>
+            <div style="font-size: 0.65rem; color: #7f8c8d;">Kamar Tidur</div>
+          </div>
+          <div style="flex: 1; text-align: center;">
+            <div style="font-size: 1.5rem;">🚿</div>
+            <div style="font-weight: 700; font-size: 1rem;">${currentProperty['km'] || '0'}</div>
+            <div style="font-size: 0.65rem; color: #7f8c8d;">Kamar Mandi</div>
+          </div>
+          <div style="flex: 1; text-align: center;">
+            <div style="font-size: 1.5rem;">📐</div>
+            <div style="font-weight: 700; font-size: 1rem;">${currentProperty['lt'] || '0'} m²</div>
+            <div style="font-size: 0.65rem; color: #7f8c8d;">Luas Tanah</div>
+          </div>
+        </div>
+        
+        <!-- Galeri Gambar (jika ada) -->
+        ${galleryImages.length > 0 ? `
+          <div style="margin-bottom: 20px;">
+            <h4 style="color: #2c3e50; font-size: 0.85rem; margin: 0 0 8px;">Galeri Properti</h4>
+            <div style="display: flex; gap: 8px; overflow-x: auto;">
+              ${galleryImages.map(img => `
+                <img src="${convertDriveUrl(img)}" 
+                     style="width: 100px; height: 100px; object-fit: cover; border-radius: 12px;"
+                     onerror="this.style.display='none'">
+              `).join('')}
+            </div>
+          </div>
+        ` : ''}
+        
+        <!-- Deskripsi -->
+        ${currentProperty['spesifikasi'] ? `
+          <div style="margin-bottom: 20px;">
+            <h4 style="color: #2c3e50; font-size: 0.85rem; margin: 0 0 8px;">Deskripsi</h4>
+            <p style="color: #555; font-size: 0.75rem; line-height: 1.5; margin: 0;">${escapeHtml(currentProperty['spesifikasi'])}</p>
+          </div>
+        ` : ''}
+        
+        <!-- Informasi Tambahan -->
+        <div style="background: #f8f9fa; padding: 16px; border-radius: 12px; margin-bottom: 20px;">
+          <table style="width: 100%; font-size: 0.7rem;">
+            <tr>
+              <td style="padding: 6px 0; color: #7f8c8d;">Kategori</td>
+              <td style="text-align: right; font-weight: 500;">${currentProperty._tab || 'primary'}</td>
+            </tr>
+            <tr>
+              <td style="padding: 6px 0; color: #7f8c8d;">Sales Marketing</td>
+              <td style="text-align: right; font-weight: 500;">${escapeHtml(currentProperty['sales'] || '-')}</td>
+            </tr>
+            <tr>
+              <td style="padding: 6px 0; color: #7f8c8d;">Kontak</td>
+              <td style="text-align: right; font-weight: 500;">${escapeHtml(currentProperty['kontak'] || '-')}</td>
+            </tr>
+            <tr>
+              <td style="padding: 6px 0; color: #7f8c8d;">Diposting</td>
+              <td style="text-align: right; font-weight: 500;">${formattedDate}</td>
+            </tr>
+          </table>
+        </div>
+        
+        <!-- Footer -->
+        <div style="text-align: center; padding-top: 16px; border-top: 1px solid #eee; font-size: 0.6rem; color: #aaa;">
+          Dokumen ini dibuat otomatis oleh BMpro<br>
+          ${window.location.href}
+        </div>
+      </div>
+    `;
+    
+    document.body.appendChild(pdfElement);
+    
+    // Gunakan html2canvas untuk screenshot
+    const canvas = await html2canvas(pdfElement, {
+      scale: 2,
+      backgroundColor: '#ffffff',
+      logging: false,
+      useCORS: true,
+      allowTaint: false
+    });
+    
+    document.body.removeChild(pdfElement);
+    
+    // Konversi ke PDF
+    const imgData = canvas.toDataURL('image/png');
+    const { jsPDF } = window.jspdf;
+    const pdf = new jsPDF({
+      orientation: 'portrait',
+      unit: 'mm',
+      format: 'a4'
+    });
+    
+    const imgWidth = 190; // mm (A4 lebar = 210mm, margin 10mm kiri/kanan)
+    const pageHeight = 277; // mm (A4 tinggi)
+    const imgHeight = (canvas.height * imgWidth) / canvas.width;
+    let position = 10; // margin top
+    
+    pdf.addImage(imgData, 'PNG', 10, position, imgWidth, imgHeight);
+    
+    // Jika gambar lebih dari 1 halaman
+    let heightLeft = imgHeight - pageHeight + position;
+    while (heightLeft > 0) {
+      position = heightLeft - imgHeight;
+      pdf.addPage();
+      pdf.addImage(imgData, 'PNG', 10, position, imgWidth, imgHeight);
+      heightLeft -= pageHeight;
     }
-  } else {
-    // Fallback untuk browser yang tidak support
-    fallbackShare();
+    
+    // Dapatkan blob PDF
+    const pdfBlob = pdf.output('blob');
+    const pdfFile = new File([pdfBlob], `${currentProperty['nama property'] || 'properti'}_${Date.now()}.pdf`, { type: 'application/pdf' });
+    
+    // Cek apakah browser support Web Share API (untuk file)
+    if (navigator.canShare && navigator.canShare({ files: [pdfFile] })) {
+      // Share PDF via native share (WhatsApp, Email, Bluetooth, dll)
+      await navigator.share({
+        title: currentProperty['nama property'] || 'Properti BMpro',
+        text: `Lihat detail properti: ${currentProperty['nama property'] || ''}\nHarga: ${hargaFormatted}\nLokasi: ${currentProperty['lokasi'] || '-'}`,
+        files: [pdfFile]
+      });
+      showToast('✅ PDF berhasil dibagikan', 2000);
+    } else {
+      // Fallback: download PDF saja
+      const link = document.createElement('a');
+      link.href = URL.createObjectURL(pdfBlob);
+      link.download = `${currentProperty['nama property'] || 'properti'}_${Date.now()}.pdf`;
+      link.click();
+      URL.revokeObjectURL(link.href);
+      showToast('✅ PDF berhasil diunduh', 2000);
+      
+      // Tawarkan share via WhatsApp
+      setTimeout(() => {
+        if (confirm('Ingin membagikan PDF via WhatsApp?')) {
+          window.open(`https://wa.me/?text=${encodeURIComponent(`*${currentProperty['nama property'] || 'Properti'}*\n\nHarga: ${hargaFormatted}\nLokasi: ${currentProperty['lokasi'] || '-'}\n\nPDF sudah diunduh, silakan lampirkan file PDF.`)}`, '_blank');
+        }
+      }, 500);
+    }
+    
+  } catch (error) {
+    console.error('PDF Error:', error);
+    showToast('❌ Gagal membuat PDF: ' + error.message, 3000);
+  } finally {
+    isGeneratingPDF = false;
+    shareBtn.innerHTML = originalText;
+    shareBtn.disabled = false;
   }
 }
 
-function fallbackShare() {
-  // Copy link ke clipboard sebagai fallback
-  const url = window.location.href;
-  navigator.clipboard.writeText(url).then(() => {
-    alert('Link telah disalin ke clipboard!\n\nGunakan WhatsApp/Email untuk membagikan.');
-  }).catch(() => {
-    alert(`Bagikan link ini: ${url}`);
-  });
+function showToast(message, duration = 2000) {
+  let toast = document.getElementById('dynamicToast');
+  if (!toast) {
+    toast = document.createElement('div');
+    toast.id = 'dynamicToast';
+    toast.style.cssText = `
+      position: fixed;
+      bottom: 100px;
+      left: 50%;
+      transform: translateX(-50%);
+      background: #2c3e50;
+      color: white;
+      padding: 10px 20px;
+      border-radius: 30px;
+      font-size: 0.8rem;
+      z-index: 1000;
+      display: none;
+      white-space: nowrap;
+      font-family: 'Poppins', sans-serif;
+    `;
+    document.body.appendChild(toast);
+  }
+  
+  toast.textContent = message;
+  toast.style.display = 'block';
+  setTimeout(() => {
+    toast.style.display = 'none';
+  }, duration);
 }
     
     function changeImage(index) {
