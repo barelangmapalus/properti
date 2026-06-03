@@ -110,6 +110,34 @@
   height:100%;
 }
 
+ /* ========== SHARE BUTTON STYLES ========== */
+ .share-btn {
+  background: linear-gradient(135deg, rgb(78, 78, 78), rgb(78, 78, 78));
+  color: white;
+  border: none;
+  padding: 12px 20px;
+  border-radius: 30px;
+  font-size: 0.8rem;
+  font-weight: 600;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  transition: all 0.3s ease;
+  width: 100%;
+  margin-bottom: 12px;
+}
+
+.share-btn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(39,174,96,0.3);
+}
+
+.share-btn i {
+  font-size: 1rem;
+}
+
   </style>
 </head>
 <body>
@@ -232,6 +260,10 @@
           <div class="spec-item"><span class="spec-label">Kontak</span><span class="spec-value">${escapeHtml(property['kontak'] || '-')}</span></div>
         </div>
         <div class="detail-contact">
+          <!-- Tombol Share Native -->
+            <button class="share-btn" id="nativeShareBtn" onclick="shareProperty()">
+              <i class="fas fa-share-alt"></i> Bagikan Properti
+            </button>
           <h3 style="margin-bottom:12px;">Hubungi Marketing</h3>
           <div class="contact-buttons">
             <a href="tel:${property['kontak'] || ''}" class="btn-call"><i class="fas fa-phone"></i> Telepon</a>
@@ -274,6 +306,47 @@
       }
       return `https://www.youtube.com/embed/${videoId}`;
     }
+
+    // ========== SHARE NATIVE MENGGUNAKAN WEB SHARE API ==========
+async function shareProperty() {
+  if (!foundProperty) {
+    alert('Data properti belum dimuat');
+    return;
+  }
+  
+  // Data yang akan dibagikan
+  const shareData = {
+    title: foundProperty['nama property'] || 'Properti BMpro',
+    text: `${foundProperty['nama property'] || 'Properti'}\n📍 ${foundProperty['lokasi'] || '-'}\n💰 ${formatPrice(foundProperty['harga'])}\n🛏️ ${foundProperty['kt'] || '0'} KT | 🚿 ${foundProperty['km'] || '0'} KM | 📐 ${foundProperty['lt'] || '0'} m²\n\nHubungi: ${foundProperty['kontak'] || '-'}`,
+    url: window.location.href
+  };
+  
+  // Cek apakah browser support Web Share API
+  if (navigator.share) {
+    try {
+      await navigator.share(shareData);
+      console.log('✅ Share berhasil');
+    } catch (error) {
+      if (error.name !== 'AbortError') {
+        console.error('❌ Share gagal:', error);
+        fallbackShare();
+      }
+    }
+  } else {
+    // Fallback untuk browser yang tidak support
+    fallbackShare();
+  }
+}
+
+function fallbackShare() {
+  // Copy link ke clipboard sebagai fallback
+  const url = window.location.href;
+  navigator.clipboard.writeText(url).then(() => {
+    alert('Link telah disalin ke clipboard!\n\nGunakan WhatsApp/Email untuk membagikan.');
+  }).catch(() => {
+    alert(`Bagikan link ini: ${url}`);
+  });
+}
     
     async function loadDetail() {
       console.log('🔍 Mencari properti dengan property_id:', propertyId);
