@@ -13,6 +13,10 @@
   <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
   <!-- CSS Global -->
   <link rel="stylesheet" href="css/style.css">
+
+  <!-- html2canvas + jsPDF -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
   
   <style>
     /* Tambahan khusus detail.html */
@@ -100,49 +104,37 @@
 
 
   /* ========== SHARE BUTTON STYLES ========== */
-.share-btn {
-  background: linear-gradient(135deg, #27ae60, #2ecc71);
-  color: white;
-  border: none;
-  padding: 12px 20px;
-  border-radius: 30px;
-  font-size: 0.8rem;
-  font-weight: 600;
-  cursor: pointer;
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  gap: 10px;
-  transition: all 0.3s ease;
-  width: 100%;
-  margin-bottom: 12px;
-}
+  .share-btn {
+      background: linear-gradient(135deg, #27ae60, #2ecc71);
+      color: white;
+      border: none;
+      padding: 12px 20px;
+      border-radius: 30px;
+      font-size: 0.8rem;
+      font-weight: 600;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
+      transition: all 0.3s ease;
+      width: 100%;
+      margin-bottom: 12px;
+    }
 
-.share-btn:active {
-  transform: scale(0.98);
-}
+    .share-btn:active {
+      transform: scale(0.98);
+    }
 
-.share-btn:disabled {
-  opacity: 0.6;
-  cursor: not-allowed;
-  transform: none;
-}
+    .share-btn:disabled {
+      opacity: 0.6;
+      cursor: not-allowed;
+      transform: none;
+    }
 
-.share-btn i {
-  font-size: 1rem;
-}
-
-/* Style untuk elemen PDF yang akan di-capture */
-.pdf-preview {
-  position: fixed;
-  left: -9999px;
-  top: 0;
-  width: 100%;
-  max-width: 800px;
-  background: white;
-  font-family: 'Poppins', sans-serif;
-  z-index: -1;
-}
+    .share-btn i {
+      font-size: 1rem;
+    }
 
   </style>
 </head>
@@ -419,10 +411,9 @@
         
         <div class="detail-contact">
           <h3 style="margin-bottom:12px;">Hubungi Marketing</h3>
-          <!-- Tombol Share PDF -->
-            <button class="share-btn" id="sharePdfBtn" onclick="generateAndSharePDF()">
-              <i class="fas fa-file-pdf"></i> Share PDF Properti
-            </button>
+          <button class="share-btn" id="sharePdfBtn" onclick="generateAndSharePDF()">
+            <i class="fas fa-file-pdf"></i> Share PDF Properti
+          </button>
           <div class="contact-buttons">
             <a href="tel:${property['kontak'] || '081234567890'}" class="btn-call">
               <i class="fas fa-phone"></i> Telepon
@@ -436,234 +427,279 @@
     }
 
 
-    // ========== GENERATE PDF DAN SHARE ==========
-let isGeneratingPDF = false;
+    // ========== ESCAPE HTML UNTUK KEAMANAN ==========
+function escapeHtml(str) {
+  if (!str) return '';
+  return str
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;')
+    .replace(/'/g, '&#39;');
+}
 
-async function generateAndSharePDF() {
-  if (isGeneratingPDF) {
-    showToast('⏳ Sedang membuat PDF, tunggu sebentar...', 2000);
-    return;
-  }
-  
-  if (!currentProperty) {
-    showToast('❌ Data properti belum dimuat', 2000);
-    return;
-  }
-  
-  isGeneratingPDF = true;
-  const shareBtn = document.getElementById('sharePdfBtn');
-  const originalText = shareBtn.innerHTML;
-  shareBtn.innerHTML = '<i class="fas fa-spinner fa-pulse"></i> Membuat PDF...';
-  shareBtn.disabled = true;
-  
-  showToast('📄 Membuat PDF properti...', 2000);
-  
-  try {
-    // Buat elemen sementara untuk PDF
-    const pdfElement = document.createElement('div');
-    pdfElement.className = 'pdf-preview';
-    pdfElement.style.position = 'fixed';
-    pdfElement.style.left = '-9999px';
-    pdfElement.style.top = '0';
-    pdfElement.style.width = '800px';
-    pdfElement.style.backgroundColor = 'white';
-    pdfElement.style.padding = '20px';
-    pdfElement.style.fontFamily = "'Poppins', sans-serif";
-    
-    // Kumpulkan gambar
-    const mainImage = currentProperty['gambar utama'] || '';
-    const galleryImages = [];
-    if (currentProperty['gambar2']) galleryImages.push(currentProperty['gambar2']);
-    if (currentProperty['gambar3']) galleryImages.push(currentProperty['gambar3']);
-    if (currentProperty['gambar4']) galleryImages.push(currentProperty['gambar4']);
-    if (currentProperty['gambar5']) galleryImages.push(currentProperty['gambar5']);
-    
-    // Format harga
-    const hargaFormatted = formatPrice(currentProperty['harga']);
-    
-    // Format tanggal
-    const date = new Date(currentProperty.timestamp || Date.now());
-    const formattedDate = date.toLocaleDateString('id-ID', {
-      day: 'numeric',
-      month: 'long',
-      year: 'numeric'
-    });
-    
-    // Buat HTML untuk PDF (desain mobile friendly)
-    pdfElement.innerHTML = `
-      <div style="max-width: 600px; margin: 0 auto; background: white;">
-        <!-- Header -->
-        <div style="text-align: center; margin-bottom: 24px; padding-bottom: 16px; border-bottom: 2px solid #3498db;">
-          <img src="https://drive.google.com/thumbnail?id=1a3cJptxJTSHksm9D7tN3us_7Ii7dQxxG&sz=w100" 
-               style="width: 50px; border-radius: 12px; margin-bottom: 8px;">
-          <h1 style="margin: 0; color: #2c3e50; font-size: 1.5rem;">BMpro</h1>
-          <p style="color: #7f8c8d; font-size: 0.7rem; margin: 4px 0 0;">Properti Batam</p>
-        </div>
+   // ========== FUNGSI UNTUK MENGATASI ERROR 429 DAN CORS ==========
+   function getDriveImageUrl(url) {
+      if (!url) return '';
+      if (url.includes('lh3.googleusercontent.com')) return url;
+      
+      let fileId = null;
+      let match = url.match(/\/d\/([a-zA-Z0-9_-]+)/);
+      if (match && match[1]) fileId = match[1];
+      if (!fileId) {
+        match = url.match(/[?&]id=([a-zA-Z0-9_-]+)/);
+        if (match && match[1]) fileId = match[1];
+      }
+      if (!fileId && url.match(/^[a-zA-Z0-9_-]{25,}$/)) fileId = url;
+      
+      if (fileId) {
+        return `https://lh3.googleusercontent.com/d/${fileId}=w800`;
+      }
+      return url;
+    }
+
+    function loadImageWithRetry(src, maxRetries = 3, delay = 1000) {
+      return new Promise((resolve, reject) => {
+        const img = new Image();
+        img.crossOrigin = 'Anonymous';
+        img.referrerPolicy = 'no-referrer';
+        let attempt = 0;
         
-        <!-- Gambar Utama -->
-        <div style="margin-bottom: 20px;">
-          <img src="${convertDriveUrl(mainImage)}" 
-               style="width: 100%; border-radius: 16px; object-fit: cover; aspect-ratio: 16/9;"
-               onerror="this.src='https://via.placeholder.com/600x400?text=No+Image'">
-        </div>
+        function attemptLoad() {
+          img.onload = () => resolve(img);
+          img.onerror = (err) => {
+            if (attempt < maxRetries) {
+              attempt++;
+              console.log(`Gagal memuat ${src}, percobaan ${attempt}/${maxRetries}...`);
+              setTimeout(attemptLoad, delay);
+            } else {
+              reject(new Error(`Gagal memuat gambar: ${src}`));
+            }
+          };
+          img.src = src;
+        }
+        attemptLoad();
+      });
+    }
+
+    // ========== GENERATE PDF DAN SHARE (VERSI ANTI 429) ==========
+    let isGeneratingPDF = false;
+
+    async function generateAndSharePDF() {
+      if (isGeneratingPDF) {
+        showToast('⏳ Sedang membuat PDF, tunggu sebentar...', 2000);
+        return;
+      }
+      
+      if (!currentProperty) {
+        showToast('❌ Data properti belum dimuat', 2000);
+        return;
+      }
+      
+      isGeneratingPDF = true;
+      const shareBtn = document.getElementById('sharePdfBtn');
+      const originalText = shareBtn.innerHTML;
+      shareBtn.innerHTML = '<i class="fas fa-spinner fa-pulse"></i> Memuat gambar...';
+      shareBtn.disabled = true;
+      
+      showToast('📸 Memuat gambar properti...', 1500);
+      
+      try {
+        // Kumpulkan semua URL gambar
+        const imageUrls = [];
+        const mainImageUrl = getDriveImageUrl(currentProperty['gambar utama']);
+        if (mainImageUrl) imageUrls.push(mainImageUrl);
         
-        <!-- Harga & Judul -->
-        <div style="margin-bottom: 16px;">
-          <h2 style="color: #3498db; font-size: 1.6rem; margin: 0 0 8px;">${hargaFormatted}</h2>
-          <h3 style="color: #2c3e50; font-size: 1.2rem; margin: 0 0 4px;">${escapeHtml(currentProperty['nama property'] || '-')}</h3>
-          <p style="color: #7f8c8d; font-size: 0.75rem; margin: 0;">
-            <i class="fas fa-map-marker-alt"></i> ${escapeHtml(currentProperty['lokasi'] || '-')}
-          </p>
-        </div>
+        const galleryImages = [];
+        ['gambar2', 'gambar3', 'gambar4', 'gambar5'].forEach(key => {
+          const url = currentProperty[key];
+          if (url && url.trim() !== '') {
+            const converted = getDriveImageUrl(url);
+            galleryImages.push(converted);
+            imageUrls.push(converted);
+          }
+        });
         
-        <!-- Spesifikasi Grid -->
-        <div style="display: flex; gap: 16px; padding: 16px 0; border-top: 1px solid #eee; border-bottom: 1px solid #eee; margin-bottom: 20px;">
-          <div style="flex: 1; text-align: center;">
-            <div style="font-size: 1.5rem;">🛏️</div>
-            <div style="font-weight: 700; font-size: 1rem;">${currentProperty['kt'] || '0'}</div>
-            <div style="font-size: 0.65rem; color: #7f8c8d;">Kamar Tidur</div>
-          </div>
-          <div style="flex: 1; text-align: center;">
-            <div style="font-size: 1.5rem;">🚿</div>
-            <div style="font-weight: 700; font-size: 1rem;">${currentProperty['km'] || '0'}</div>
-            <div style="font-size: 0.65rem; color: #7f8c8d;">Kamar Mandi</div>
-          </div>
-          <div style="flex: 1; text-align: center;">
-            <div style="font-size: 1.5rem;">📐</div>
-            <div style="font-weight: 700; font-size: 1rem;">${currentProperty['lt'] || '0'} m²</div>
-            <div style="font-size: 0.65rem; color: #7f8c8d;">Luas Tanah</div>
-          </div>
-        </div>
+        const logoUrl = 'https://drive.google.com/thumbnail?id=1a3cJptxJTSHksm9D7tN3us_7Ii7dQxxG&sz=w100';
+        imageUrls.push(logoUrl);
         
-        <!-- Galeri Gambar (jika ada) -->
-        ${galleryImages.length > 0 ? `
-          <div style="margin-bottom: 20px;">
-            <h4 style="color: #2c3e50; font-size: 0.85rem; margin: 0 0 8px;">Galeri Properti</h4>
-            <div style="display: flex; gap: 8px; overflow-x: auto;">
-              ${galleryImages.map(img => `
-                <img src="${convertDriveUrl(img)}" 
-                     style="width: 100px; height: 100px; object-fit: cover; border-radius: 12px;"
-                     onerror="this.style.display='none'">
-              `).join('')}
+        // Muat gambar satu per satu (untuk hindari rate limit)
+        showToast(`📥 Memuat ${imageUrls.length} gambar...`, 2000);
+        for (let i = 0; i < imageUrls.length; i++) {
+          try {
+            console.log(`Memuat gambar ${i+1}/${imageUrls.length}`);
+            await loadImageWithRetry(imageUrls[i], 3, 1500);
+          } catch (err) {
+            console.warn(`Gagal memuat gambar: ${imageUrls[i]}`);
+          }
+        }
+        
+        showToast('📄 Membuat layout PDF...', 1500);
+        
+        // Buat elemen sementara untuk PDF
+        const pdfElement = document.createElement('div');
+        pdfElement.style.position = 'fixed';
+        pdfElement.style.left = '-9999px';
+        pdfElement.style.top = '0';
+        pdfElement.style.width = '800px';
+        pdfElement.style.backgroundColor = 'white';
+        pdfElement.style.padding = '20px';
+        pdfElement.style.fontFamily = "'Poppins', sans-serif";
+        
+        const hargaFormatted = formatPrice(currentProperty['harga']);
+        const date = new Date(currentProperty.timestamp || Date.now());
+        const formattedDate = date.toLocaleDateString('id-ID', {
+          day: 'numeric',
+          month: 'long',
+          year: 'numeric'
+        });
+        
+        pdfElement.innerHTML = `
+          <div style="max-width: 600px; margin: 0 auto; background: white;">
+            <div style="text-align: center; margin-bottom: 24px; padding-bottom: 16px; border-bottom: 2px solid #3498db;">
+              <img src="${logoUrl}" style="width: 50px; border-radius: 12px; margin-bottom: 8px;">
+              <h1 style="margin: 0; color: #2c3e50; font-size: 1.5rem;">BMpro</h1>
+              <p style="color: #7f8c8d; font-size: 0.7rem; margin: 4px 0 0;">Properti Batam</p>
+            </div>
+            <div style="margin-bottom: 20px;">
+              <img src="${mainImageUrl}" style="width: 100%; border-radius: 16px; object-fit: cover; aspect-ratio: 16/9;" onerror="this.src='https://via.placeholder.com/600x400?text=No+Image'">
+            </div>
+            <div style="margin-bottom: 16px;">
+              <h2 style="color: #3498db; font-size: 1.6rem; margin: 0 0 8px;">${hargaFormatted}</h2>
+              <h3 style="color: #2c3e50; font-size: 1.2rem; margin: 0 0 4px;">${escapeHtml(currentProperty['nama property'] || '-')}</h3>
+              <p style="color: #7f8c8d; font-size: 0.75rem; margin: 0;">📍 ${escapeHtml(currentProperty['lokasi'] || '-')}</p>
+            </div>
+            <div style="display: flex; gap: 16px; padding: 16px 0; border-top: 1px solid #eee; border-bottom: 1px solid #eee; margin-bottom: 20px;">
+              <div style="flex: 1; text-align: center;"><div style="font-size: 1.5rem;">🛏️</div><div style="font-weight: 700;">${currentProperty['kt'] || '0'}</div><div style="font-size: 0.65rem; color: #7f8c8d;">Kamar Tidur</div></div>
+              <div style="flex: 1; text-align: center;"><div style="font-size: 1.5rem;">🚿</div><div style="font-weight: 700;">${currentProperty['km'] || '0'}</div><div style="font-size: 0.65rem; color: #7f8c8d;">Kamar Mandi</div></div>
+              <div style="flex: 1; text-align: center;"><div style="font-size: 1.5rem;">📐</div><div style="font-weight: 700;">${currentProperty['lt'] || '0'} m²</div><div style="font-size: 0.65rem; color: #7f8c8d;">Luas Tanah</div></div>
+            </div>
+            ${galleryImages.length > 0 ? `
+              <div style="margin-bottom: 20px;">
+                <h4 style="color: #2c3e50; font-size: 0.85rem; margin: 0 0 8px;">📸 Galeri Properti</h4>
+                <div style="display: flex; gap: 8px; flex-wrap: wrap;">
+                  ${galleryImages.map(img => `<img src="${img}" style="width: 80px; height: 80px; object-fit: cover; border-radius: 12px;" onerror="this.style.display='none'">`).join('')}
+                </div>
+              </div>
+            ` : ''}
+            ${currentProperty['spesifikasi'] ? `
+              <div style="margin-bottom: 20px;">
+                <h4 style="color: #2c3e50; font-size: 0.85rem; margin: 0 0 8px;">📋 Deskripsi</h4>
+                <p style="color: #555; font-size: 0.75rem; line-height: 1.5; margin: 0;">${escapeHtml(currentProperty['spesifikasi'])}</p>
+              </div>
+            ` : ''}
+            <div style="background: #f8f9fa; padding: 16px; border-radius: 12px; margin-bottom: 20px;">
+              <table style="width: 100%; font-size: 0.7rem;">
+                <tr><td style="padding: 6px 0;">Kategori</td><td style="text-align: right;">${currentProperty._tab || 'primary'}</td></tr>
+                <tr><td style="padding: 6px 0;">Sales Marketing</td><td style="text-align: right;">${escapeHtml(currentProperty['sales'] || '-')}</td></tr>
+                <tr><td style="padding: 6px 0;">Kontak</td><td style="text-align: right;">${escapeHtml(currentProperty['kontak'] || '-')}</td></tr>
+                <tr><td style="padding: 6px 0;">Diposting</td><td style="text-align: right;">${formattedDate}</td></tr>
+              </table>
+            </div>
+            <div style="text-align: center; padding-top: 16px; border-top: 1px solid #eee; font-size: 0.6rem; color: #aaa;">
+              Dokumen ini dibuat otomatis oleh BMpro
             </div>
           </div>
-        ` : ''}
+        `;
         
-        <!-- Deskripsi -->
-        ${currentProperty['spesifikasi'] ? `
-          <div style="margin-bottom: 20px;">
-            <h4 style="color: #2c3e50; font-size: 0.85rem; margin: 0 0 8px;">Deskripsi</h4>
-            <p style="color: #555; font-size: 0.75rem; line-height: 1.5; margin: 0;">${escapeHtml(currentProperty['spesifikasi'])}</p>
-          </div>
-        ` : ''}
+        document.body.appendChild(pdfElement);
         
-        <!-- Informasi Tambahan -->
-        <div style="background: #f8f9fa; padding: 16px; border-radius: 12px; margin-bottom: 20px;">
-          <table style="width: 100%; font-size: 0.7rem;">
-            <tr>
-              <td style="padding: 6px 0; color: #7f8c8d;">Kategori</td>
-              <td style="text-align: right; font-weight: 500;">${currentProperty._tab || 'primary'}</td>
-            </tr>
-            <tr>
-              <td style="padding: 6px 0; color: #7f8c8d;">Sales Marketing</td>
-              <td style="text-align: right; font-weight: 500;">${escapeHtml(currentProperty['sales'] || '-')}</td>
-            </tr>
-            <tr>
-              <td style="padding: 6px 0; color: #7f8c8d;">Kontak</td>
-              <td style="text-align: right; font-weight: 500;">${escapeHtml(currentProperty['kontak'] || '-')}</td>
-            </tr>
-            <tr>
-              <td style="padding: 6px 0; color: #7f8c8d;">Diposting</td>
-              <td style="text-align: right; font-weight: 500;">${formattedDate}</td>
-            </tr>
-          </table>
-        </div>
+        showToast('📸 Meng-capture halaman...', 1500);
         
-        <!-- Footer -->
-        <div style="text-align: center; padding-top: 16px; border-top: 1px solid #eee; font-size: 0.6rem; color: #aaa;">
-          Dokumen ini dibuat otomatis oleh BMpro<br>
-          ${window.location.href}
-        </div>
-      </div>
-    `;
-    
-    document.body.appendChild(pdfElement);
-    
-    // Gunakan html2canvas untuk screenshot
-    const canvas = await html2canvas(pdfElement, {
-      scale: 2,
-      backgroundColor: '#ffffff',
-      logging: false,
-      useCORS: true,
-      allowTaint: false
-    });
-    
-    document.body.removeChild(pdfElement);
-    
-    // Konversi ke PDF
-    const imgData = canvas.toDataURL('image/png');
-    const { jsPDF } = window.jspdf;
-    const pdf = new jsPDF({
-      orientation: 'portrait',
-      unit: 'mm',
-      format: 'a4'
-    });
-    
-    const imgWidth = 190; // mm (A4 lebar = 210mm, margin 10mm kiri/kanan)
-    const pageHeight = 277; // mm (A4 tinggi)
-    const imgHeight = (canvas.height * imgWidth) / canvas.width;
-    let position = 10; // margin top
-    
-    pdf.addImage(imgData, 'PNG', 10, position, imgWidth, imgHeight);
-    
-    // Jika gambar lebih dari 1 halaman
-    let heightLeft = imgHeight - pageHeight + position;
-    while (heightLeft > 0) {
-      position = heightLeft - imgHeight;
-      pdf.addPage();
-      pdf.addImage(imgData, 'PNG', 10, position, imgWidth, imgHeight);
-      heightLeft -= pageHeight;
-    }
-    
-    // Dapatkan blob PDF
-    const pdfBlob = pdf.output('blob');
-    const pdfFile = new File([pdfBlob], `${currentProperty['nama property'] || 'properti'}_${Date.now()}.pdf`, { type: 'application/pdf' });
-    
-    // Cek apakah browser support Web Share API (untuk file)
-    if (navigator.canShare && navigator.canShare({ files: [pdfFile] })) {
-      // Share PDF via native share (WhatsApp, Email, Bluetooth, dll)
-      await navigator.share({
-        title: currentProperty['nama property'] || 'Properti BMpro',
-        text: `Lihat detail properti: ${currentProperty['nama property'] || ''}\nHarga: ${hargaFormatted}\nLokasi: ${currentProperty['lokasi'] || '-'}`,
-        files: [pdfFile]
-      });
-      showToast('✅ PDF berhasil dibagikan', 2000);
-    } else {
-      // Fallback: download PDF saja
-      const link = document.createElement('a');
-      link.href = URL.createObjectURL(pdfBlob);
-      link.download = `${currentProperty['nama property'] || 'properti'}_${Date.now()}.pdf`;
-      link.click();
-      URL.revokeObjectURL(link.href);
-      showToast('✅ PDF berhasil diunduh', 2000);
-      
-      // Tawarkan share via WhatsApp
-      setTimeout(() => {
-        if (confirm('Ingin membagikan PDF via WhatsApp?')) {
-          window.open(`https://wa.me/?text=${encodeURIComponent(`*${currentProperty['nama property'] || 'Properti'}*\n\nHarga: ${hargaFormatted}\nLokasi: ${currentProperty['lokasi'] || '-'}\n\nPDF sudah diunduh, silakan lampirkan file PDF.`)}`, '_blank');
+        const canvas = await html2canvas(pdfElement, {
+          scale: 2,
+          backgroundColor: '#ffffff',
+          logging: false,
+          useCORS: true,
+          allowTaint: false,
+          imageTimeout: 30000
+        });
+        
+        document.body.removeChild(pdfElement);
+        
+        showToast('📑 Membuat file PDF...', 1500);
+        
+        const imgData = canvas.toDataURL('image/png');
+        const { jsPDF } = window.jspdf;
+        const pdf = new jsPDF({ orientation: 'portrait', unit: 'mm', format: 'a4' });
+        
+        const imgWidth = 190;
+        const pageHeight = 277;
+        const imgHeight = (canvas.height * imgWidth) / canvas.width;
+        let position = 10;
+        
+        pdf.addImage(imgData, 'PNG', 10, position, imgWidth, imgHeight);
+        
+        let heightLeft = imgHeight - pageHeight + position;
+        while (heightLeft > 0) {
+          position = heightLeft - imgHeight;
+          pdf.addPage();
+          pdf.addImage(imgData, 'PNG', 10, position, imgWidth, imgHeight);
+          heightLeft -= pageHeight;
         }
-      }, 500);
+        
+        const pdfBlob = pdf.output('blob');
+        const fileName = `${(currentProperty['nama property'] || 'properti').replace(/[^a-z0-9]/gi, '_')}_${Date.now()}.pdf`;
+        const pdfFile = new File([pdfBlob], fileName, { type: 'application/pdf' });
+        
+        if (navigator.canShare && navigator.canShare({ files: [pdfFile] })) {
+          await navigator.share({
+            title: currentProperty['nama property'] || 'Properti BMpro',
+            text: `🏠 ${currentProperty['nama property'] || 'Properti'}\n💰 ${hargaFormatted}\n📍 ${currentProperty['lokasi'] || '-'}`,
+            files: [pdfFile]
+          });
+          showToast('✅ PDF berhasil dibagikan', 2000);
+        } else {
+          const link = document.createElement('a');
+          link.href = URL.createObjectURL(pdfBlob);
+          link.download = fileName;
+          link.click();
+          URL.revokeObjectURL(link.href);
+          showToast('✅ PDF berhasil diunduh', 2000);
+        }
+        
+      } catch (error) {
+        console.error('PDF Error:', error);
+        showToast('❌ Gagal membuat PDF: ' + error.message, 4000);
+      } finally {
+        isGeneratingPDF = false;
+        const btn = document.getElementById('sharePdfBtn');
+        if (btn) {
+          btn.innerHTML = '<i class="fas fa-file-pdf"></i> Share PDF Properti';
+          btn.disabled = false;
+        }
+      }
+    }
+
+    function showToast(message, duration = 2000) {
+      let toast = document.getElementById('dynamicToast');
+      if (!toast) {
+        toast = document.createElement('div');
+        toast.id = 'dynamicToast';
+        toast.style.cssText = `
+          position: fixed;
+          bottom: 100px;
+          left: 50%;
+          transform: translateX(-50%);
+          background: #2c3e50;
+          color: white;
+          padding: 10px 20px;
+          border-radius: 30px;
+          font-size: 0.8rem;
+          z-index: 1000;
+          display: none;
+          white-space: nowrap;
+          font-family: 'Poppins', sans-serif;
+        `;
+        document.body.appendChild(toast);
+      }
+      toast.textContent = message;
+      toast.style.display = 'block';
+      setTimeout(() => {
+        toast.style.display = 'none';
+      }, duration);
     }
     
-  } catch (error) {
-    console.error('PDF Error:', error);
-    showToast('❌ Gagal membuat PDF: ' + error.message, 3000);
-  } finally {
-    isGeneratingPDF = false;
-    shareBtn.innerHTML = originalText;
-    shareBtn.disabled = false;
-  }
-}
 
 function showToast(message, duration = 2000) {
   let toast = document.getElementById('dynamicToast');
