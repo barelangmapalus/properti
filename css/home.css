@@ -732,7 +732,8 @@ body.home-page > .home-fixed-nav .nav-item span {
     justify-content:center !important;
     align-items:center !important;
     width:100% !important;
-    margin:20px auto !important;
+    margin:30px auto !important;
+    padding:15px 0 25px 0 !important;
     overflow:visible !important;
 }
 
@@ -744,9 +745,11 @@ body.home-page > .home-fixed-nav .nav-item span {
 #histats_counter canvas{
     display:block !important;
     margin:auto !important;
+    transform:scale(1.5) !important;
+    transform-origin:center center !important;
 }
-  
-  .property-viewers i{
+
+.property-viewers i{
     color:#3498db;
     font-size:11px;
-  }
+}
