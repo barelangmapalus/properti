@@ -1011,9 +1011,3 @@
     margin-top:4px;
     margin-bottom:6px;
   }
-
-img {
-    max-width: 100%;
-    height: auto !important; /* Memastikan proporsi gambar tetap terjaga */
-    object-fit: contain; 
-}
