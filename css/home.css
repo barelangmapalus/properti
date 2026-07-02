@@ -725,25 +725,6 @@ body.home-page > .home-fixed-nav .nav-item span {
 .home-footer {
   max-width: 100%;
 }
-
-/* #histats_counter{
-    display:flex !important;
-    justify-content:center !important;
-    align-items:center !important;
-    width:100% !important;
-    margin:20px auto !important;
-    overflow:visible !important;
-}
-
-#histats_counter > div{
-    position:static !important;
-    margin:auto !important;
-}
-
-#histats_counter canvas{
-    display:block !important;
-    margin:auto !important;
-} */
   
 .property-viewers i{
     color:#3498db;
