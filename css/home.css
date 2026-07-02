@@ -588,6 +588,19 @@ body.home-page {
   margin: 4px 0;
 }
 
+.home-footer p a{
+    color:#ffffff;
+    text-decoration:none;
+}
+
+.home-footer p a:hover{
+    color:#ffd54f;
+}
+
+.home-footer p a:active{
+    color:#ffe082;
+}
+
 .home-footer-contact {
   margin-top: 12px;
   display: flex;
