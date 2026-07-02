@@ -730,3 +730,15 @@ body.home-page > .home-fixed-nav .nav-item span {
     color:#3498db;
     font-size:11px;
 }
+
+#histats_counter{
+display:flex;
+justify-content:center;
+margin-top:18px;
+}
+
+#histats_counter table{
+
+margin:auto;
+
+}
