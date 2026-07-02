@@ -727,27 +727,7 @@ body.home-page > .home-fixed-nav .nav-item span {
   max-width: 100%;
 }
 
-#histats_counter{
-    display:flex !important;
-    justify-content:center !important;
-    align-items:center !important;
-    width:100% !important;
-    margin:30px auto !important;
-    padding:15px 0 25px 0 !important;
-    overflow:visible !important;
-}
 
-#histats_counter > div{
-    position:static !important;
-    margin:auto !important;
-}
-
-#histats_counter canvas{
-    display:block !important;
-    margin:auto !important;
-    transform:scale(1.5) !important;
-    transform-origin:center center !important;
-}
 
 .property-viewers i{
     color:#3498db;
