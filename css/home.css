@@ -726,7 +726,7 @@ body.home-page > .home-fixed-nav .nav-item span {
   max-width: 100%;
 }
 
-#histats_counter{
+/* #histats_counter{
     display:flex !important;
     justify-content:center !important;
     align-items:center !important;
@@ -743,7 +743,7 @@ body.home-page > .home-fixed-nav .nav-item span {
 #histats_counter canvas{
     display:block !important;
     margin:auto !important;
-}
+} */
   
 .property-viewers i{
     color:#3498db;
