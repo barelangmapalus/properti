@@ -368,34 +368,46 @@
         const property = JSON.parse(storedData);
         currentProperty = property;
 
-        const propertyKey = `${property['nama property']}_${property._tab}_${property.timestamp}`;
-        const viewedKey = `bmpro_viewed_${propertyKey}`;
-        const alreadyViewed = localStorage.getItem(viewedKey);
-
         displayDetail(property);
 
-        if (!alreadyViewed) {
-          localStorage.setItem(viewedKey, 'true');
-
+        // ===== Viewer dihitung maksimal 1x setiap 24 jam =====
+        const viewedKey = `bmpro_viewed_${property.property_id}`;
+        const lastViewed = parseInt(localStorage.getItem(viewedKey) || "0");
+        
+        const now = Date.now();
+        const oneDay = 24 * 60 * 60 * 1000;
+        
+        if (now - lastViewed >= oneDay) {
+        
+          localStorage.setItem(viewedKey, now);
+        
           fetch(SCRIPT_URL, {
             method: 'POST',
-            headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+            headers: {
+              'Content-Type': 'application/x-www-form-urlencoded'
+            },
             body: new URLSearchParams({
               action: 'incrementViewer',
               category: property._tab || 'primary',
-              timestamp: property.timestamp
+              property_id: property.property_id
             })
           })
           .then(res => res.json())
           .then(result => {
             console.log('👁️ Viewer updated:', result);
+        
             if (property && result.success) {
               property['viewer'] = parseInt(property['viewer'] || 0) + 1;
+        
               const viewerEl = document.getElementById('viewerCount');
-              if (viewerEl) viewerEl.textContent = property['viewer'];
+        
+              if (viewerEl) {
+                viewerEl.textContent = property['viewer'];
+              }
             }
           })
           .catch(err => console.log('❌ Viewer gagal:', err));
+        
         }
       } catch (e) {
         console.error('Load detail error:', e);
