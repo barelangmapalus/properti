@@ -3,974 +3,147 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=yes, viewport-fit=cover">
-  <meta name="theme-color" content="#0f172a">
+  <meta name="theme-color" content="#2c3e50">
   
   <title>Pencarian - BMpro</title>
   
   <!-- Font Awesome -->
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
   <!-- Google Fonts -->
-  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <!-- CSS Global -->
+  <link rel="stylesheet" href="css/style.css">
   
   <style>
-    /* ============================================================
-       GLOBAL - Mobile First (Mengikuti index.html)
-       ============================================================ */
-    * {
-      margin: 0;
-      padding: 0;
-      box-sizing: border-box;
-    }
-
-    :root {
-      --home-bg: #f4f6f9;
-      --home-surface: #ffffff;
-      --home-primary: #0f172a;
-      --home-accent: #c41e3a;
-      --home-accent-soft: rgba(196, 30, 58, 0.12);
-      --home-blue: #2563eb;
-      --home-blue-soft: rgba(37, 99, 235, 0.1);
-      --home-orange: #ea580c;
-      --home-green: #059669;
-      --home-radius: 20px;
-      --home-shadow: 0 8px 32px rgba(15, 23, 42, 0.08);
-      --home-shadow-lg: 0 20px 48px rgba(15, 23, 42, 0.12);
-      --mobile-max: 430px;
-    }
-
-    html {
-      -webkit-text-size-adjust: 100%;
-      text-size-adjust: 100%;
-    }
-
-    body {
-      margin: 0;
-      padding: 0;
-      overflow-x: hidden;
-      background: #0f172a;
-      min-height: 100dvh;
-      overscroll-behavior: none;
-      -webkit-tap-highlight-color: transparent;
-      height: 100dvh;
-      overflow: hidden;
-      font-family: 'Plus Jakarta Sans', 'Poppins', sans-serif;
-    }
-
-    /* ============================================================
-       MOBILE SHELL
-       ============================================================ */
-    .mobile-shell {
-      width: 100%;
-      max-width: var(--mobile-max);
-      margin: 0 auto;
-      height: 100dvh;
-      max-height: 100dvh;
-      background: var(--home-bg);
-      color: var(--home-primary);
-      position: relative;
-      overflow-x: hidden;
-      overflow-y: auto;
-      -webkit-overflow-scrolling: touch;
-      padding-bottom: calc(64px + env(safe-area-inset-bottom, 0px));
-    }
-
-    @media (min-width: 431px) {
-      body {
-        display: flex;
-        justify-content: center;
-        align-items: flex-start;
-      }
-      .mobile-shell {
-        box-shadow: 0 0 0 1px rgba(255, 255, 255, 0.06), 0 24px 64px rgba(0, 0, 0, 0.45);
-        height: 100dvh;
-        max-height: 100dvh;
-      }
-    }
-
-    /* ============================================================
-       SIDEBAR - Sama dengan index.html
-       ============================================================ */
-    .menu-overlay {
-      position: fixed;
-      inset: 0;
-      width: 100%;
-      height: 100%;
-      background: rgba(0, 0, 0, 0.5);
-      z-index: 1999;
-      opacity: 0;
-      visibility: hidden;
-      transition: all 0.3s ease;
-      backdrop-filter: blur(4px);
-      -webkit-backdrop-filter: blur(4px);
-    }
-
-    .menu-overlay.active {
-      opacity: 1;
-      visibility: visible;
-    }
-
-    .sidebar-menu {
-      position: fixed;
-      top: 0;
-      width: min(300px, 85%);
-      max-width: 300px;
-      height: 100%;
-      height: 100dvh;
-      left: -100%;
-      right: auto;
-      z-index: 2000;
-      background: var(--home-surface);
-      box-shadow: 4px 0 20px rgba(0, 0, 0, 0.15);
-      transition: left 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-      overflow-y: auto;
-    }
-
-    .sidebar-menu.active {
-      left: 0;
-    }
-
-    .sidebar-header {
-      background: linear-gradient(135deg, #0f172a, #1e40af);
-      padding: 20px 16px 14px;
-      color: #fff;
-    }
-
-    .sidebar-header-top {
-      display: flex;
-      align-items: center;
-      gap: 12px;
-      margin-bottom: 4px;
-    }
-
-    .sidebar-logo {
-      width: 45px;
-      height: 40px;
-      background: rgba(255, 255, 255, 0.15);
-      border-radius: 12px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      overflow: hidden;
-      flex-shrink: 0;
-    }
-
-    .sidebar-logo img {
-      width: 70%;
-      height: 70%;
-      object-fit: cover;
-    }
-
-    .sidebar-header h3 {
-      font-size: 1.2rem;
-      font-weight: 700;
-    }
-
-    .sidebar-header p {
-      font-size: 0.7rem;
-      opacity: 0.85;
-      margin-left: 57px;
-    }
-
-    .sidebar-nav {
-      padding: 8px 0;
-    }
-
-    .menu-item {
-      display: flex;
-      align-items: center;
-      gap: 14px;
-      padding: 14px 18px;
-      color: var(--home-primary);
-      text-decoration: none;
-      font-weight: 500;
-      font-size: 0.9rem;
-      border-bottom: 1px solid rgba(15, 23, 42, 0.05);
-      transition: background 0.2s;
-      min-height: 48px;
-    }
-
-    .menu-item:active {
-      background: var(--home-bg);
-    }
-
-    .menu-item i {
-      width: 22px;
-      color: var(--home-blue);
-      font-size: 1rem;
-    }
-
-    .sidebar-footer {
-      padding: 16px;
-      border-top: 1px solid rgba(15, 23, 42, 0.06);
-      font-size: 0.65rem;
-      color: #64748b;
-      text-align: center;
-    }
-
-    /* ============================================================
-       BOTTOM NAV - Sama dengan index.html
-       ============================================================ */
-    .home-fixed-nav {
-      position: fixed;
-      left: 50%;
-      right: auto;
-      transform: translateX(-50%);
-      width: min(calc(100vw - 16px), calc(var(--mobile-max) - 16px));
-      bottom: max(6px, env(safe-area-inset-bottom, 0px));
-      margin: 0;
-      border-radius: 14px;
-      background: rgba(255, 255, 255, 0.95);
-      backdrop-filter: blur(20px);
-      -webkit-backdrop-filter: blur(20px);
-      border: 1px solid rgba(15, 23, 42, 0.08);
-      box-shadow: 0 4px 20px rgba(15, 23, 42, 0.1);
-      padding: 5px 10px;
-      z-index: 3000;
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      gap: 6px;
-      box-sizing: border-box;
-    }
-
-    .home-fixed-nav .nav-item {
-      flex: 1;
-      min-width: 0;
-      min-height: 40px;
-      font-size: 0.52rem;
-      font-weight: 500;
-      gap: 1px;
-      padding: 3px 9px;
-      margin: 0 2px;
-      border-radius: 10px;
-      transition: color 0.2s, background 0.2s;
-      justify-content: center;
-      -webkit-user-select: none;
-      user-select: none;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      text-decoration: none;
-      color: #64748b;
-    }
-
-    .home-fixed-nav .nav-item.active {
-      color: var(--home-blue);
-      background: var(--home-blue-soft);
-    }
-
-    .home-fixed-nav .nav-item.active i {
-      color: var(--home-blue);
-    }
-
-    .home-fixed-nav .nav-item i {
-      font-size: 0.95rem;
-      margin-bottom: 1px;
-      line-height: 1;
-    }
-
-    .home-fixed-nav .nav-item span {
-      line-height: 1.1;
-      letter-spacing: 0.01em;
-    }
-
-    /* ============================================================
-       SEARCH HEADER - Mengikuti gaya index.html
-       ============================================================ */
-    /* ============================================================
-   SEARCH HEADER - FIXED OVERFLOW
-   ============================================================ */
+    /* Tambahan khusus search.html */
     .search-header {
-      width: 100%;
-      padding: 10px 12px;
-      background: var(--home-surface);
-      border-bottom: 1px solid rgba(15, 23, 42, 0.06);
+      background: white;
+      padding: 12px 16px;
       display: flex;
       align-items: center;
       gap: 8px;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.05);
       position: sticky;
       top: 0;
       z-index: 100;
-      min-height: 56px;
     }
-
-    /* HAMBURGER BUTTON */
-    .hamburger-btn {
-      display: inline-flex;
-      align-items: center;
-      justify-content: center;
-      width: 36px;
-      height: 36px;
-      flex-shrink: 0;
-      border: none;
-      background: none;
+    
+    .back-btn {
+      color: var(--primary);
+      font-size: 1.2rem;
       cursor: pointer;
-      padding: 0;
-      border-radius: 10px;
-      transition: background 0.2s;
-    }
-
-    .hamburger-btn:active {
-      background: var(--home-bg);
-    }
-
-    .hamburger-btn i {
-      font-size: 1.1rem;
-      color: var(--home-primary);
-    }
-
-    /* SEARCH BOX */
-    .search-box {
-      flex: 1;
-      min-width: 0;
-      background: var(--home-surface);
-      border-radius: 14px;
-      padding: 4px 4px 4px 12px;
-      box-shadow: var(--home-shadow-lg);
-      border: 1px solid rgba(15, 23, 42, 0.06);
-      display: flex;
-      align-items: center;
-      gap: 4px;
-    }
-
-    .search-box > i.fa-search {
-      color: var(--home-primary);
-      opacity: 0.4;
-      font-size: 0.8rem;
-      flex-shrink: 0;
-    }
-
-    .search-box input {
-      flex: 1;
-      min-width: 30px;
-      border: none;
-      padding: 10px 4px;
-      font-size: 15px;
-      font-family: 'Plus Jakarta Sans', 'Poppins', sans-serif;
-      background: transparent;
-      outline: none;
-    }
-
-    .search-box input::placeholder {
-      color: #94a3b8;
-      font-size: 0.75rem;
-    }
-
-    .search-box #searchBtn {
-      flex-shrink: 0;
-      background: linear-gradient(135deg, #1e40af, #2563eb);
-      border: none;
-      color: #fff;
-      padding: 8px 14px;
-      border-radius: 10px;
-      font-size: 0.7rem;
-      font-weight: 600;
-      cursor: pointer;
-      white-space: nowrap;
-      box-shadow: 0 3px 10px rgba(37, 99, 235, 0.3);
-      font-family: 'Plus Jakarta Sans', 'Poppins', sans-serif;
-      transition: transform 0.2s;
-    }
-
-    .search-box #searchBtn:active {
-      transform: scale(0.97);
-    }
-
-    .search-box .filter-btn-inside {
-      flex-shrink: 0;
       width: 36px;
       height: 36px;
       display: flex;
       align-items: center;
       justify-content: center;
-      background: var(--home-bg);
-      border-radius: 10px;
-      border: none;
-      cursor: pointer;
-      padding: 0;
-      min-width: 36px;
-      min-height: 36px;
-      transition: background 0.2s;
+      border-radius: 50%;
+      background: #f0f0f0;
+      text-decoration: none;
     }
-
-    .search-box .filter-btn-inside:active {
-      background: #e2e8f0;
+    
+    .search-header .search-box {
+      flex: 1;
     }
-
-    .search-box .filter-btn-inside i {
-      color: var(--home-primary);
-      font-size: 0.85rem;
-    }
-
-    .search-box .filter-btn-inside:active {
-      opacity: 0.7;
-    }
-
-    /* ============================================================
-       FILTER TABS - Mengikuti gaya category chips di index.html
-       ============================================================ */
+    
     .filter-tabs {
       display: flex;
-      gap: 10px;
-      padding: 12px 16px 4px;
-      background: var(--home-bg);
-      overflow-x: auto;
-      scrollbar-width: none;
-      -ms-overflow-style: none;
-    }
-
-    .filter-tabs::-webkit-scrollbar {
-      display: none;
-    }
-
-    .filter-tab {
-      flex-shrink: 0;
-      display: inline-flex;
-      align-items: center;
-      gap: 8px;
       padding: 10px 16px;
-      background: var(--home-surface);
-      border-radius: 100px;
-      text-decoration: none;
-      color: var(--home-primary);
-      font-size: 0.8rem;
-      font-weight: 600;
-      box-shadow: 0 2px 12px rgba(15, 23, 42, 0.06);
-      border: 1px solid rgba(15, 23, 42, 0.06);
-      transition: transform 0.2s, box-shadow 0.2s;
-      min-height: 44px;
+      gap: 8px;
+      background: white;
+      border-bottom: 1px solid #eee;
+      overflow-x: auto;
+      white-space: nowrap;
+    }
+    
+    .filter-tab {
+      padding: 6px 14px;
+      border-radius: 30px;
+      font-size: 0.75rem;
+      font-weight: 500;
+      background: #f0f0f0;
+      color: var(--gray);
+      border: none;
       cursor: pointer;
-      font-family: 'Plus Jakarta Sans', 'Poppins', sans-serif;
     }
-
-    .filter-tab:active {
-      transform: scale(0.97);
-    }
-
+    
     .filter-tab.active {
-      background: var(--home-primary);
-      color: #ffffff;
-      border-color: var(--home-primary);
+      background: var(--primary);
+      color: white;
     }
-
-    /* ============================================================
-       ACTIVE FILTERS CHIPS
-       ============================================================ */
+    
     .active-filters {
-      padding: 8px 16px;
-      background: var(--home-surface);
+      padding: 10px 16px;
+      background: white;
       display: flex;
       flex-wrap: wrap;
-      gap: 6px;
-      border-bottom: 1px solid rgba(15, 23, 42, 0.06);
-      min-height: 44px;
-      align-items: center;
+      gap: 8px;
+      border-bottom: 1px solid #eee;
     }
-
-    .active-filters .empty-filter {
-      font-size: 0.7rem;
-      color: #64748b;
-    }
-
+    
     .filter-chip {
-      background: var(--home-blue-soft);
-      color: var(--home-blue);
+      background: #e8f4fd;
+      color: var(--secondary);
       padding: 4px 12px;
-      border-radius: 100px;
+      border-radius: 20px;
       font-size: 0.7rem;
-      font-weight: 500;
-      display: inline-flex;
+      display: flex;
       align-items: center;
       gap: 6px;
       cursor: pointer;
-      transition: background 0.2s;
     }
-
-    .filter-chip:active {
-      background: rgba(37, 99, 235, 0.2);
-    }
-
-    .filter-chip i.fa-times {
-      font-size: 0.55rem;
+    
+    .filter-chip i {
+      font-size: 0.6rem;
       opacity: 0.7;
     }
-
+    
     .filter-chip.clear-all {
-      background: rgba(196, 30, 58, 0.1);
-      color: var(--home-accent);
+      background: #fce4e4;
+      color: var(--accent);
     }
-
-    .filter-chip.clear-all:active {
-      background: rgba(196, 30, 58, 0.2);
-    }
-
-    /* ============================================================
-       RESULT COUNT
-       ============================================================ */
+    
     .result-count {
-      padding: 8px 16px;
+      padding: 10px 16px;
       font-size: 0.75rem;
-      color: #64748b;
-      background: var(--home-bg);
-      border-bottom: 1px solid rgba(15, 23, 42, 0.04);
+      color: var(--gray);
+      background: #f8f9fa;
     }
-
-    .result-count strong {
-      color: var(--home-primary);
-    }
-
-    /* ============================================================
-       PROPERTY LIST
-       ============================================================ */
+    
     .property-list {
       padding: 12px 16px;
       display: flex;
       flex-direction: column;
       gap: 14px;
-      padding-bottom: 80px;
-      max-width: 100%;
     }
 
-    /* PROPERTY CARD - SAMA PERSIS DENGAN INDEX.HTML */
-    .property-card {
-      background: var(--home-surface);
-      border-radius: var(--home-radius);
-      overflow: hidden;
-      box-shadow: var(--home-shadow);
-      border: 1px solid rgba(15, 23, 42, 0.05);
-      text-decoration: none;
-      color: inherit;
-      display: block;
-      transition: transform 0.2s;
-    }
+.property-viewers{
+  display:flex;
+  align-items:center;
+  gap:6px;
+  margin:4px 0 6px;
+  font-size:0.85rem;
+  color:#888;
+}
 
-    .property-card:active {
-      transform: scale(0.98);
-    }
+.property-viewers i{
+  color:#3498db;
+}
 
-    .card-image {
-      position: relative;
-      width: 100%;
-      height: 200px;
-      overflow: hidden;
-    }
-
-    .card-image img {
-      width: 100%;
-      height: 100%;
-      object-fit: cover;
-    }
-
-    .card-image::after {
-      content: '';
-      position: absolute;
-      inset: 0;
-      background: linear-gradient(to top, rgba(15, 23, 42, 0.4) 0%, transparent 50%);
-      pointer-events: none;
-    }
-
-    .tab-badge {
-      position: absolute;
-      top: 12px;
-      right: 12px;
-      background: rgba(255, 255, 255, 0.2);
-      backdrop-filter: blur(8px);
-      -webkit-backdrop-filter: blur(8px);
-      border: 1px solid rgba(255, 255, 255, 0.3);
-      color: #fff;
-      padding: 4px 12px;
-      border-radius: 8px;
-      font-size: 0.6rem;
-      font-weight: 500;
-      z-index: 2;
-      text-transform: uppercase;
-    }
-
-    .favorite-btn {
-      position: absolute;
-      bottom: 12px;
-      right: 12px;
-      width: 38px;
-      height: 38px;
-      background: rgba(255, 255, 255, 0.95);
-      border-radius: 50%;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      cursor: pointer;
-      z-index: 2;
-      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
-      border: none;
-    }
-
-    .favorite-btn i {
-      color: var(--home-accent);
-      font-size: 1rem;
-    }
-
-    .favorite-btn.loved {
-      background: var(--home-accent);
-    }
-
-    .favorite-btn.loved i {
-      color: #ffffff;
-    }
-
-    .card-content {
-      padding: 16px 18px 18px;
-    }
-
-    .property-price {
-      font-size: 1.15rem;
-      font-weight: 700;
-      color: var(--home-accent);
-      letter-spacing: -0.02em;
-      margin-bottom: 2px;
-    }
-
-    .property-title {
-      font-size: 0.95rem;
-      font-weight: 600;
-      color: var(--home-primary);
-      margin-bottom: 4px;
-      display: -webkit-box;
-      -webkit-line-clamp: 1;
-      -webkit-box-orient: vertical;
-      overflow: hidden;
-    }
-
-    .property-viewers {
-      font-size: 0.72rem;
-      color: #64748b;
-      margin: 4px 0 6px;
-      display: flex;
-      align-items: center;
-      gap: 6px;
-    }
-
-    .property-viewers i {
-      color: var(--home-blue);
-      font-size: 0.65rem;
-    }
-
-    .property-address {
-      font-size: 0.75rem;
-      color: #64748b;
-      display: flex;
-      align-items: center;
-      gap: 4px;
-      margin-bottom: 10px;
-    }
-
-    .property-address i {
-      color: var(--home-blue);
-      font-size: 0.65rem;
-    }
-
-    .property-features {
-      display: flex;
-      gap: 16px;
-      padding-top: 12px;
-      border-top: 1px solid #f1f5f9;
-    }
-
-    .feature {
-      display: flex;
-      align-items: center;
-      gap: 4px;
-      background: var(--home-bg);
-      padding: 4px 10px;
-      border-radius: 8px;
-      font-size: 0.7rem;
-      font-weight: 500;
-      color: #475569;
-    }
-
-    .feature i {
-      color: var(--home-blue);
-      font-size: 0.7rem;
-    }
-
-    /* ============================================================
-       FILTER SHEET (Bottom Sheet)
-       ============================================================ */
-    .filter-sheet {
-      position: fixed;
-      bottom: 0;
-      left: 50%;
-      transform: translateX(-50%) translateY(100%);
-      width: min(100%, var(--mobile-max));
-      background: var(--home-surface);
-      border-radius: 24px 24px 0 0;
-      padding: 20px 16px calc(20px + env(safe-area-inset-bottom, 0px));
-      box-shadow: 0 -4px 30px rgba(15, 23, 42, 0.15);
-      z-index: 4000;
-      transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-      max-height: 75vh;
-      overflow-y: auto;
-    }
-
-    .filter-sheet.active {
-      transform: translateX(-50%) translateY(0);
-    }
-
-    .filter-sheet-overlay {
-      position: fixed;
-      inset: 0;
-      background: rgba(0, 0, 0, 0.5);
-      z-index: 3999;
-      opacity: 0;
-      visibility: hidden;
-      transition: all 0.3s;
-      backdrop-filter: blur(4px);
-      -webkit-backdrop-filter: blur(4px);
-    }
-
-    .filter-sheet-overlay.active {
-      opacity: 1;
-      visibility: visible;
-    }
-
-    .filter-sheet-header {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      margin-bottom: 20px;
-    }
-
-    .filter-sheet-header h4 {
-      font-size: 1rem;
-      font-weight: 700;
-      color: var(--home-primary);
-    }
-
-    .filter-sheet-header h4 i {
-      margin-right: 8px;
-      color: var(--home-blue);
-    }
-
-    .filter-sheet-header .close-filter {
-      width: 36px;
-      height: 36px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      border-radius: 50%;
-      background: var(--home-bg);
-      cursor: pointer;
-      font-size: 0.9rem;
-      color: var(--home-primary);
-      border: none;
-    }
-
-    .filter-sheet-header .close-filter:active {
-      background: #e2e8f0;
-    }
-
-    /* Filter Groups */
-    .filter-group {
-      margin-bottom: 18px;
-    }
-
-    .filter-group label {
-      display: block;
-      font-size: 0.78rem;
-      font-weight: 600;
-      margin-bottom: 6px;
-      color: var(--home-primary);
-    }
-
-    .filter-group select,
-    .filter-group input {
-      width: 100%;
-      padding: 10px 14px;
-      border: 2px solid #e2e8f0;
-      border-radius: 12px;
-      font-family: 'Plus Jakarta Sans', 'Poppins', sans-serif;
-      font-size: 0.8rem;
-      background: var(--home-surface);
-      color: var(--home-primary);
-      appearance: none;
-      -webkit-appearance: none;
-      transition: border-color 0.2s;
-    }
-
-    .filter-group select:focus,
-    .filter-group input:focus {
-      outline: none;
-      border-color: var(--home-blue);
-    }
-
-    .filter-group select {
-      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath d='M1 1l5 5 5-5' stroke='%23475669' stroke-width='1.5' fill='none' stroke-linecap='round'/%3E%3C/svg%3E");
-      background-repeat: no-repeat;
-      background-position: right 14px center;
-      padding-right: 36px;
-    }
-
-    .filter-group select option {
-      padding: 8px;
-    }
-
-    /* Range Inputs */
-    .range-inputs {
-      display: flex;
-      align-items: center;
-      gap: 10px;
-    }
-
-    .range-inputs input {
-      flex: 1;
-    }
-
-    .range-inputs span {
-      color: #94a3b8;
-      font-weight: 500;
-      font-size: 0.85rem;
-    }
-
-    /* Filter Actions */
-    .filter-sheet-actions {
-      display: flex;
-      gap: 12px;
-      margin-top: 24px;
-      padding-bottom: 4px;
-    }
-
-    .filter-sheet-actions .btn-reset {
-      flex: 1;
-      background: var(--home-bg);
-      border: none;
-      padding: 12px;
-      border-radius: 12px;
-      font-weight: 600;
-      font-size: 0.8rem;
-      cursor: pointer;
-      color: var(--home-primary);
-      font-family: 'Plus Jakarta Sans', 'Poppins', sans-serif;
-      transition: background 0.2s;
-    }
-
-    .filter-sheet-actions .btn-reset:active {
-      background: #e2e8f0;
-    }
-
-    .filter-sheet-actions .btn-apply {
-      flex: 1;
-      background: linear-gradient(135deg, #1e40af, #2563eb);
-      color: #ffffff;
-      border: none;
-      padding: 12px;
-      border-radius: 12px;
-      font-weight: 600;
-      font-size: 0.8rem;
-      cursor: pointer;
-      font-family: 'Plus Jakarta Sans', 'Poppins', sans-serif;
-      box-shadow: 0 4px 14px rgba(37, 99, 235, 0.3);
-      transition: transform 0.2s;
-    }
-
-    .filter-sheet-actions .btn-apply:active {
-      transform: scale(0.98);
-    }
-
-    /* ============================================================
-       LOADING & EMPTY STATE
-       ============================================================ */
-    .loading {
-      text-align: center;
-      padding: 40px 16px;
-      color: #94a3b8;
-    }
-
-    .loading i {
-      font-size: 1.8rem;
-      color: var(--home-blue);
-      animation: spin 1s linear infinite;
-      display: block;
-      margin-bottom: 10px;
-    }
-
-    @keyframes spin {
-      from { transform: rotate(0deg); }
-      to { transform: rotate(360deg); }
-    }
-
-    .empty-state {
-      text-align: center;
-      padding: 60px 20px;
-      color: #94a3b8;
-    }
-
-    .empty-state i {
-      font-size: 3rem;
-      color: #cbd5e1;
-      display: block;
-      margin-bottom: 12px;
-    }
-
-    .empty-state p {
-      font-size: 0.85rem;
-    }
-
-    /* ============================================================
-       RESPONSIVE - Desktop Frame
-       ============================================================ */
-    @media (min-width: 431px) {
-      .filter-sheet {
-        width: min(100%, 430px);
-      }
-    }
   </style>
 </head>
 <body>
 
-<div class="mobile-shell">
-
-  <!-- ========== SIDEBAR ========== -->
-  <div class="menu-overlay" id="menuOverlay"></div>
-  
-  <div class="sidebar-menu" id="sidebarMenu">
-    <div class="sidebar-header">
-      <div class="sidebar-header-top">
-        <div class="sidebar-logo">
-          <img src="https://drive.google.com/thumbnail?id=1a3cJptxJTSHksm9D7tN3us_7Ii7dQxxG&sz=w100" 
-               alt="BMpro Logo"
-               onerror="this.src='https://via.placeholder.com/100x100/0f172a/ffffff?text=BM'">
-        </div>
-        <h3>BMpro</h3>
-      </div>
-      <p>Temukan properti impian Anda di Batam</p>
-    </div>
-    
-    <div class="sidebar-nav">
-      <a href="index.html" class="menu-item"><i class="fas fa-home"></i><span>Beranda</span></a>
-      <a href="search.html" class="menu-item"><i class="fas fa-search"></i><span>Cari Properti</span></a>
-      <a href="#" class="menu-item" onclick="goToFavorite(event)"><i class="fas fa-heart"></i><span>Favorit Saya</span></a>
-      <a href="search.html?tab=primary" class="menu-item"><i class="fas fa-building"></i><span>Primary</span></a>
-      <a href="search.html?tab=secondary" class="menu-item"><i class="fas fa-home"></i><span>Secondary</span></a>
-      <a href="search.html?tab=rent" class="menu-item"><i class="fas fa-key"></i><span>Rent</span></a>
-      <a href="contact.html" class="menu-item"><i class="fas fa-headset"></i><span>Hubungi Kami</span></a>
-    </div>
-    
-    <div class="sidebar-footer">
-      <p>© 2025 Barelang Mapalus Properti</p>
-      <p>Mobile First Website</p>
+  <!-- ========== HEADER SEARCH ========== -->
+  <div class="search-header">
+    <a href="index.html" class="back-btn"><i class="fas fa-arrow-left"></i></a>
+    <div class="search-box">
+      <i class="fas fa-search"></i>
+      <input type="text" placeholder="Cari properti..." id="searchInput">
+      <button id="searchBtn">Cari</button>
+      <button class="filter-btn-inside" id="filterBtn"><i class="fas fa-sliders-h"></i></button>
     </div>
   </div>
-
-    <!-- ========== HEADER SEARCH ========== -->
-    <div class="search-header">
-      <button class="hamburger-btn" id="hamburgerBtn" aria-label="Menu">
-        <i class="fas fa-bars"></i>
-      </button>
-      <div class="search-box">
-        <i class="fas fa-search"></i>
-        <input type="text" placeholder="Cari properti..." id="searchInput">
-        <button id="searchBtn">Cari</button>
-        <button class="filter-btn-inside" id="filterBtn"><i class="fas fa-sliders-h"></i></button>
-      </div>
-    </div>
   
   <!-- ========== FILTER TABS ========== -->
   <div class="filter-tabs">
@@ -982,7 +155,7 @@
   
   <!-- ========== ACTIVE FILTERS ========== -->
   <div class="active-filters" id="activeFilters">
-    <span class="empty-filter">🔍 Belum ada filter aktif</span>
+    <span style="font-size:0.7rem; color:var(--gray);">🔍 Belum ada filter aktif</span>
   </div>
   
   <!-- ========== RESULT COUNT ========== -->
@@ -998,7 +171,7 @@
   <div class="filter-sheet" id="filterSheet">
     <div class="filter-sheet-header">
       <h4><i class="fas fa-sliders-h"></i> Filter Properti</h4>
-      <button class="close-filter" id="closeFilterSheetBtn"><i class="fas fa-times"></i></button>
+      <i class="fas fa-times" style="cursor: pointer;" id="closeFilterSheetBtn"></i>
     </div>
     
     <div class="filter-group">
@@ -1049,486 +222,273 @@
     </div>
   </div>
 
-  <!-- ========== BOTTOM NAV ========== -->
-  <nav class="home-fixed-nav" aria-label="Navigasi utama">
-    <a href="index.html" class="nav-item"><i class="fas fa-home"></i><span>Beranda</span></a>
-    <a href="search.html" class="nav-item active"><i class="fas fa-search"></i><span>Cari</span></a>
-    <a href="#" class="nav-item" onclick="goToFavorite(event)"><i class="fas fa-heart"></i><span>Favorit</span></a>
-    <a href="#" class="nav-item" onclick="goToProfile(event)"><i class="fas fa-user"></i><span>Profil</span></a>
-  </nav>
-
-</div><!-- /.mobile-shell -->
-
-<!-- ========== JAVASCRIPT ========== -->
-<script>
-  // ============================================================
-  // KONFIGURASI OPENSHEET
-  // ============================================================
-  const SHEET_ID = '1mosLZD23_3YDcuzi2diUY2TRNBSigJ2HNiiiFGPWtzo';
-  const OPENSHEET_BASE = `https://opensheet.elk.sh/${SHEET_ID}`;
-
-  // ============================================================
-  // FUNGSI UTILITY
-  // ============================================================
+  <!-- JavaScript Global -->
+  <script src="js/script.js"></script>
   
-  function formatPrice(price) {
-    if (!price) return 'Hubungi';
-    const num = parseInt(price.toString().replace(/\D/g, '')) || 0;
-    return `Rp ${num.toLocaleString('id-ID')}`;
-  }
-
-  function convertDriveUrl(url) {
-    if (!url) return '';
-    if (url.includes('lh3.googleusercontent.com')) return url;
+  <!-- JavaScript Khusus Search -->
+  <script>
+    // ========== STATE ==========
+    let currentTab = '';
+    let currentFilters = { kt: '', km: '', lt: '', minHarga: '', maxHarga: '' };
+    let allResults = [];
     
-    const fileIdMatch = url.match(/\/d\/([a-zA-Z0-9_-]+)/);
-    if (fileIdMatch) {
-      return `https://lh3.googleusercontent.com/d/${fileIdMatch[1]}=w400`;
+    // ========== FILTER SHEET ==========
+    const filterSheet = document.getElementById('filterSheet');
+    const filterSheetOverlay = document.getElementById('filterSheetOverlay');
+    
+    function openFilterSheet() {
+      filterSheet.classList.add('active');
+      filterSheetOverlay.classList.add('active');
     }
     
-    const ucIdMatch = url.match(/[?&]id=([a-zA-Z0-9_-]+)/);
-    if (ucIdMatch) {
-      return `https://lh3.googleusercontent.com/d/${ucIdMatch[1]}=w400`;
+    function closeFilterSheet() {
+      filterSheet.classList.remove('active');
+      filterSheetOverlay.classList.remove('active');
     }
     
-    if (url.match(/^[a-zA-Z0-9_-]{25,}$/)) {
-      return `https://lh3.googleusercontent.com/d/${url}=w400`;
-    }
+    document.getElementById('filterBtn').addEventListener('click', openFilterSheet);
+    document.getElementById('closeFilterSheetBtn').addEventListener('click', closeFilterSheet);
+    filterSheetOverlay.addEventListener('click', closeFilterSheet);
     
-    return url;
-  }
-
-  function escapeHtml(str) {
-    if (!str) return '';
-    return str.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;').replace(/'/g, '&#39;');
-  }
-
-  // ============================================================
-  // FETCH DATA DARI GOOGLE SHEET
-  // ============================================================
-  async function fetchSheetData(tabName) {
-    try {
-      const response = await fetch(`${OPENSHEET_BASE}/${tabName}`);
-      if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
-      return await response.json();
-    } catch (error) {
-      console.error(`Error fetching ${tabName}:`, error);
-      return [];
-    }
-  }
-
-  // ============================================================
-  // FAVORITE FUNCTIONS
-  // ============================================================
-  
-  function isLocalFavorite(propertyData) {
-    const favorites = JSON.parse(localStorage.getItem('bmpro_favorites') || '[]');
-    return favorites.some(f => 
-      f['nama property'] === propertyData['nama property'] && f._tab === propertyData._tab
-    );
-  }
-
-  function saveLocalFavorite(property) {
-    const favorites = JSON.parse(localStorage.getItem('bmpro_favorites') || '[]');
-    const exists = favorites.find(f => 
-      f['nama property'] === property['nama property'] && f._tab === property._tab
-    );
-    if (!exists) {
-      favorites.unshift(property);
-      localStorage.setItem('bmpro_favorites', JSON.stringify(favorites));
-    }
-  }
-
-  function removeLocalFavorite(property) {
-    let favorites = JSON.parse(localStorage.getItem('bmpro_favorites') || '[]');
-    favorites = favorites.filter(f => 
-      !(f['nama property'] === property['nama property'] && f._tab === property._tab)
-    );
-    localStorage.setItem('bmpro_favorites', JSON.stringify(favorites));
-  }
-
-  function toggleLove(btn, propertyData) {
-    const icon = btn.querySelector('i');
-    const userData = JSON.parse(localStorage.getItem('bmpro_user') || 'null');
-    
-    if (!userData) {
-      alert('Silakan registrasi terlebih dahulu untuk menyimpan favorit!\n\nKlik OK untuk menuju halaman registrasi.');
-      window.location.href = 'register.html';
-      return;
-    }
-    
-    if (icon.classList.contains('far')) {
-      icon.classList.remove('far');
-      icon.classList.add('fas');
-      btn.classList.add('loved');
-      btn.style.background = 'var(--home-accent, #c41e3a)';
-      icon.style.color = '#fff';
-      saveLocalFavorite(propertyData);
-    } else {
-      icon.classList.remove('fas');
-      icon.classList.add('far');
-      btn.classList.remove('loved');
-      btn.style.background = 'rgba(255,255,255,0.95)';
-      icon.style.color = 'var(--home-accent, #c41e3a)';
-      removeLocalFavorite(propertyData);
-    }
-  }
-
-  // ============================================================
-  // NAVIGASI FUNCTIONS
-  // ============================================================
-  function goToFavorite(event) {
-    if (event) event.preventDefault();
-    const userData = JSON.parse(localStorage.getItem('bmpro_user') || 'null');
-    if (!userData) {
-      window.location.href = 'register.html';
-    } else {
-      window.location.href = 'favorite.html';
-    }
-  }
-
-  function goToProfile(event) {
-    if (event) event.preventDefault();
-    const userData = JSON.parse(localStorage.getItem('bmpro_user') || 'null');
-    if (!userData) {
-      window.location.href = 'register.html';
-    } else {
-      window.location.href = 'profile.html';
-    }
-  }
-
-  // ============================================================
-  // SIDEBAR
-  // ============================================================
-  function initSidebar() {
-    const hamburgerBtn = document.getElementById('hamburgerBtn');
-    const sidebarMenu = document.getElementById('sidebarMenu');
-    const menuOverlay = document.getElementById('menuOverlay');
-    
-    if (!hamburgerBtn || !sidebarMenu || !menuOverlay) return;
-    
-    const menuIcon = hamburgerBtn.querySelector('i');
-    
-    function openMenu() {
-      sidebarMenu.classList.add('active');
-      menuOverlay.classList.add('active');
-      if (menuIcon) {
-        menuIcon.classList.remove('fa-bars');
-        menuIcon.classList.add('fa-times');
-      }
-      document.body.style.overflow = 'hidden';
-    }
-    
-    function closeMenu() {
-      sidebarMenu.classList.remove('active');
-      menuOverlay.classList.remove('active');
-      if (menuIcon) {
-        menuIcon.classList.remove('fa-times');
-        menuIcon.classList.add('fa-bars');
-      }
-      document.body.style.overflow = '';
-    }
-    
-    hamburgerBtn.addEventListener('click', (e) => {
-      e.stopPropagation();
-      sidebarMenu.classList.contains('active') ? closeMenu() : openMenu();
+    // ========== FILTER TABS ==========
+    document.querySelectorAll('.filter-tab').forEach(tab => {
+      tab.addEventListener('click', function() {
+        document.querySelectorAll('.filter-tab').forEach(t => t.classList.remove('active'));
+        this.classList.add('active');
+        currentTab = this.dataset.tab;
+        doSearch();
+        updateActiveFilterChips();
+      });
     });
     
-    menuOverlay.addEventListener('click', closeMenu);
-    
-    let touchStartX = 0;
-    sidebarMenu.addEventListener('touchstart', (e) => {
-      touchStartX = e.changedTouches[0].screenX;
-    }, { passive: true });
-    
-    sidebarMenu.addEventListener('touchend', (e) => {
-      if (touchStartX - e.changedTouches[0].screenX > 40) closeMenu();
-    });
-    
-    document.addEventListener('keydown', (e) => {
-      if (e.key === 'Escape') closeMenu();
-    });
-  }
-
-  // ============================================================
-  // SEARCH PAGE SPECIFIC
-  // ============================================================
-  
-  // STATE
-  let currentTab = '';
-  let currentFilters = { kt: '', km: '', lt: '', minHarga: '', maxHarga: '' };
-  let allResults = [];
-  
-  // FILTER SHEET
-  const filterSheet = document.getElementById('filterSheet');
-  const filterSheetOverlay = document.getElementById('filterSheetOverlay');
-  
-  function openFilterSheet() {
-    filterSheet.classList.add('active');
-    filterSheetOverlay.classList.add('active');
-  }
-  
-  function closeFilterSheet() {
-    filterSheet.classList.remove('active');
-    filterSheetOverlay.classList.remove('active');
-  }
-  
-  document.getElementById('filterBtn').addEventListener('click', function(e) {
-    e.stopPropagation();
-    openFilterSheet();
-  });
-  
-  document.getElementById('closeFilterSheetBtn').addEventListener('click', closeFilterSheet);
-  filterSheetOverlay.addEventListener('click', closeFilterSheet);
-  
-  // FILTER TABS
-  document.querySelectorAll('.filter-tab').forEach(tab => {
-    tab.addEventListener('click', function() {
-      document.querySelectorAll('.filter-tab').forEach(t => t.classList.remove('active'));
-      this.classList.add('active');
-      currentTab = this.dataset.tab;
-      doSearch();
-      updateActiveFilterChips();
-    });
-  });
-  
-  // SEARCH
-  async function doSearch() {
-    const searchTerm = document.getElementById('searchInput').value.toLowerCase().trim();
-    
-    document.getElementById('propertyList').innerHTML = 
-      '<div class="loading"><i class="fas fa-spinner"></i><p>Mencari properti...</p></div>';
-    
-    try {
-      const [primaryData, secondaryData, rentData] = await Promise.all([
-        fetchSheetData('primary'),
-        fetchSheetData('secondary'),
-        fetchSheetData('rent')
-      ]);
+    // ========== SEARCH ==========
+    async function doSearch() {
+      const searchTerm = document.getElementById('searchInput').value.toLowerCase().trim();
       
-      let results = [
-        ...primaryData.map(item => ({ ...item, _tab: 'primary' })),
-        ...secondaryData.map(item => ({ ...item, _tab: 'secondary' })),
-        ...rentData.map(item => ({ ...item, _tab: 'rent' }))
-      ];
-      
-      // Filter teks
-      if (searchTerm) {
-        results = results.filter(item => {
-          const nama = (item['nama property'] || '').toLowerCase();
-          const lokasi = (item['lokasi'] || '').toLowerCase();
-          const spesifikasi = (item['spesifikasi'] || '').toLowerCase();
-          return nama.includes(searchTerm) || lokasi.includes(searchTerm) || spesifikasi.includes(searchTerm);
-        });
-      }
-      
-      // Filter tab
-      if (currentTab) {
-        results = results.filter(item => item._tab === currentTab);
-      }
-      
-      // Filter KT
-      if (currentFilters.kt) {
-        results = results.filter(item => (parseInt(item['kt']) || 0) >= parseInt(currentFilters.kt));
-      }
-      
-      // Filter KM
-      if (currentFilters.km) {
-        results = results.filter(item => (parseInt(item['km']) || 0) >= parseInt(currentFilters.km));
-      }
-      
-      // Filter LT
-      if (currentFilters.lt) {
-        results = results.filter(item => (parseInt(item['lt']) || 0) >= parseInt(currentFilters.lt));
-      }
-      
-      // Filter Harga
-      if (currentFilters.minHarga || currentFilters.maxHarga) {
-        results = results.filter(item => {
-          let harga = parseInt((item['harga'] || '0').toString().replace(/\D/g, '')) || 0;
-          if (currentFilters.minHarga && harga < parseInt(currentFilters.minHarga) * 1000000) return false;
-          if (currentFilters.maxHarga && harga > parseInt(currentFilters.maxHarga) * 1000000) return false;
-          return true;
-        });
-      }
-      
-      allResults = results;
-      displayResults(results);
-      
-    } catch (error) {
-      console.error('Search error:', error);
       document.getElementById('propertyList').innerHTML = 
-        `<div class="empty-state"><i class="fas fa-exclamation-triangle"></i><p>Gagal memuat data</p></div>`;
-    }
-  }
-  
-  function displayResults(results) {
-    const container = document.getElementById('propertyList');
-    
-    document.getElementById('resultCount').innerHTML = 
-      `Ditemukan <strong>${results.length}</strong> properti`;
-    
-    if (results.length === 0) {
-      container.innerHTML = `<div class="empty-state"><i class="fas fa-search"></i><p>Tidak ada properti yang cocok</p></div>`;
-      return;
-    }
-    
-    container.innerHTML = results.map((item, i) => {
-      const detailId = `search_${Date.now()}_${i}`;
-      sessionStorage.setItem(detailId, JSON.stringify(item));
-      const isFav = isLocalFavorite(item);
+        '<div class="loading"><i class="fas fa-spinner"></i><p>Mencari properti...</p></div>';
       
-      return `
-        <a href="detail.html?id=${detailId}" class="property-card">
-          <div class="card-image">
-            <img src="${convertDriveUrl(item['gambar utama']) || 'https://images.unsplash.com/photo-1580587771525-78b9dba3b914?w=400'}" 
-                 alt="${escapeHtml(item['nama property'])}"
-                 onerror="this.src='https://images.unsplash.com/photo-1580587771525-78b9dba3b914?w=400';">
-            <span class="tab-badge">${item._tab}</span>
-            <div class="favorite-btn ${isFav ? 'loved' : ''}" onclick="event.preventDefault(); event.stopPropagation(); toggleLove(this, ${JSON.stringify(item).replace(/"/g, '&quot;')})">
-              <i class="${isFav ? 'fas' : 'far'} fa-heart"></i>
-            </div>
-          </div>
-          <div class="card-content">
-            <div class="property-price">${formatPrice(item['harga'])}</div>
-            <h3 class="property-title">${escapeHtml(item['nama property']) || 'Tanpa Nama'}</h3>
-            <div class="property-viewers">
-              <i class="fas fa-eye"></i>
-              ${item['viewer'] || 0} Dilihat
-            </div>
-            <div class="property-address">
-              <i class="fas fa-map-marker-alt"></i> 
-              <span>${escapeHtml(item['lokasi']) || '-'}</span>
-            </div>
-            <div class="property-features">
-              <span class="feature"><i class="fas fa-bed"></i> ${item['kt'] || '0'} KT</span>
-              <span class="feature"><i class="fas fa-bath"></i> ${item['km'] || '0'} KM</span>
-              <span class="feature"><i class="fas fa-layer-group"></i> ${item['lt'] || '0'} Lt</span>
-            </div>
-          </div>
-        </a>
-      `;
-    }).join('');
-  }
-  
-  // FILTER FUNCTIONS
-  function applyFilter() {
-    currentFilters = {
-      kt: document.getElementById('filterKT').value,
-      km: document.getElementById('filterKM').value,
-      lt: document.getElementById('filterLT').value,
-      minHarga: document.getElementById('minHarga').value,
-      maxHarga: document.getElementById('maxHarga').value
-    };
-    
-    closeFilterSheet();
-    updateActiveFilterChips();
-    doSearch();
-  }
-  
-  function resetFilter() {
-    document.getElementById('filterKT').value = '';
-    document.getElementById('filterKM').value = '';
-    document.getElementById('filterLT').value = '';
-    document.getElementById('minHarga').value = '';
-    document.getElementById('maxHarga').value = '';
-    
-    currentFilters = { kt: '', km: '', lt: '', minHarga: '', maxHarga: '' };
-    
-    closeFilterSheet();
-    updateActiveFilterChips();
-    doSearch();
-  }
-  
-  function updateActiveFilterChips() {
-    const container = document.getElementById('activeFilters');
-    let html = '';
-    
-    if (currentTab) html += `<span class="filter-chip" onclick="removeTabFilter()">📁 ${currentTab} <i class="fas fa-times"></i></span>`;
-    if (currentFilters.kt) html += `<span class="filter-chip" onclick="removeFilter('kt')">🛏️ ${currentFilters.kt}+ KT <i class="fas fa-times"></i></span>`;
-    if (currentFilters.km) html += `<span class="filter-chip" onclick="removeFilter('km')">🚿 ${currentFilters.km}+ KM <i class="fas fa-times"></i></span>`;
-    if (currentFilters.lt) html += `<span class="filter-chip" onclick="removeFilter('lt')">🏢 ${currentFilters.lt}+ Lt <i class="fas fa-times"></i></span>`;
-    if (currentFilters.minHarga || currentFilters.maxHarga) {
-      const min = currentFilters.minHarga ? currentFilters.minHarga + 'jt' : '0';
-      const max = currentFilters.maxHarga ? currentFilters.maxHarga + 'jt' : '∞';
-      html += `<span class="filter-chip" onclick="removeFilter('harga')">💰 ${min} - ${max} <i class="fas fa-times"></i></span>`;
-    }
-    if (html) html += `<span class="filter-chip clear-all" onclick="resetFilter()"><i class="fas fa-times"></i> Clear All</span>`;
-    
-    container.innerHTML = html || '<span class="empty-filter">🔍 Belum ada filter aktif</span>';
-  }
-  
-  function removeTabFilter() {
-    currentTab = '';
-    document.querySelectorAll('.filter-tab').forEach(t => {
-      t.classList.remove('active');
-      if (t.dataset.tab === '') t.classList.add('active');
-    });
-    updateActiveFilterChips();
-    doSearch();
-  }
-  
-  function removeFilter(type) {
-    if (type === 'kt') { currentFilters.kt = ''; document.getElementById('filterKT').value = ''; }
-    else if (type === 'km') { currentFilters.km = ''; document.getElementById('filterKM').value = ''; }
-    else if (type === 'lt') { currentFilters.lt = ''; document.getElementById('filterLT').value = ''; }
-    else if (type === 'harga') { 
-      currentFilters.minHarga = ''; 
-      currentFilters.maxHarga = ''; 
-      document.getElementById('minHarga').value = ''; 
-      document.getElementById('maxHarga').value = ''; 
-    }
-    updateActiveFilterChips();
-    doSearch();
-  }
-  
-  document.getElementById('applyFilterBtn').addEventListener('click', applyFilter);
-  document.getElementById('resetFilterBtn').addEventListener('click', resetFilter);
-  
-  // NAVIGASI
-  document.getElementById('searchBtn').addEventListener('click', doSearch);
-  document.getElementById('searchInput').addEventListener('keypress', function(e) {
-    if (e.key === 'Enter') doSearch();
-  });
-  
-  // INIT DARI URL
-  function initFromUrl() {
-    const params = new URLSearchParams(window.location.search);
-    const query = params.get('q');
-    const filter = params.get('filter');
-    const tab = params.get('tab');
-    
-    if (query) {
-      document.getElementById('searchInput').value = query;
+      try {
+        const [primaryData, secondaryData, rentData] = await Promise.all([
+          fetchSheetData('primary'),
+          fetchSheetData('secondary'),
+          fetchSheetData('rent')
+        ]);
+        
+        let results = [
+          ...primaryData.map(item => ({ ...item, _tab: 'primary' })),
+          ...secondaryData.map(item => ({ ...item, _tab: 'secondary' })),
+          ...rentData.map(item => ({ ...item, _tab: 'rent' }))
+        ];
+        
+        // Filter teks
+        if (searchTerm) {
+          results = results.filter(item => {
+            const nama = (item['nama property'] || '').toLowerCase();
+            const lokasi = (item['lokasi'] || '').toLowerCase();
+            const spesifikasi = (item['spesifikasi'] || '').toLowerCase();
+            return nama.includes(searchTerm) || lokasi.includes(searchTerm) || spesifikasi.includes(searchTerm);
+          });
+        }
+        
+        // Filter tab
+        if (currentTab) {
+          results = results.filter(item => item._tab === currentTab);
+        }
+        
+        // Filter KT
+        if (currentFilters.kt) {
+          results = results.filter(item => (parseInt(item['kt']) || 0) >= parseInt(currentFilters.kt));
+        }
+        
+        // Filter KM
+        if (currentFilters.km) {
+          results = results.filter(item => (parseInt(item['km']) || 0) >= parseInt(currentFilters.km));
+        }
+        
+        // Filter LT
+        if (currentFilters.lt) {
+          results = results.filter(item => (parseInt(item['lt']) || 0) >= parseInt(currentFilters.lt));
+        }
+        
+        // Filter Harga
+        if (currentFilters.minHarga || currentFilters.maxHarga) {
+          results = results.filter(item => {
+            let harga = parseInt((item['harga'] || '0').toString().replace(/\D/g, '')) || 0;
+            if (currentFilters.minHarga && harga < parseInt(currentFilters.minHarga) * 1000000) return false;
+            if (currentFilters.maxHarga && harga > parseInt(currentFilters.maxHarga) * 1000000) return false;
+            return true;
+          });
+        }
+        
+        allResults = results;
+        displayResults(results);
+        
+      } catch (error) {
+        document.getElementById('propertyList').innerHTML = 
+          `<div class="empty-state"><i class="fas fa-exclamation-triangle"></i><p>Gagal memuat data</p></div>`;
+      }
     }
     
-    if (tab) {
-      currentTab = tab;
+    function displayResults(results) {
+      const container = document.getElementById('propertyList');
+      
+      document.getElementById('resultCount').innerHTML = 
+        `Ditemukan <strong>${results.length}</strong> properti`;
+      
+      if (results.length === 0) {
+        container.innerHTML = `<div class="empty-state"><i class="fas fa-search"></i><p>Tidak ada properti yang cocok</p></div>`;
+        return;
+      }
+      
+      container.innerHTML = results.map((item, i) => {
+        const detailId = `search_${Date.now()}_${i}`;
+        sessionStorage.setItem(detailId, JSON.stringify(item));
+        
+        return `
+          <a href="detail.html?id=${detailId}" class="property-card">
+            <div class="card-image">
+              <img src="${convertDriveUrl(item['gambar utama']) || 'https://images.unsplash.com/photo-1580587771525-78b9dba3b914?w=400'}" 
+                   alt="${item['nama property']}">
+              <span class="tab-badge">${item._tab}</span>
+              <div class="favorite-btn" onclick="event.preventDefault(); event.stopPropagation(); toggleFavorite(this)">
+                <i class="far fa-heart"></i>
+              </div>
+            </div>
+            <div class="card-content">
+              <div class="property-price">${formatPrice(item['harga'])}</div>
+              <h3 class="property-title">${item['nama property'] || 'Tanpa Nama'}</h3>
+<div class="property-viewers">
+  <i class="fas fa-eye"></i>
+  ${item['viewer'] || 0} Dilihat
+</div>
+              <div class="property-address">
+                <i class="fas fa-map-marker-alt"></i> 
+                <span>${item['lokasi'] || '-'}</span>
+              </div>
+              <div class="property-features">
+                <span class="feature"><i class="fas fa-bed"></i> ${item['kt'] || '0'} KT</span>
+                <span class="feature"><i class="fas fa-bath"></i> ${item['km'] || '0'} KM</span>
+                <span class="feature"><i class="fas fa-layer-group"></i> ${item['lt'] || '0'} Lt</span>
+              </div>
+            </div>
+          </a>
+        `;
+      }).join('');
+    }
+    
+    // ========== FILTER FUNCTIONS ==========
+    function applyFilter() {
+      currentFilters = {
+        kt: document.getElementById('filterKT').value,
+        km: document.getElementById('filterKM').value,
+        lt: document.getElementById('filterLT').value,
+        minHarga: document.getElementById('minHarga').value,
+        maxHarga: document.getElementById('maxHarga').value
+      };
+      
+      closeFilterSheet();
+      updateActiveFilterChips();
+      doSearch();
+    }
+    
+    function resetFilter() {
+      document.getElementById('filterKT').value = '';
+      document.getElementById('filterKM').value = '';
+      document.getElementById('filterLT').value = '';
+      document.getElementById('minHarga').value = '';
+      document.getElementById('maxHarga').value = '';
+      
+      currentFilters = { kt: '', km: '', lt: '', minHarga: '', maxHarga: '' };
+      
+      closeFilterSheet();
+      updateActiveFilterChips();
+      doSearch();
+    }
+    
+    function updateActiveFilterChips() {
+      const container = document.getElementById('activeFilters');
+      let html = '';
+      
+      if (currentTab) html += `<span class="filter-chip" onclick="removeTabFilter()">📁 ${currentTab} <i class="fas fa-times"></i></span>`;
+      if (currentFilters.kt) html += `<span class="filter-chip" onclick="removeFilter('kt')">🛏️ ${currentFilters.kt}+ KT <i class="fas fa-times"></i></span>`;
+      if (currentFilters.km) html += `<span class="filter-chip" onclick="removeFilter('km')">🚿 ${currentFilters.km}+ KM <i class="fas fa-times"></i></span>`;
+      if (currentFilters.lt) html += `<span class="filter-chip" onclick="removeFilter('lt')">🏢 ${currentFilters.lt}+ Lt <i class="fas fa-times"></i></span>`;
+      if (currentFilters.minHarga || currentFilters.maxHarga) {
+        const min = currentFilters.minHarga ? currentFilters.minHarga + 'jt' : '0';
+        const max = currentFilters.maxHarga ? currentFilters.maxHarga + 'jt' : '∞';
+        html += `<span class="filter-chip" onclick="removeFilter('harga')">💰 ${min} - ${max} <i class="fas fa-times"></i></span>`;
+      }
+      if (html) html += `<span class="filter-chip clear-all" onclick="resetFilter()"><i class="fas fa-times"></i> Clear All</span>`;
+      
+      container.innerHTML = html || '<span style="font-size:0.7rem; color:var(--gray);">🔍 Belum ada filter aktif</span>';
+    }
+    
+    function removeTabFilter() {
+      currentTab = '';
       document.querySelectorAll('.filter-tab').forEach(t => {
         t.classList.remove('active');
-        if (t.dataset.tab === tab) t.classList.add('active');
+        if (t.dataset.tab === '') t.classList.add('active');
       });
-      if (!document.querySelector('.filter-tab.active')) {
-        document.querySelector('.filter-tab[data-tab=""]').classList.add('active');
+      updateActiveFilterChips();
+      doSearch();
+    }
+    
+    function removeFilter(type) {
+      if (type === 'kt') { currentFilters.kt = ''; document.getElementById('filterKT').value = ''; }
+      else if (type === 'km') { currentFilters.km = ''; document.getElementById('filterKM').value = ''; }
+      else if (type === 'lt') { currentFilters.lt = ''; document.getElementById('filterLT').value = ''; }
+      else if (type === 'harga') { 
+        currentFilters.minHarga = ''; 
+        currentFilters.maxHarga = ''; 
+        document.getElementById('minHarga').value = ''; 
+        document.getElementById('maxHarga').value = ''; 
       }
       updateActiveFilterChips();
+      doSearch();
     }
     
-    if (filter === 'open') {
-      setTimeout(openFilterSheet, 100);
+    document.getElementById('applyFilterBtn').addEventListener('click', applyFilter);
+    document.getElementById('resetFilterBtn').addEventListener('click', resetFilter);
+    
+    // ========== NAVIGASI ==========
+    document.getElementById('searchBtn').addEventListener('click', doSearch);
+    document.getElementById('searchInput').addEventListener('keypress', function(e) {
+      if (e.key === 'Enter') doSearch();
+    });
+    
+    // ========== INIT DARI URL ==========
+    function initFromUrl() {
+      const params = new URLSearchParams(window.location.search);
+      const query = params.get('q');
+      const filter = params.get('filter');
+      const tab = params.get('tab');
+      
+      if (query) {
+        document.getElementById('searchInput').value = query;
+      }
+      
+      if (tab) {
+        currentTab = tab;
+        document.querySelectorAll('.filter-tab').forEach(t => {
+          t.classList.remove('active');
+          if (t.dataset.tab === tab) t.classList.add('active');
+        });
+        if (!document.querySelector('.filter-tab.active')) {
+          document.querySelector('.filter-tab[data-tab=""]').classList.add('active');
+        }
+        updateActiveFilterChips();
+      }
+      
+      if (filter === 'open') {
+        setTimeout(openFilterSheet, 100);
+      }
+      
+      doSearch();
     }
     
-    doSearch();
-  }
-  
-  // ============================================================
-  // INIT
-  // ============================================================
-  document.addEventListener('DOMContentLoaded', function() {
-    initSidebar();
+    // ========== INIT ==========
     initFromUrl();
-  });
-</script>
-
+  </script>
 </body>
 </html>
