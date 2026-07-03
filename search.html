@@ -277,53 +277,55 @@
     /* ============================================================
        SEARCH HEADER - Mengikuti gaya index.html
        ============================================================ */
+    /* ============================================================
+   SEARCH HEADER - FIXED OVERFLOW
+   ============================================================ */
     .search-header {
       width: 100%;
-      padding: 12px 16px;
+      padding: 10px 12px;
       background: var(--home-surface);
       border-bottom: 1px solid rgba(15, 23, 42, 0.06);
       display: flex;
       align-items: center;
-      gap: 10px;
+      gap: 8px;
       position: sticky;
       top: 0;
       z-index: 100;
-      min-height: 60px;
+      min-height: 56px;
     }
 
+    /* HAMBURGER BUTTON */
     .hamburger-btn {
       display: inline-flex;
       align-items: center;
       justify-content: center;
-      width: 40px;
-      height: 40px;
-      border-radius: 12px;
-      background: var(--home-surface);
-      color: var(--home-primary);
-      font-size: 1rem;
-      box-shadow: 0 2px 8px rgba(15, 23, 42, 0.06);
-      border: 1px solid rgba(15, 23, 42, 0.06);
+      width: 36px;
+      height: 36px;
       flex-shrink: 0;
-      cursor: pointer;
-      background: none;
       border: none;
+      background: none;
+      cursor: pointer;
+      padding: 0;
+      border-radius: 10px;
+      transition: background 0.2s;
     }
 
     .hamburger-btn:active {
-      transform: scale(0.95);
+      background: var(--home-bg);
     }
 
     .hamburger-btn i {
-      font-size: 1.2rem;
+      font-size: 1.1rem;
       color: var(--home-primary);
     }
 
-    /* SEARCH BOX - Sama persis dengan index.html */
+    /* SEARCH BOX */
     .search-box {
       flex: 1;
+      min-width: 0;
       background: var(--home-surface);
-      border-radius: 16px;
-      padding: 6px 6px 6px 14px;
+      border-radius: 14px;
+      padding: 4px 4px 4px 12px;
       box-shadow: var(--home-shadow-lg);
       border: 1px solid rgba(15, 23, 42, 0.06);
       display: flex;
@@ -334,38 +336,40 @@
     .search-box > i.fa-search {
       color: var(--home-primary);
       opacity: 0.4;
-      font-size: 0.9rem;
-      margin-left: 0;
+      font-size: 0.8rem;
+      flex-shrink: 0;
     }
 
     .search-box input {
       flex: 1;
+      min-width: 30px;
       border: none;
-      padding: 12px 8px;
-      font-size: 16px;
+      padding: 10px 4px;
+      font-size: 15px;
       font-family: 'Plus Jakarta Sans', 'Poppins', sans-serif;
       background: transparent;
       outline: none;
-      min-width: 0;
     }
 
     .search-box input::placeholder {
       color: #94a3b8;
-      font-size: 0.82rem;
+      font-size: 0.75rem;
     }
 
     .search-box #searchBtn {
+      flex-shrink: 0;
       background: linear-gradient(135deg, #1e40af, #2563eb);
       border: none;
       color: #fff;
-      padding: 10px 18px;
-      border-radius: 12px;
-      font-size: 0.8rem;
+      padding: 8px 14px;
+      border-radius: 10px;
+      font-size: 0.7rem;
       font-weight: 600;
       cursor: pointer;
       white-space: nowrap;
-      box-shadow: 0 4px 14px rgba(37, 99, 235, 0.35);
+      box-shadow: 0 3px 10px rgba(37, 99, 235, 0.3);
       font-family: 'Plus Jakarta Sans', 'Poppins', sans-serif;
+      transition: transform 0.2s;
     }
 
     .search-box #searchBtn:active {
@@ -373,23 +377,29 @@
     }
 
     .search-box .filter-btn-inside {
-      width: 42px;
-      height: 42px;
+      flex-shrink: 0;
+      width: 36px;
+      height: 36px;
       display: flex;
       align-items: center;
       justify-content: center;
       background: var(--home-bg);
-      border-radius: 12px;
+      border-radius: 10px;
       border: none;
       cursor: pointer;
       padding: 0;
-      min-width: 44px;
-      min-height: 44px;
+      min-width: 36px;
+      min-height: 36px;
+      transition: background 0.2s;
+    }
+
+    .search-box .filter-btn-inside:active {
+      background: #e2e8f0;
     }
 
     .search-box .filter-btn-inside i {
       color: var(--home-primary);
-      font-size: 0.95rem;
+      font-size: 0.85rem;
     }
 
     .search-box .filter-btn-inside:active {
@@ -949,18 +959,18 @@
     </div>
   </div>
 
-  <!-- ========== HEADER SEARCH ========== -->
-  <div class="search-header">
-    <button class="hamburger-btn" id="hamburgerBtn" aria-label="Menu">
-      <i class="fas fa-bars"></i>
-    </button>
-    <div class="search-box">
-      <i class="fas fa-search"></i>
-      <input type="text" placeholder="Cari properti..." id="searchInput">
-      <button id="searchBtn">Cari</button>
-      <button class="filter-btn-inside" id="filterBtn"><i class="fas fa-sliders-h"></i></button>
+    <!-- ========== HEADER SEARCH ========== -->
+    <div class="search-header">
+      <button class="hamburger-btn" id="hamburgerBtn" aria-label="Menu">
+        <i class="fas fa-bars"></i>
+      </button>
+      <div class="search-box">
+        <i class="fas fa-search"></i>
+        <input type="text" placeholder="Cari properti..." id="searchInput">
+        <button id="searchBtn">Cari</button>
+        <button class="filter-btn-inside" id="filterBtn"><i class="fas fa-sliders-h"></i></button>
+      </div>
     </div>
-  </div>
   
   <!-- ========== FILTER TABS ========== -->
   <div class="filter-tabs">
