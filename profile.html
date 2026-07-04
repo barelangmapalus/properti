@@ -11,153 +11,11 @@
   <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="css/style.css">
   
-  <style>
-    .profile-page {
-      min-height: 100vh;
-      background: #f8f9fa;
-      padding-top: 20px;
-    }
-    
-    .profile-header {
-      background: white;
-      padding: 10px 16px;
-      display: flex;
-      align-items: center;
-      gap: 14px;
-      box-shadow: 0 2px 8px rgba(0,0,0,0.05);
-      position: sticky;
-      top: 0;
-      z-index: 100;
-    }
-    
-    .profile-header h2 {
-      font-size: 1rem;
-      font-weight: 600;
-    }
-    
-    .profile-content {
-      padding: 16px;
-    }
-    
-    .profile-card {
-      background: white;
-      border-radius: 16px;
-      padding: 20px;
-      text-align: center;
-      box-shadow: 0 3px 10px rgba(0,0,0,0.06);
-    }
-    
-    .profile-avatar {
-      width: 64px;
-      height: 64px;
-      background: linear-gradient(135deg, var(--primary), var(--secondary));
-      border-radius: 50%;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      margin: 0 auto 12px;
-      color: white;
-      font-size: 1.5rem;
-      font-weight: 600;
-    }
-    
-    .profile-name {
-      font-size: 1rem;
-      font-weight: 600;
-      color: var(--primary);
-      margin-bottom: 2px;
-    }
-    
-    .profile-phone {
-      color: var(--gray);
-      font-size: 0.8rem;
-      margin-bottom: 16px;
-    }
-    
-    .profile-info {
-      background: white;
-      border-radius: 16px;
-      padding: 14px;
-      margin-top: 14px;
-      box-shadow: 0 3px 10px rgba(0,0,0,0.06);
-    }
-    
-    .profile-info .spec-item {
-      padding: 8px 0;
-    }
-    
-    .profile-info .spec-label {
-      font-size: 0.75rem;
-    }
-    
-    .profile-info .spec-value {
-      font-size: 0.8rem;
-    }
-    
-    .btn-logout {
-      display: block;
-      width: 100%;
-      padding: 10px;
-      margin-top: 16px;
-      background: #e74c3c;
-      color: white;
-      border: none;
-      border-radius: 12px;
-      font-weight: 500;
-      font-size: 0.8rem;
-      cursor: pointer;
-      font-family: 'Poppins', sans-serif;
-    }
-    
-    .btn-logout:active {
-      background: #c0392b;
-    }
-
-    .switch {
-  position: relative;
-  display: inline-block;
-  width: 48px;
-  height: 26px;
-}
-
-.switch input {
-  opacity: 0;
-  width: 0;
-  height: 0;
-}
-
-.slider {
-  position: absolute;
-  cursor: pointer;
-  inset: 0;
-  background-color: #ccc;
-  transition: .3s;
-  border-radius: 34px;
-}
-
-.slider:before {
-  position: absolute;
-  content: "";
-  height: 20px;
-  width: 20px;
-  left: 3px;
-  bottom: 3px;
-  background-color: white;
-  transition: .3s;
-  border-radius: 50%;
-}
-
-input:checked + .slider {
-  background-color: #25D366;
-}
-
-input:checked + .slider:before {
-  transform: translateX(22px);
-}
-
-  </style>
 </head>
 <body>
+
+  <div class="mobile-shell">
+  
   <div class="profile-page">
     <!-- Header -->
     <div class="profile-header">
@@ -197,6 +55,26 @@ input:checked + .slider:before {
     </div>
   </div>
 
+  <!-- ========== BOTTOM NAVIGATION ========== -->
+<nav class="home-fixed-nav" aria-label="Navigasi utama">
+  <a href="index.html" class="nav-item" id="navHome">
+    <i class="fas fa-home"></i>
+    <span>Beranda</span>
+  </a>
+  <a href="search.html" class="nav-item" id="navSearch">
+    <i class="fas fa-search"></i>
+    <span>Cari</span>
+  </a>
+  <a href="#" class="nav-item" id="navFavorite" onclick="goToFavorite(event)">
+    <i class="fas fa-heart"></i>
+    <span>Favorit</span>
+  </a>
+  <a href="#" class="nav-item" id="navProfile" onclick="goToProfile(event)">
+    <i class="fas fa-user"></i>
+    <span>Profil</span>
+  </a>
+</nav>
+
   <script src="js/script.js"></script>
   
   <script>
@@ -217,6 +95,50 @@ input:checked + .slider:before {
       const initial = (userData.nama || 'U').charAt(0).toUpperCase();
       document.getElementById('profileAvatar').textContent = initial;
     }
+
+
+    // ============================================================
+// NAVIGASI FUNCTIONS
+// ============================================================
+
+function goToFavorite(event) {
+  if (event) event.preventDefault();
+  const userData = JSON.parse(localStorage.getItem('bmpro_user') || 'null');
+  if (!userData) {
+    window.location.href = 'register.html';
+  } else {
+    window.location.href = 'favorite.html';
+  }
+}
+
+function goToProfile(event) {
+  if (event) event.preventDefault();
+  const userData = JSON.parse(localStorage.getItem('bmpro_user') || 'null');
+  if (!userData) {
+    window.location.href = 'register.html';
+  } else {
+    window.location.href = 'profile.html';
+  }
+}
+
+// ============================================================
+// SET ACTIVE NAV (Otomatis sesuai halaman)
+// ============================================================
+function setActiveNav() {
+  const page = window.location.pathname.split('/').pop() || 'index.html';
+  const map = {
+    'index.html': 'navHome',
+    'search.html': 'navSearch',
+    'favorite.html': 'navFavorite',
+    'profile.html': 'navProfile',
+    'register.html': 'navHome'
+  };
+  const el = document.getElementById(map[page]);
+  if (el) el.classList.add('active');
+}
+
+// Jalankan saat halaman dimuat
+document.addEventListener('DOMContentLoaded', setActiveNav);
     
     function doLogout() {
         if (confirm('⚠️ Jika Anda Logout, maka listing properti Favorite akan terhapus.\n\nApakah Anda yakin ingin logout?')) {
