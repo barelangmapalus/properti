@@ -30,6 +30,26 @@
     </div>
   </div>
 
+  <!-- ========== BOTTOM NAVIGATION ========== -->
+<nav class="home-fixed-nav" aria-label="Navigasi utama">
+  <a href="index.html" class="nav-item" id="navHome">
+    <i class="fas fa-home"></i>
+    <span>Beranda</span>
+  </a>
+  <a href="search.html" class="nav-item" id="navSearch">
+    <i class="fas fa-search"></i>
+    <span>Cari</span>
+  </a>
+  <a href="#" class="nav-item" id="navFavorite" onclick="goToFavorite(event)">
+    <i class="fas fa-heart"></i>
+    <span>Favorit</span>
+  </a>
+  <a href="#" class="nav-item" id="navProfile" onclick="goToProfile(event)">
+    <i class="fas fa-user"></i>
+    <span>Profil</span>
+  </a>
+</nav>
+
   <!-- JS Global dari website Anda -->
   <script src="js/script.js"></script>
   
@@ -58,6 +78,50 @@
         </div>
       `;
     }
+
+
+    // ============================================================
+// NAVIGASI FUNCTIONS
+// ============================================================
+
+function goToFavorite(event) {
+  if (event) event.preventDefault();
+  const userData = JSON.parse(localStorage.getItem('bmpro_user') || 'null');
+  if (!userData) {
+    window.location.href = 'register.html';
+  } else {
+    window.location.href = 'favorite.html';
+  }
+}
+
+function goToProfile(event) {
+  if (event) event.preventDefault();
+  const userData = JSON.parse(localStorage.getItem('bmpro_user') || 'null');
+  if (!userData) {
+    window.location.href = 'register.html';
+  } else {
+    window.location.href = 'profile.html';
+  }
+}
+
+// ============================================================
+// SET ACTIVE NAV (Otomatis sesuai halaman)
+// ============================================================
+function setActiveNav() {
+  const page = window.location.pathname.split('/').pop() || 'index.html';
+  const map = {
+    'index.html': 'navHome',
+    'search.html': 'navSearch',
+    'favorite.html': 'navFavorite',
+    'profile.html': 'navProfile',
+    'register.html': 'navHome'
+  };
+  const el = document.getElementById(map[page]);
+  if (el) el.classList.add('active');
+}
+
+// Jalankan saat halaman dimuat
+document.addEventListener('DOMContentLoaded', setActiveNav);
     
     function displayDetail(property, category) {
       // Kumpulkan gambar
