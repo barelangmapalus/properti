@@ -11,159 +11,17 @@
   <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="css/style.css">
   
-  <style>
-    .register-page {
-      min-height: 100vh;
-      background: #f8f9fa;
-      padding: 20px;
-    }
-    
-    .register-header {
-      text-align: center;
-      margin-bottom: 20px;
-      margin-top: 20px;
-    }
-    
-    .register-header h1 {
-      font-size: 1.2rem;
-      color: var(--primary);
-      margin-bottom: 6px;
-    }
-    
-    .register-header p {
-      color: var(--gray);
-      font-size: 0.75rem;
-    }
-    
-    .register-form {
-      background: white;
-      padding: 20px;
-      border-radius: 16px;
-      box-shadow: 0 4px 12px rgba(0,0,0,0.06);
-      display: block;
-    }
-    
-    .register-form.hidden {
-      display: none;
-    }
-    
-    .form-group {
-      margin-bottom: 16px;
-    }
-    
-    .form-group label {
-      display: block;
-      font-size: 0.75rem;
-      font-weight: 500;
-      margin-bottom: 6px;
-      color: var(--primary);
-    }
-    
-    .form-group input {
-      width: 100%;
-      padding: 10px 14px;
-      border: 2px solid #e0e0e0;
-      border-radius: 10px;
-      font-family: 'Poppins', sans-serif;
-      font-size: 0.8rem;
-      transition: border-color 0.2s;
-    }
-    
-    .form-group input:focus {
-      outline: none;
-      border-color: var(--secondary);
-    }
-    
-    .btn-register {
-      width: 100%;
-      padding: 10px;
-      background: var(--secondary);
-      color: white;
-      border: none;
-      border-radius: 10px;
-      font-weight: 600;
-      font-size: 0.85rem;
-      cursor: pointer;
-      transition: background 0.2s;
-      font-family: 'Poppins', sans-serif;
-      margin-top: 4px;
-    }
-    
-    .btn-register:active {
-      background: #2980b9;
-    }
-    
-    .btn-login {
-      width: 100%;
-      padding: 10px;
-      background: #27ae60;
-      color: white;
-      border: none;
-      border-radius: 10px;
-      font-weight: 600;
-      font-size: 0.85rem;
-      cursor: pointer;
-      transition: background 0.2s;
-      font-family: 'Poppins', sans-serif;
-      margin-top: 4px;
-    }
-    
-    .btn-login:active {
-      background: #219a52;
-    }
-    
-    .toggle-link {
-      text-align: center;
-      margin-top: 14px;
-      font-size: 0.75rem;
-      color: var(--gray);
-    }
-    
-    .toggle-link a {
-      color: var(--secondary);
-      text-decoration: none;
-      font-weight: 500;
-      cursor: pointer;
-    }
-    
-    .success-message {
-      display: none;
-      text-align: center;
-      padding: 30px;
-    }
-    
-    .success-message i {
-      font-size: 3rem;
-      color: #27ae60;
-      margin-bottom: 12px;
-    }
-    
-    .success-message h2 {
-      color: var(--primary);
-      font-size: 1.1rem;
-      margin-bottom: 6px;
-    }
-    
-    .success-message p {
-      color: var(--gray);
-      font-size: 0.8rem;
-      margin-bottom: 16px;
-    }
-    
-    .btn-back {
-      display: inline-block;
-      padding: 10px 20px;
-      background: var(--primary);
-      color: white;
-      text-decoration: none;
-      border-radius: 10px;
-      font-weight: 500;
-      font-size: 0.8rem;
-    }
-  </style>
 </head>
+<style>
+  .register-page {
+    /* Jika mau beda background atau padding */
+    background: #f0f3f5;
+  }
+</style>
+
 <body>
-  <div class="register-page">
+  <div class="mobile-shell">
+    <div class="register-page">
     <!-- Tombol Back -->
     <a href="index.html" style="
       display: inline-flex;
