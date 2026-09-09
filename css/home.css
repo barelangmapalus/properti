@@ -763,12 +763,14 @@
   margin: 20px 0;
   text-align: center;
   box-sizing: border-box;
+  position: relative;
 }
 
 .promo-banner a {
   display: inline-block;
   margin: 0 auto;
   line-height: 0;
+  position: relative;
 }
 
 .promo-banner img {
@@ -779,4 +781,23 @@
   margin: 0 auto;
   border: 0;
   border-radius: 12px;
+}
+
+/* Pita kecil "Iklan" di kanan atas banner */
+.promo-label {
+  position: absolute;
+  top: 8px;
+  right: 8px;
+  z-index: 5;
+
+  background: #facc15;
+  color: #111827;
+
+  padding: 4px 9px;
+  font-size: 10px;
+  font-weight: 700;
+  line-height: 1.2;
+
+  border-radius: 5px;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
 }
