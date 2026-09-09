@@ -756,36 +756,27 @@
   
   }
 
-/* ==============================
-   PROMO BANNER
-   ============================== */
+/* ---------- Promo Banner ---------- */
 
 .promo-banner {
   width: 100%;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  margin-top: 20px;
-  margin-bottom: 20px;
-  padding: 0;
+  margin: 20px 0;
+  text-align: center;
   box-sizing: border-box;
 }
 
 .promo-banner a {
-  display: block;
-  width: 300px;
-  max-width: 100%;
+  display: inline-block;
   margin: 0 auto;
-  padding: 0;
+  line-height: 0;
 }
 
 .promo-banner img {
   display: block;
   width: 300px;
+  height: 250px;
   max-width: 100%;
-  height: auto;
   margin: 0 auto;
-  padding: 0;
   border: 0;
   border-radius: 12px;
 }
