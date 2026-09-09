@@ -2101,18 +2101,3 @@ border-radius: 50%;
 input:checked + .slider {
 background-color: #25D366;
 }
-
-/* PROMO BANNER */
-.promo-banner {
-  margin: 16px;
-  text-align: center;
-}
-
-.promo-banner img {
-  width: 100%;
-  max-width: 300px;
-  height: auto;
-  display: block;
-  margin: 0 auto;
-  border-radius: 12px;
-}
