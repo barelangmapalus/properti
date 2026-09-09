@@ -763,32 +763,40 @@
   margin: 20px 0;
   text-align: center;
   box-sizing: border-box;
-  position: relative;
 }
 
-.promo-banner a {
+.promo-banner-box {
+  position: relative;
   display: inline-block;
-  margin: 0 auto;
+  width: 300px;
+  max-width: 100%;
   line-height: 0;
-  position: relative;
+  text-align: left;
 }
 
-.promo-banner img {
+.promo-banner-box a {
+  display: block;
+  width: 300px;
+  max-width: 100%;
+}
+
+.promo-banner-box img {
   display: block;
   width: 300px;
   height: 250px;
   max-width: 100%;
-  margin: 0 auto;
+  margin: 0;
+  padding: 0;
   border: 0;
   border-radius: 12px;
 }
 
-/* Pita kecil "Iklan" di kanan atas banner */
+/* Pita Iklan - DI DALAM banner */
 .promo-label {
   position: absolute;
   top: 8px;
   right: 8px;
-  z-index: 5;
+  z-index: 10;
 
   background: #facc15;
   color: #111827;
@@ -799,5 +807,7 @@
   line-height: 1.2;
 
   border-radius: 5px;
-  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.25);
+
+  pointer-events: none;
 }
