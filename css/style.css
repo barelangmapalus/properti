@@ -91,6 +91,7 @@
   .share-btn:active,
   .btn-call:active,
   .btn-wa:active,
+  .btn-booking:active,
   .filter-tab:active,
   .property-card:active,
   .hamburger-btn:active,
@@ -549,32 +550,33 @@
     text-transform: uppercase;
   }
   
-  .favorite-btn {
-    position: absolute;
-    bottom: 10px;
-    right: 10px;
-    background: rgba(255,255,255,0.95);
-    width: 32px;
-    height: 32px;
-    border-radius: 50%;
+  .favorite-page {
+    min-height: 100vh;
+    background: #f8f9fa;
+  }
+  
+  .favorite-header {
+    background: white;
+    padding: 12px 16px;
     display: flex;
     align-items: center;
-    justify-content: center;
-    cursor: pointer;
-    border: none;
+    gap: 16px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+    position: sticky;
+    top: 0;
+    z-index: 100;
   }
   
-  .favorite-btn i {
-    color: var(--accent);
-    font-size: 1rem;
+  .favorite-header h2 {
+    font-size: 1.1rem;
+    font-weight: 600;
   }
   
-  .favorite-btn.loved {
-    background: var(--accent);
-  }
-  
-  .favorite-btn.loved i {
-    color: #ffffff;
+  .favorite-list {
+    padding: 16px;
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
   }
   
   .card-content {
@@ -1146,6 +1148,23 @@
     padding: 14px;
     border-radius: 12px;
     font-weight: 500;
+    text-decoration: none;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    font-family: 'Poppins', sans-serif;
+  }
+
+  .btn-booking {
+    width: 100%;
+    margin-top: 12px;
+    background: #2563eb;
+    color: white;
+    border: none;
+    padding: 14px;
+    border-radius: 12px;
+    font-weight: 600;
     text-decoration: none;
     display: flex;
     align-items: center;
@@ -1923,6 +1942,52 @@
 .btn-call { background: #2c3e50; color: white; }
 .btn-wa { background: #25D366; color: white; }
 
+/* Modern action buttons on the property detail page. */
+.detail-contact .share-btn,
+.detail-contact .btn-call,
+.detail-contact .btn-wa,
+.detail-contact .btn-booking {
+  min-height: 50px;
+  border: 1px solid transparent;
+  border-radius: 14px;
+  box-shadow: 0 6px 14px rgba(15, 23, 42, 0.08);
+  font-size: 0.82rem;
+  font-weight: 600;
+  letter-spacing: 0;
+  transition: transform 0.2s ease, box-shadow 0.2s ease, filter 0.2s ease;
+}
+
+.detail-contact .share-btn {
+  background: #f8fafc;
+  border-color: #e2e8f0;
+  color: #334155;
+}
+
+.detail-contact .share-btn i {
+  color: #dc2626;
+}
+
+.detail-contact .btn-call {
+  background: #0f172a;
+}
+
+.detail-contact .btn-wa {
+  background: #16a34a;
+}
+
+.detail-contact .btn-booking {
+  background: #2563eb;
+}
+
+.detail-contact .share-btn:hover,
+.detail-contact .btn-call:hover,
+.detail-contact .btn-wa:hover,
+.detail-contact .btn-booking:hover {
+  filter: brightness(1.04);
+  box-shadow: 0 8px 18px rgba(15, 23, 42, 0.14);
+  transform: translateY(-1px);
+}
+
 .detail-viewer {
   font-size: 13px;
   color: #777;
@@ -2100,4 +2165,8 @@ border-radius: 50%;
 
 input:checked + .slider {
 background-color: #25D366;
+}
+
+input:checked + .slider:before {
+transform: translateX(22px);
 }
