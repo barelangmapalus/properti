@@ -206,6 +206,11 @@
               <i class="fab fa-whatsapp"></i> WhatsApp
             </a>
           </div>
+          ${property._tab === 'rent' ? `
+            <a href="#" class="btn-booking" onclick="return false;">
+              <i class="fas fa-calendar-check"></i> Booking
+            </a>
+          ` : ''}
         </div>
       `;
     }
