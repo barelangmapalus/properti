@@ -147,6 +147,8 @@
     function loadSelectedPropertyPreview() {
       const params = new URLSearchParams(window.location.search);
       const requestedId = params.get('property_id') || localStorage.getItem('bmpro_last_selected_property_id');
+      const fallbackTitle = params.get('property_name');
+      const fallbackImage = params.get('property_image');
 
       let property = null;
 
@@ -161,8 +163,8 @@
         }
       }
 
-      const title = property?.['nama property'] || property?.name || 'Properti pilihanmu';
-      const imageUrl = property?.['gambar utama'] || property?.image || property?.['gambar utama'] || 'https://images.unsplash.com/photo-1600210492486-724fe5c67fb0?auto=format&fit=crop&w=240&q=80';
+      const title = property?.['nama property'] || property?.name || fallbackTitle || 'Properti pilihanmu';
+      const imageUrl = property?.['gambar utama'] || property?.image || fallbackImage || 'https://images.unsplash.com/photo-1600210492486-724fe5c67fb0?auto=format&fit=crop&w=240&q=80';
       const locationText = property?.lokasi || property?.['kota'] || property?.['alamat'] || 'Detail properti';
 
       if (propertyPreviewImage) {
