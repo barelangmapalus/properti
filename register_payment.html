@@ -30,11 +30,11 @@
       </section>
 
       <section class="property-preview" aria-label="Ringkasan properti">
-        <img src="https://images.unsplash.com/photo-1600210492486-724fe5c67fb0?auto=format&fit=crop&w=240&q=80" alt="Interior apartemen">
+        <img id="propertyPreviewImage" src="https://images.unsplash.com/photo-1600210492486-724fe5c67fb0?auto=format&fit=crop&w=240&q=80" alt="Interior apartemen">
         <div class="property-preview-copy">
           <span class="property-tag"><i class="fas fa-key"></i> PROPERTI SEWA</span>
-          <h2>Properti pilihanmu</h2>
-          <p><i class="fas fa-location-dot"></i> Detail properti</p>
+          <h2 id="propertyPreviewTitle">Properti pilihanmu</h2>
+          <p id="propertyPreviewLocation"><i class="fas fa-location-dot"></i> Detail properti</p>
         </div>
         <i class="fas fa-arrow-up-right-from-square property-open" aria-hidden="true"></i>
       </section>
@@ -120,8 +120,64 @@
     const pricePreview = document.getElementById('pricePreview');
     const submitButton = document.querySelector('.payment-submit');
     const authStatus = document.getElementById('authStatus');
+    const propertyPreviewImage = document.getElementById('propertyPreviewImage');
+    const propertyPreviewTitle = document.getElementById('propertyPreviewTitle');
+    const propertyPreviewLocation = document.getElementById('propertyPreviewLocation');
     const bmproSupabase = window.supabaseClient;
     const paymentBackLink = document.querySelector('.payment-back');
+
+    function normalizePropertyImage(url) {
+      if (!url) return 'https://images.unsplash.com/photo-1600210492486-724fe5c67fb0?auto=format&fit=crop&w=240&q=80';
+
+      if (url.includes('lh3.googleusercontent.com')) return url;
+
+      const fileIdMatch = url.match(/\/d\/([a-zA-Z0-9_-]+)/);
+      if (fileIdMatch) {
+        return `https://lh3.googleusercontent.com/d/${fileIdMatch[1]}=w400`;
+      }
+
+      const ucIdMatch = url.match(/[?&]id=([a-zA-Z0-9_-]+)/);
+      if (ucIdMatch) {
+        return `https://lh3.googleusercontent.com/d/${ucIdMatch[1]}=w400`;
+      }
+
+      return url;
+    }
+
+    function loadSelectedPropertyPreview() {
+      const params = new URLSearchParams(window.location.search);
+      const requestedId = params.get('property_id') || localStorage.getItem('bmpro_last_selected_property_id');
+
+      let property = null;
+
+      if (requestedId) {
+        const savedProperty = localStorage.getItem(`bmpro_property_${requestedId}`);
+        if (savedProperty) {
+          try {
+            property = JSON.parse(savedProperty);
+          } catch (error) {
+            console.warn('Gagal parsing data properti dari localStorage:', error);
+          }
+        }
+      }
+
+      const title = property?.['nama property'] || property?.name || 'Properti pilihanmu';
+      const imageUrl = property?.['gambar utama'] || property?.image || property?.['gambar utama'] || 'https://images.unsplash.com/photo-1600210492486-724fe5c67fb0?auto=format&fit=crop&w=240&q=80';
+      const locationText = property?.lokasi || property?.['kota'] || property?.['alamat'] || 'Detail properti';
+
+      if (propertyPreviewImage) {
+        propertyPreviewImage.src = normalizePropertyImage(imageUrl);
+        propertyPreviewImage.alt = title;
+      }
+
+      if (propertyPreviewTitle) {
+        propertyPreviewTitle.textContent = title;
+      }
+
+      if (propertyPreviewLocation) {
+        propertyPreviewLocation.innerHTML = `<i class="fas fa-location-dot"></i> ${locationText}`;
+      }
+    }
 
     function getBookingBackUrl() {
       const params = new URLSearchParams(window.location.search);
