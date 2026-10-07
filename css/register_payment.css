@@ -82,9 +82,9 @@
   letter-spacing: 1px;
 }
 
-.payment-heading h1 {
+..payment-heading h1 {
   max-width: 340px;
-  font-size: 27px;
+  font-size: 19px;
   line-height: 1.2;
   font-weight: 600;
   letter-spacing: 0;
