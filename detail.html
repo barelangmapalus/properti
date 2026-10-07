@@ -65,7 +65,7 @@
         return;
       }
       
-      const storedData = sessionStorage.getItem(id);
+      const storedData = sessionStorage.getItem(id) || localStorage.getItem(`bmpro_property_${id}`);
       if (!storedData) {
         showError('Data properti tidak ditemukan');
         return;
@@ -122,7 +122,21 @@
       }
     }
     
+    function saveSelectedProperty(property) {
+      if (!property) return;
+      const propertyId = property.property_id || property.id || 'selected';
+      localStorage.setItem(`bmpro_property_${propertyId}`, JSON.stringify(property));
+      localStorage.setItem('bmpro_last_selected_property_id', propertyId);
+    }
+
+    document.addEventListener('click', function (event) {
+      const bookingLink = event.target.closest('.btn-booking');
+      if (!bookingLink || !currentProperty) return;
+      saveSelectedProperty(currentProperty);
+    });
+
     function displayDetail(property) {
+      saveSelectedProperty(property);
       allImages = [];
       if (property['gambar utama']) allImages.push(convertDriveUrl(property['gambar utama']));
       if (property['gambar2']) allImages.push(convertDriveUrl(property['gambar2']));
@@ -207,8 +221,8 @@
             </a>
           </div>
           ${property._tab === 'rent' ? `
-            <a href="#" class="btn-booking" onclick="return false;">
-              <i class="fas fa-calendar-check"></i> Booking-DalamPengembangan
+            <a href="register_payment.html?property_id=${encodeURIComponent(property['property_id'] || property['id'] || '')}&property_name=${encodeURIComponent(property['nama property'] || property['name'] || '')}&price=${encodeURIComponent(property['harga'] || '')}" class="btn-booking" target="_blank" rel="noopener noreferrer">
+              <i class="fas fa-calendar-check"></i> Booking
             </a>
           ` : ''}
         </div>
