@@ -87,7 +87,7 @@
           </div>
           <label class="field-group renter-phone">
             <span>Nomor WhatsApp</span>
-            <span class="input-wrap"><i class="fab fa-whatsapp"></i><input type="tel" autocomplete="tel" placeholder="08xx xxxx xxxx"></span>
+            <span class="input-wrap"><i class="fab fa-whatsapp"></i><input id="bookingPhoneInput" type="tel" autocomplete="tel" placeholder="08xx xxxx xxxx"></span>
           </label>
         </section>
 
@@ -116,6 +116,7 @@
     const emailField = document.getElementById('emailField');
     const fullNameInput = document.getElementById('fullName');
     const phoneInput = document.getElementById('phoneInput');
+    const bookingPhoneInput = document.getElementById('bookingPhoneInput');
     const emailInput = document.getElementById('emailInput');
     const passwordInput = document.getElementById('passwordInput');
     const dateSection = document.getElementById('dateSection');
@@ -284,6 +285,31 @@
       }
     }
 
+    async function loadRenterProfile(user) {
+      if (!user || !user.id) return;
+
+      const { data: profile, error } = await bmproSupabase
+        .from('profiles')
+        .select('full_name, phone')
+        .eq('id', user.id)
+        .maybeSingle();
+
+      if (error) throw error;
+
+      const profilePhone = profile?.phone || user.user_metadata?.phone || '';
+      if (bookingPhoneInput) {
+        bookingPhoneInput.value = profilePhone;
+      }
+
+      if (!profile) {
+        await ensureProfileRecord(
+          user,
+          user.user_metadata?.full_name || '',
+          profilePhone
+        );
+      }
+    }
+
 
     async function handleAuthSubmit() {
       const mode = document.querySelector('.auth-tab.is-active')?.dataset.mode || 'register';
@@ -338,6 +364,7 @@
 
           if (data?.user) {
             await ensureProfileRecord(data.user, fullName, phone);
+            await loadRenterProfile(data.user);
           }
 
           showAuthStatus('Register berhasil di Supabase. Silakan lanjutkan ke step berikutnya.', 'success');
@@ -346,7 +373,7 @@
           if (error) throw error;
 
           if (data?.user) {
-            await ensureProfileRecord(data.user, fullName, phone);
+            await loadRenterProfile(data.user);
           }
 
           showAuthStatus('Login berhasil di Supabase. Silakan lanjutkan.', 'success');
@@ -372,7 +399,7 @@
       }
 
       if (user) {
-        await ensureProfileRecord(user, user.user_metadata?.full_name || '', user.user_metadata?.phone || '');
+        await loadRenterProfile(user);
         toggleBookingDetails(true);
       }
     }
