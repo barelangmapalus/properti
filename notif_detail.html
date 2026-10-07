@@ -206,8 +206,8 @@ document.addEventListener('DOMContentLoaded', setActiveNav);
             <a href="https://wa.me/${convertToWaNumber(property['kontak'])}?text=Halo, saya tertarik dengan properti ${encodeURIComponent(property['nama property'] || '')}" class="btn-wa" target="_blank"><i class="fab fa-whatsapp"></i> WhatsApp</a>
           </div>
           ${(category || property._tab) === 'rent' ? `
-            <a href="#" class="btn-booking" onclick="return false;">
-              <i class="fas fa-calendar-check"></i> Booking-DalamPengembangan
+            <a href="register_payment.html?property_id=${encodeURIComponent(property['property_id'] || property['id'] || '')}&property_name=${encodeURIComponent(property['nama property'] || property['name'] || '')}&price=${encodeURIComponent(property['harga'] || '')}" class="btn-booking" target="_blank" rel="noopener noreferrer">
+              <i class="fas fa-calendar-check"></i> Booking
             </a>
           ` : ''}
         </div>
