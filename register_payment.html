@@ -55,11 +55,11 @@
             <span>Nama lengkap</span>
             <span class="input-wrap"><i class="far fa-user"></i><input id="fullName" type="text" autocomplete="name" placeholder="Nama sesuai identitas"></span>
           </label>
-          <label class="field-group">
+          <label class="field-group" id="phoneField">
             <span>Nomor WhatsApp</span>
             <span class="input-wrap"><i class="fab fa-whatsapp"></i><input id="phoneInput" type="tel" autocomplete="tel" placeholder="08xx xxxx xxxx"></span>
           </label>
-          <label class="field-group">
+          <label class="field-group" id="emailField">
             <span>Email</span>
             <span class="input-wrap"><i class="far fa-envelope"></i><input id="emailInput" type="email" autocomplete="email" placeholder="nama@email.com"></span>
           </label>
@@ -112,6 +112,8 @@
   <script>
     const authTabs = document.querySelectorAll('.auth-tab');
     const nameField = document.getElementById('nameField');
+    const phoneField = document.getElementById('phoneField');
+    const emailField = document.getElementById('emailField');
     const fullNameInput = document.getElementById('fullName');
     const phoneInput = document.getElementById('phoneInput');
     const emailInput = document.getElementById('emailInput');
@@ -231,6 +233,11 @@
         nameField.style.display = isRegister ? '' : 'none';
       }
 
+      if (phoneField) {
+        phoneField.hidden = !isRegister;
+        phoneField.style.display = isRegister ? '' : 'none';
+      }
+
       if (passwordInput) {
         passwordInput.autocomplete = isRegister ? 'new-password' : 'current-password';
       }
@@ -247,9 +254,9 @@
       const fullName = fullNameInput?.value.trim() || '';
       const phone = phoneInput?.value.trim() || '';
 
-      if (!email || !password) return false;
-      if (mode === 'register' && !fullName) return false;
-      if (mode === 'register' && !phone) return false;
+      if (!password) return false;
+      if (mode === 'register' && (!email || !fullName || !phone)) return false;
+      if (mode === 'login' && !email) return false;
       return true;
     }
 
@@ -285,10 +292,13 @@
       const fullName = fullNameInput?.value.trim() || '';
       const phone = phoneInput?.value.trim() || '';
 
-      if (!email || !password) {
-        showAuthStatus(mode === 'register'
-          ? 'Lengkapi email dan kata sandi untuk membuat akun.'
-          : 'Lengkapi email dan kata sandi untuk masuk.', 'error');
+      if (mode === 'register' && (!email || !password)) {
+        showAuthStatus('Lengkapi email dan kata sandi untuk membuat akun.', 'error');
+        return;
+      }
+
+      if (mode === 'login' && (!email || !password)) {
+        showAuthStatus('Lengkapi email dan kata sandi untuk masuk.', 'error');
         return;
       }
 
@@ -377,6 +387,7 @@
 
     syncAuthMode('register');
     toggleBookingDetails(false);
+    loadSelectedPropertyPreview();
     restoreSessionIfLoggedIn();
   </script>
 </body>
