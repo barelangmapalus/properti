@@ -1,0 +1,325 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+  <meta name="theme-color" content="#f4f6f9">
+  <title>Booking Properti - BMpro</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="css/style.css">
+  <link rel="stylesheet" href="css/register_payment.css">
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="js/supabase-config.js"></script>
+</head>
+<body class="payment-body">
+  <div class="mobile-shell">
+    <main class="payment-page">
+      <header class="payment-topbar">
+        <a class="payment-back" href="#" aria-label="Kembali ke detail properti">
+          <i class="fas fa-arrow-left"></i>
+        </a>
+        <div class="payment-step-label"><span></span> PEMESANAN <b>01</b> / 03</div>
+        <button class="payment-help" type="button" aria-label="Bantuan"><i class="far fa-circle-question"></i></button>
+      </header>
+
+      <section class="payment-heading">
+        <p class="payment-eyebrow">SEWA PROPERTI</p>
+        <h1>Mulai booking<br>tempat tinggalmu.</h1>
+        <p class="payment-subtitle">Lengkapi akun dan tanggal sewa untuk melanjutkan.</p>
+      </section>
+
+      <section class="property-preview" aria-label="Ringkasan properti">
+        <img src="https://images.unsplash.com/photo-1600210492486-724fe5c67fb0?auto=format&fit=crop&w=240&q=80" alt="Interior apartemen">
+        <div class="property-preview-copy">
+          <span class="property-tag"><i class="fas fa-key"></i> PROPERTI SEWA</span>
+          <h2>Properti pilihanmu</h2>
+          <p><i class="fas fa-location-dot"></i> Detail properti</p>
+        </div>
+        <i class="fas fa-arrow-up-right-from-square property-open" aria-hidden="true"></i>
+      </section>
+
+      <form class="booking-form" onsubmit="return false;">
+        <section class="form-section">
+          <div class="section-heading">
+            <span class="section-number">01</span>
+            <div><h2>Akun BMpro</h2><p>Masuk atau buat akun penyewa</p></div>
+          </div>
+
+          <div class="auth-switch" role="tablist" aria-label="Pilih akses akun">
+            <button class="auth-tab is-active" type="button" role="tab" aria-selected="true" data-mode="register">Buat akun</button>
+            <button class="auth-tab" type="button" role="tab" aria-selected="false" data-mode="login">Masuk</button>
+          </div>
+
+          <label class="field-group" id="nameField" aria-live="polite">
+            <span>Nama lengkap</span>
+            <span class="input-wrap"><i class="far fa-user"></i><input id="fullName" type="text" autocomplete="name" placeholder="Nama sesuai identitas"></span>
+          </label>
+          <label class="field-group">
+            <span>Nomor WhatsApp</span>
+            <span class="input-wrap"><i class="fab fa-whatsapp"></i><input id="phoneInput" type="tel" autocomplete="tel" placeholder="08xx xxxx xxxx"></span>
+          </label>
+          <label class="field-group">
+            <span>Email</span>
+            <span class="input-wrap"><i class="far fa-envelope"></i><input id="emailInput" type="email" autocomplete="email" placeholder="nama@email.com"></span>
+          </label>
+          <label class="field-group">
+            <span>Kata sandi</span>
+            <span class="input-wrap"><i class="fas fa-lock"></i><input id="passwordInput" type="password" autocomplete="new-password" placeholder="Minimal 8 karakter"></span>
+          </label>
+        </section>
+
+        <section class="form-section date-section" id="dateSection" hidden>
+          <div class="section-heading">
+            <span class="section-number">02</span>
+            <div><h2>Tanggal menginap</h2><p>Pilih durasi sewa yang kamu inginkan</p></div>
+          </div>
+          <div class="date-fields">
+            <label class="field-group">
+              <span>Check-in</span>
+              <span class="input-wrap"><i class="far fa-calendar"></i><input type="date" aria-label="Tanggal check-in"></span>
+            </label>
+            <span class="date-divider" aria-hidden="true"><i class="fas fa-arrow-right"></i></span>
+            <label class="field-group">
+              <span>Check-out</span>
+              <span class="input-wrap"><i class="far fa-calendar"></i><input type="date" aria-label="Tanggal check-out"></span>
+            </label>
+          </div>
+          <label class="field-group renter-phone">
+            <span>Nomor WhatsApp</span>
+            <span class="input-wrap"><i class="fab fa-whatsapp"></i><input type="tel" autocomplete="tel" placeholder="08xx xxxx xxxx"></span>
+          </label>
+        </section>
+
+        <section class="price-preview" id="pricePreview" hidden>
+          <div class="price-preview-heading"><i class="fas fa-receipt"></i><h2>Ringkasan biaya</h2></div>
+          <div class="price-line"><span>Harga sewa</span><span>Menunggu detail properti</span></div>
+          <div class="price-line"><span>Durasi</span><span>Pilih tanggal sewa</span></div>
+          <div class="price-total"><span>Total sementara</span><strong>--</strong></div>
+          <p class="price-note"><i class="fas fa-shield-halved"></i> Rincian pembayaran ditampilkan sebelum konfirmasi.</p>
+        </section>
+
+        <div id="authStatus" class="auth-status" aria-live="polite" style="display:none; margin-top: 12px; font-size: 13px; font-weight: 500;"></div>
+
+        <button class="payment-submit" type="button">
+          Lanjutkan <i class="fas fa-arrow-right"></i>
+        </button>
+        <p class="preview-note"><i class="fas fa-circle-info"></i> Pratinjau halaman booking</p>
+      </form>
+    </main>
+  </div>
+
+  <script>
+    const authTabs = document.querySelectorAll('.auth-tab');
+    const nameField = document.getElementById('nameField');
+    const fullNameInput = document.getElementById('fullName');
+    const phoneInput = document.getElementById('phoneInput');
+    const emailInput = document.getElementById('emailInput');
+    const passwordInput = document.getElementById('passwordInput');
+    const dateSection = document.getElementById('dateSection');
+    const pricePreview = document.getElementById('pricePreview');
+    const submitButton = document.querySelector('.payment-submit');
+    const authStatus = document.getElementById('authStatus');
+    const bmproSupabase = window.supabaseClient;
+    const paymentBackLink = document.querySelector('.payment-back');
+
+    function getBookingBackUrl() {
+      const params = new URLSearchParams(window.location.search);
+      const propertyId = params.get('property_id');
+
+      if (propertyId) {
+        return `detail.html?id=${encodeURIComponent(propertyId)}`;
+      }
+
+      const savedPropertyId = localStorage.getItem('bmpro_last_selected_property_id');
+      if (savedPropertyId) {
+        return `detail.html?id=${encodeURIComponent(savedPropertyId)}`;
+      }
+
+      return 'detail.html';
+    }
+
+    if (paymentBackLink) {
+      paymentBackLink.href = getBookingBackUrl();
+      paymentBackLink.addEventListener('click', (event) => {
+        event.preventDefault();
+        window.location.href = getBookingBackUrl();
+      });
+    }
+
+    function showAuthStatus(message, type = 'info') {
+      if (!authStatus) return;
+      authStatus.textContent = message;
+      authStatus.style.display = 'block';
+      authStatus.style.color = type === 'success' ? '#0a7f54' : type === 'error' ? '#b42318' : '#1f2937';
+      authStatus.style.background = type === 'success' ? '#ecfdf5' : type === 'error' ? '#fef3f2' : '#f3f4f6';
+      authStatus.style.border = '1px solid ' + (type === 'success' ? '#a7f3d0' : type === 'error' ? '#fecaca' : '#e5e7eb');
+      authStatus.style.borderRadius = '10px';
+      authStatus.style.padding = '10px 12px';
+      authStatus.style.marginBottom = '10px';
+    }
+
+    function syncAuthMode(mode) {
+      const isRegister = mode === 'register';
+
+      authTabs.forEach((item) => {
+        const isActive = item.dataset.mode === mode;
+        item.classList.toggle('is-active', isActive);
+        item.setAttribute('aria-selected', String(isActive));
+      });
+
+      if (nameField) {
+        nameField.hidden = !isRegister;
+        nameField.style.display = isRegister ? '' : 'none';
+      }
+
+      if (passwordInput) {
+        passwordInput.autocomplete = isRegister ? 'new-password' : 'current-password';
+      }
+
+      if (!isRegister && fullNameInput) {
+        fullNameInput.value = '';
+      }
+    }
+
+    function isAuthValid() {
+      const mode = document.querySelector('.auth-tab.is-active')?.dataset.mode || 'register';
+      const email = emailInput?.value.trim() || '';
+      const password = passwordInput?.value.trim() || '';
+      const fullName = fullNameInput?.value.trim() || '';
+      const phone = phoneInput?.value.trim() || '';
+
+      if (!email || !password) return false;
+      if (mode === 'register' && !fullName) return false;
+      if (mode === 'register' && !phone) return false;
+      return true;
+    }
+
+    function toggleBookingDetails(show) {
+      if (dateSection) dateSection.hidden = !show;
+      if (pricePreview) pricePreview.hidden = !show;
+    }
+
+    async function ensureProfileRecord(user, fullName = '', phone = '') {
+      if (!user || !user.id) return;
+
+      const payload = {
+        id: user.id,
+        full_name: fullName || user.user_metadata?.full_name || user.email?.split('@')[0] || '',
+        phone: phone || user.user_metadata?.phone || '',
+        role: 'renter',
+      };
+
+      const { error } = await bmproSupabase
+        .from('profiles')
+        .upsert(payload, { onConflict: 'id' });
+
+      if (error) {
+        throw error;
+      }
+    }
+
+
+    async function handleAuthSubmit() {
+      const mode = document.querySelector('.auth-tab.is-active')?.dataset.mode || 'register';
+      const email = emailInput?.value.trim() || '';
+      const password = passwordInput?.value.trim() || '';
+      const fullName = fullNameInput?.value.trim() || '';
+      const phone = phoneInput?.value.trim() || '';
+
+      if (!email || !password) {
+        showAuthStatus(mode === 'register'
+          ? 'Lengkapi email dan kata sandi untuk membuat akun.'
+          : 'Lengkapi email dan kata sandi untuk masuk.', 'error');
+        return;
+      }
+
+      if (mode === 'register' && !fullName) {
+        showAuthStatus('Nama lengkap wajib diisi untuk membuat akun.', 'error');
+        return;
+      }
+
+      if (mode === 'register' && !phone) {
+        showAuthStatus('Nomor WhatsApp wajib diisi untuk membuat akun.', 'error');
+        return;
+      }
+
+      if (!bmproSupabase) {
+        showAuthStatus('Konfigurasi Supabase belum siap. Periksa file js/supabase-config.js.', 'error');
+        return;
+      }
+
+      submitButton.disabled = true;
+      submitButton.innerHTML = 'Memproses...';
+      showAuthStatus('Menghubungkan ke Supabase...', 'info');
+
+      try {
+        if (mode === 'register') {
+          const { data, error } = await bmproSupabase.auth.signUp({
+            email,
+            password,
+            options: {
+              data: {
+                full_name: fullName,
+                phone: phone,
+              },
+            },
+          });
+
+          if (error) throw error;
+
+          if (data?.user) {
+            await ensureProfileRecord(data.user, fullName, phone);
+          }
+
+          showAuthStatus('Register berhasil di Supabase. Silakan lanjutkan ke step berikutnya.', 'success');
+        } else {
+          const { data, error } = await bmproSupabase.auth.signInWithPassword({ email, password });
+          if (error) throw error;
+
+          if (data?.user) {
+            await ensureProfileRecord(data.user, fullName, phone);
+          }
+
+          showAuthStatus('Login berhasil di Supabase. Silakan lanjutkan.', 'success');
+        }
+
+        toggleBookingDetails(true);
+      } catch (error) {
+        console.error('Supabase auth error:', error);
+        showAuthStatus(error?.message || 'Terjadi kesalahan saat memproses akun.', 'error');
+      } finally {
+        submitButton.disabled = false;
+        submitButton.innerHTML = 'Lanjutkan <i class="fas fa-arrow-right"></i>';
+      }
+    }
+
+    async function restoreSessionIfLoggedIn() {
+      if (!bmproSupabase) return;
+
+      const { data: { user }, error } = await bmproSupabase.auth.getUser();
+      if (error) {
+        console.warn('User session unavailable:', error.message);
+        return;
+      }
+
+      if (user) {
+        await ensureProfileRecord(user, user.user_metadata?.full_name || '', user.user_metadata?.phone || '');
+        toggleBookingDetails(true);
+      }
+    }
+
+    authTabs.forEach((tab) => {
+      tab.addEventListener('click', () => {
+        syncAuthMode(tab.dataset.mode);
+      });
+    });
+
+    submitButton.addEventListener('click', handleAuthSubmit);
+
+    syncAuthMode('register');
+    toggleBookingDetails(false);
+    restoreSessionIfLoggedIn();
+  </script>
+</body>
+</html>
