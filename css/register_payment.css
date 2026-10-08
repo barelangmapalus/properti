@@ -392,6 +392,11 @@
   line-height: 1.45;
 }
 
+.price-note.is-unavailable {
+  color: #b42318;
+  font-weight: 600;
+}
+
 .price-note i {
   margin-right: 3px;
   color: var(--payment-green);
