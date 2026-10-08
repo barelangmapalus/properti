@@ -95,10 +95,10 @@
 
         <section class="price-preview" id="pricePreview" hidden>
           <div class="price-preview-heading"><i class="fas fa-receipt"></i><h2>Ringkasan biaya</h2></div>
-          <div class="price-line"><span>Harga sewa</span><span>Menunggu detail properti</span></div>
-          <div class="price-line"><span>Durasi</span><span>Pilih tanggal sewa</span></div>
-          <div class="price-total"><span>Total sementara</span><strong>--</strong></div>
-          <p class="price-note"><i class="fas fa-shield-halved"></i> Rincian pembayaran ditampilkan sebelum konfirmasi.</p>
+          <div class="price-line"><span>Harga per malam</span><span id="bookingNightlyPrice">Memuat harga...</span></div>
+          <div class="price-line"><span>Durasi</span><span id="bookingDuration">Pilih tanggal sewa</span></div>
+          <div class="price-total"><span>Total sementara</span><strong id="bookingTotal">--</strong></div>
+          <p class="price-note" id="bookingQuoteStatus" aria-live="polite"><i class="fas fa-shield-halved"></i> Harga final diverifikasi oleh server saat booking dibuat.</p>
         </section>
 
         <div id="authStatus" class="auth-status" aria-live="polite" style="display:none; margin-top: 12px; font-size: 13px; font-weight: 500;"></div>
@@ -128,6 +128,10 @@
     const accountSection = document.getElementById('accountSection');
     const dateSection = document.getElementById('dateSection');
     const pricePreview = document.getElementById('pricePreview');
+    const bookingNightlyPrice = document.getElementById('bookingNightlyPrice');
+    const bookingDuration = document.getElementById('bookingDuration');
+    const bookingTotal = document.getElementById('bookingTotal');
+    const bookingQuoteStatus = document.getElementById('bookingQuoteStatus');
     const submitButton = document.querySelector('.payment-submit');
     const previewNote = document.querySelector('.preview-note');
     const authStatus = document.getElementById('authStatus');
@@ -136,8 +140,14 @@
     const propertyPreviewLocation = document.getElementById('propertyPreviewLocation');
     const bmproSupabase = window.supabaseClient;
     const paymentBackLink = document.querySelector('.payment-back');
+    const bookingPropertyExternalId = new URLSearchParams(window.location.search).get('property_id') || '';
+    const isLocalBookingTest = ['localhost', '127.0.0.1'].includes(window.location.hostname);
+    const localBookingFunctionUrl = 'http://127.0.0.1:54321/functions/v1/booking-flow';
     let isBookingAuthenticated = false;
     let profilePhoneRegistrationUser = null;
+    let bookingProperty = null;
+    let bookingAvailabilityReady = false;
+    let createdBooking = false;
 
     function normalizePropertyImage(url) {
       if (!url) return 'https://images.unsplash.com/photo-1600210492486-724fe5c67fb0?auto=format&fit=crop&w=240&q=80';
@@ -157,41 +167,153 @@
       return url;
     }
 
-    function loadSelectedPropertyPreview() {
-      const params = new URLSearchParams(window.location.search);
-      const requestedId = params.get('property_id') || localStorage.getItem('bmpro_last_selected_property_id');
-      const fallbackTitle = params.get('property_name');
-      const fallbackImage = params.get('property_image');
+    function formatRupiah(amount) {
+      return new Intl.NumberFormat('id-ID', {
+        style: 'currency',
+        currency: 'IDR',
+        maximumFractionDigits: 0,
+      }).format(amount);
+    }
 
-      let property = null;
-
-      if (requestedId) {
-        const savedProperty = localStorage.getItem(`bmpro_property_${requestedId}`);
-        if (savedProperty) {
-          try {
-            property = JSON.parse(savedProperty);
-          } catch (error) {
-            console.warn('Gagal parsing data properti dari localStorage:', error);
-          }
+    async function getBookingFunctionErrorMessage(error, fallback) {
+      const response = error?.context;
+      if (response && typeof response.clone === 'function') {
+        try {
+          const body = await response.clone().json();
+          if (body?.error) return body.error;
+        } catch (parseError) {
+          console.warn('Gagal membaca detail error booking:', parseError);
         }
       }
 
-      const title = property?.['nama property'] || property?.name || fallbackTitle || 'Properti pilihanmu';
-      const imageUrl = property?.['gambar utama'] || property?.image || fallbackImage || 'https://images.unsplash.com/photo-1600210492486-724fe5c67fb0?auto=format&fit=crop&w=240&q=80';
-      const locationText = property?.lokasi || property?.['kota'] || property?.['alamat'] || 'Detail properti';
+      return error?.message || fallback;
+    }
+
+    async function invokeBookingFlow(body) {
+      if (!isLocalBookingTest) {
+        return bmproSupabase.functions.invoke('booking-flow', { body });
+      }
+
+      const { data: { session }, error: sessionError } = await bmproSupabase.auth.getSession();
+      if (sessionError) throw sessionError;
+      if (!session?.access_token) {
+        throw new Error('Silakan masuk kembali sebelum melanjutkan booking.');
+      }
+
+      let response;
+      try {
+        response = await fetch(localBookingFunctionUrl, {
+          method: 'POST',
+          headers: {
+            Authorization: `Bearer ${session.access_token}`,
+            apikey: window.SUPABASE_ANON_KEY,
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify(body),
+        });
+      } catch (error) {
+        if (error instanceof TypeError) {
+          throw new Error('Edge Function lokal belum berjalan. Jalankan `supabase functions serve booking-flow --no-verify-jwt --env-file supabase/functions/booking-flow/.env.local` di terminal VS Code.');
+        }
+        throw error;
+      }
+      const data = await response.json();
+
+      if (!response.ok) {
+        const error = new Error(data?.error || `Booking function gagal (HTTP ${response.status}).`);
+        error.context = new Response(JSON.stringify(data), {
+          status: response.status,
+          headers: { 'Content-Type': 'application/json' },
+        });
+        throw error;
+      }
+
+      return { data, error: null };
+    }
+
+    function calculateNights(checkIn, checkOut) {
+      const start = Date.parse(`${checkIn}T00:00:00Z`);
+      const end = Date.parse(`${checkOut}T00:00:00Z`);
+      if (!Number.isFinite(start) || !Number.isFinite(end) || end <= start) return 0;
+      return (end - start) / 86400000;
+    }
+
+    function updateBookingQuote() {
+      bookingAvailabilityReady = false;
+      const nights = calculateNights(checkInInput?.value, checkOutInput?.value);
+      const price = Number(bookingProperty?.price_per_night);
+
+      if (bookingDuration) {
+        bookingDuration.textContent = nights
+          ? `${nights} malam`
+          : 'Pilih tanggal sewa';
+      }
+
+      if (bookingTotal) {
+        bookingTotal.textContent = nights && Number.isSafeInteger(price)
+          ? formatRupiah(price * nights)
+          : '--';
+      }
+
+      if (bookingQuoteStatus) {
+        bookingQuoteStatus.innerHTML = '<i class="fas fa-shield-halved"></i> Harga final diverifikasi oleh server saat booking dibuat.';
+        bookingQuoteStatus.classList.remove('is-unavailable');
+      }
+
+      if (isBookingAuthenticated && submitButton && !createdBooking) {
+        submitButton.innerHTML = 'Cek ketersediaan <i class="fas fa-arrow-right"></i>';
+      }
+    }
+
+    async function loadSelectedPropertyPreview() {
+      if (!bookingPropertyExternalId) {
+        showAuthStatus('ID properti tidak ditemukan. Kembali ke detail properti dan tekan Booking dari listing yang dipilih.', 'error');
+        return;
+      }
+
+      if (!bmproSupabase) {
+        showAuthStatus('Konfigurasi Supabase belum siap. Data properti tidak dapat dimuat.', 'error');
+        return;
+      }
+
+      const { data: property, error } = await bmproSupabase
+        .from('properties')
+        .select('id, external_id, name, address, price_per_night, image_url, status')
+        .eq('external_id', bookingPropertyExternalId)
+        .eq('status', 'available')
+        .maybeSingle();
+
+      if (error) {
+        console.error('Supabase property lookup error:', error);
+        showAuthStatus('Gagal memuat harga properti dari Supabase. Silakan coba lagi.', 'error');
+        return;
+      }
+
+      if (!property) {
+        showAuthStatus('Properti tidak ditemukan atau sedang tidak tersedia untuk disewa.', 'error');
+        if (bookingNightlyPrice) bookingNightlyPrice.textContent = 'Tidak tersedia';
+        return;
+      }
+
+      bookingProperty = property;
+      const title = property.name || 'Properti pilihanmu';
 
       if (propertyPreviewImage) {
-        propertyPreviewImage.src = normalizePropertyImage(imageUrl);
+        propertyPreviewImage.src = normalizePropertyImage(property.image_url);
         propertyPreviewImage.alt = title;
       }
 
-      if (propertyPreviewTitle) {
-        propertyPreviewTitle.textContent = title;
-      }
+      if (propertyPreviewTitle) propertyPreviewTitle.textContent = title;
 
       if (propertyPreviewLocation) {
-        propertyPreviewLocation.innerHTML = `<i class="fas fa-location-dot"></i> ${locationText}`;
+        propertyPreviewLocation.textContent = property.address || 'Detail properti';
       }
+
+      if (bookingNightlyPrice) {
+        bookingNightlyPrice.textContent = `${formatRupiah(Number(property.price_per_night))} / malam`;
+      }
+
+      updateBookingQuote();
     }
 
     function getBookingBackUrl() {
@@ -291,11 +413,12 @@
       if (submitButton) {
         submitButton.hidden = false;
         submitButton.innerHTML = isAuthenticated
-          ? 'Lanjutkan booking <i class="fas fa-arrow-right"></i>'
+          ? 'Cek ketersediaan <i class="fas fa-arrow-right"></i>'
           : profilePhoneRegistrationUser
             ? 'Simpan nomor WhatsApp <i class="fas fa-arrow-right"></i>'
             : 'Lanjutkan <i class="fas fa-arrow-right"></i>';
       }
+      if (isAuthenticated) updateBookingQuote();
     }
 
     function requestProfilePhoneRegistration(user, profile) {
@@ -500,25 +623,122 @@
       } finally {
         submitButton.disabled = false;
         submitButton.innerHTML = isBookingAuthenticated
-          ? 'Lanjutkan booking <i class="fas fa-arrow-right"></i>'
+          ? 'Cek ketersediaan <i class="fas fa-arrow-right"></i>'
           : profilePhoneRegistrationUser
             ? 'Simpan nomor WhatsApp <i class="fas fa-arrow-right"></i>'
             : 'Lanjutkan <i class="fas fa-arrow-right"></i>';
       }
     }
 
-    function handleBookingContinue() {
+    function validateBookingDates() {
       if (!checkInInput?.value || !checkOutInput?.value) {
         showAuthStatus('Pilih tanggal check-in dan check-out terlebih dahulu.', 'error');
-        return;
+        return false;
       }
 
-      if (checkOutInput.value <= checkInInput.value) {
+      if (!calculateNights(checkInInput.value, checkOutInput.value)) {
         showAuthStatus('Tanggal check-out harus setelah tanggal check-in.', 'error');
+        return false;
+      }
+
+      if (!bookingProperty) {
+        showAuthStatus('Data properti dan harga dari Supabase belum tersedia.', 'error');
+        return false;
+      }
+
+      return true;
+    }
+
+    async function handleBookingContinue() {
+      if (createdBooking || !validateBookingDates()) return;
+
+      if (!bookingAvailabilityReady) {
+        submitButton.disabled = true;
+        submitButton.innerHTML = 'Memeriksa tanggal...';
+        showAuthStatus('Memeriksa ketersediaan tanggal booking...', 'info');
+
+        try {
+          const { data, error } = await invokeBookingFlow({
+            action: 'check_availability',
+            property_external_id: bookingProperty.external_id,
+            check_in: checkInInput.value,
+            check_out: checkOutInput.value,
+          });
+
+          if (error) throw error;
+          if (!data?.available) {
+            if (bookingQuoteStatus) {
+              bookingQuoteStatus.textContent = 'Tanggal tersebut baru saja dipesan. Silakan pilih tanggal lain.';
+              bookingQuoteStatus.classList.add('is-unavailable');
+            }
+            showAuthStatus('Tanggal tidak tersedia. Pilih rentang tanggal lain.', 'error');
+            return;
+          }
+
+          if (bookingTotal) bookingTotal.textContent = formatRupiah(Number(data.total_amount));
+          if (bookingNightlyPrice) {
+            bookingNightlyPrice.textContent = `${formatRupiah(Number(data.price_per_night))} / malam`;
+          }
+          bookingAvailabilityReady = true;
+          if (bookingQuoteStatus) {
+            bookingQuoteStatus.textContent = 'Tanggal tersedia. Periksa ringkasan biaya, lalu tekan Buat booking untuk menahan tanggal selama 15 menit.';
+            bookingQuoteStatus.classList.remove('is-unavailable');
+          }
+          submitButton.innerHTML = 'Buat booking <i class="fas fa-arrow-right"></i>';
+          showAuthStatus('Tanggal tersedia. Harga akan diverifikasi kembali saat booking dibuat.', 'success');
+        } catch (error) {
+          console.error('Booking availability check failed:', error);
+          showAuthStatus(
+            await getBookingFunctionErrorMessage(error, 'Gagal memeriksa ketersediaan. Pastikan Edge Function booking-flow sudah dipasang.'),
+            'error'
+          );
+        } finally {
+          submitButton.disabled = false;
+          if (!bookingAvailabilityReady && !createdBooking) {
+            submitButton.innerHTML = 'Cek ketersediaan <i class="fas fa-arrow-right"></i>';
+          }
+        }
         return;
       }
 
-      showAuthStatus('Tanggal valid. Pembuatan booking dan pembayaran belum tersedia.', 'info');
+      submitButton.disabled = true;
+      submitButton.innerHTML = 'Membuat booking...';
+      showAuthStatus('Menyimpan booking dan memeriksa ulang harga serta ketersediaan...', 'info');
+
+      try {
+        const { data, error } = await invokeBookingFlow({
+          action: 'create_booking',
+          property_external_id: bookingProperty.external_id,
+          check_in: checkInInput.value,
+          check_out: checkOutInput.value,
+        });
+
+        if (error) throw error;
+        if (!data?.booking?.id) {
+          throw new Error('Server tidak mengembalikan nomor booking.');
+        }
+
+        createdBooking = true;
+        checkInInput.disabled = true;
+        checkOutInput.disabled = true;
+        bookingAvailabilityReady = false;
+        if (bookingTotal) bookingTotal.textContent = formatRupiah(Number(data.booking.total_amount));
+        if (bookingQuoteStatus) {
+          bookingQuoteStatus.textContent = `Booking ${data.booking.id} berstatus menunggu pembayaran hingga ${new Date(data.booking.expires_at).toLocaleString('id-ID')}.`;
+        }
+        submitButton.disabled = true;
+        submitButton.textContent = 'Booking dibuat';
+        showAuthStatus('Booking berhasil dibuat dengan status menunggu pembayaran. Pembayaran online belum terhubung, jadi booking ini belum terkonfirmasi.', 'success');
+      } catch (error) {
+        console.error('Booking creation failed:', error);
+        showAuthStatus(
+          await getBookingFunctionErrorMessage(error, 'Booking gagal dibuat. Silakan cek ketersediaan dan coba lagi.'),
+          'error'
+        );
+        bookingAvailabilityReady = false;
+        submitButton.disabled = false;
+        submitButton.innerHTML = 'Cek ketersediaan <i class="fas fa-arrow-right"></i>';
+      }
     }
 
     function handleContinue() {
@@ -557,6 +777,10 @@
 
         syncAuthMode(tab.dataset.mode);
       });
+    });
+
+    [checkInInput, checkOutInput].forEach((input) => {
+      input?.addEventListener('change', updateBookingQuote);
     });
 
     submitButton.addEventListener('click', handleContinue);
