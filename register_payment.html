@@ -77,12 +77,12 @@
           <div class="date-fields">
             <label class="field-group">
               <span>Check-in</span>
-              <span class="input-wrap"><i class="far fa-calendar"></i><input type="date" aria-label="Tanggal check-in"></span>
+              <span class="input-wrap"><i class="far fa-calendar"></i><input id="checkInInput" type="date" aria-label="Tanggal check-in"></span>
             </label>
             <span class="date-divider" aria-hidden="true"><i class="fas fa-arrow-right"></i></span>
             <label class="field-group">
               <span>Check-out</span>
-              <span class="input-wrap"><i class="far fa-calendar"></i><input type="date" aria-label="Tanggal check-out"></span>
+              <span class="input-wrap"><i class="far fa-calendar"></i><input id="checkOutInput" type="date" aria-label="Tanggal check-out"></span>
             </label>
           </div>
           <label class="field-group renter-phone">
@@ -119,6 +119,8 @@
     const phoneInput = document.getElementById('phoneInput');
     const bookingPhoneInput = document.getElementById('bookingPhoneInput');
     const bookingPhoneStatus = document.getElementById('bookingPhoneStatus');
+    const checkInInput = document.getElementById('checkInInput');
+    const checkOutInput = document.getElementById('checkOutInput');
     const emailInput = document.getElementById('emailInput');
     const passwordInput = document.getElementById('passwordInput');
     const accountSection = document.getElementById('accountSection');
@@ -132,6 +134,7 @@
     const propertyPreviewLocation = document.getElementById('propertyPreviewLocation');
     const bmproSupabase = window.supabaseClient;
     const paymentBackLink = document.querySelector('.payment-back');
+    let isBookingAuthenticated = false;
 
     function normalizePropertyImage(url) {
       if (!url) return 'https://images.unsplash.com/photo-1600210492486-724fe5c67fb0?auto=format&fit=crop&w=240&q=80';
@@ -266,11 +269,17 @@
     }
 
     function setAuthenticatedBookingView(isAuthenticated) {
+      isBookingAuthenticated = isAuthenticated;
       if (accountSection) accountSection.hidden = isAuthenticated;
       if (dateSection) dateSection.hidden = !isAuthenticated;
       if (pricePreview) pricePreview.hidden = !isAuthenticated;
-      if (submitButton) submitButton.hidden = isAuthenticated;
       if (previewNote) previewNote.hidden = isAuthenticated;
+      if (submitButton) {
+        submitButton.hidden = false;
+        submitButton.innerHTML = isAuthenticated
+          ? 'Lanjutkan booking <i class="fas fa-arrow-right"></i>'
+          : 'Lanjutkan <i class="fas fa-arrow-right"></i>';
+      }
     }
 
     async function ensureProfileRecord(user, fullName = '', phone = '') {
@@ -389,8 +398,8 @@
           }
 
           if (data?.session?.user) {
-            await loadRenterProfile(data.session.user, phone);
             setAuthenticatedBookingView(true);
+            await loadRenterProfile(data.session.user, phone);
             showAuthStatus('Register berhasil di Supabase. Silakan lanjutkan ke step berikutnya.', 'success');
           } else {
             setAuthenticatedBookingView(false);
@@ -401,8 +410,8 @@
           if (error) throw error;
 
           if (data?.user) {
-            await loadRenterProfile(data.user);
             setAuthenticatedBookingView(true);
+            await loadRenterProfile(data.user);
           }
 
           showAuthStatus('Login berhasil di Supabase. Silakan lanjutkan.', 'success');
@@ -412,8 +421,33 @@
         showAuthStatus(error?.message || 'Terjadi kesalahan saat memproses akun.', 'error');
       } finally {
         submitButton.disabled = false;
-        submitButton.innerHTML = 'Lanjutkan <i class="fas fa-arrow-right"></i>';
+        submitButton.innerHTML = isBookingAuthenticated
+          ? 'Lanjutkan booking <i class="fas fa-arrow-right"></i>'
+          : 'Lanjutkan <i class="fas fa-arrow-right"></i>';
       }
+    }
+
+    function handleBookingContinue() {
+      if (!checkInInput?.value || !checkOutInput?.value) {
+        showAuthStatus('Pilih tanggal check-in dan check-out terlebih dahulu.', 'error');
+        return;
+      }
+
+      if (checkOutInput.value <= checkInInput.value) {
+        showAuthStatus('Tanggal check-out harus setelah tanggal check-in.', 'error');
+        return;
+      }
+
+      showAuthStatus('Tanggal valid. Pembuatan booking dan pembayaran belum tersedia.', 'info');
+    }
+
+    function handleContinue() {
+      if (isBookingAuthenticated) {
+        handleBookingContinue();
+        return;
+      }
+
+      handleAuthSubmit();
     }
 
     async function restoreSessionIfLoggedIn() {
@@ -437,7 +471,7 @@
       });
     });
 
-    submitButton.addEventListener('click', handleAuthSubmit);
+    submitButton.addEventListener('click', handleContinue);
 
     syncAuthMode('register');
     setAuthenticatedBookingView(false);
