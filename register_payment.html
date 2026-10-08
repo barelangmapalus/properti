@@ -40,7 +40,7 @@
       </section>
 
       <form class="booking-form" onsubmit="return false;">
-        <section class="form-section">
+        <section class="form-section" id="accountSection">
           <div class="section-heading">
             <span class="section-number">01</span>
             <div><h2>Akun BMpro</h2><p>Masuk atau buat akun penyewa</p></div>
@@ -119,9 +119,11 @@
     const bookingPhoneInput = document.getElementById('bookingPhoneInput');
     const emailInput = document.getElementById('emailInput');
     const passwordInput = document.getElementById('passwordInput');
+    const accountSection = document.getElementById('accountSection');
     const dateSection = document.getElementById('dateSection');
     const pricePreview = document.getElementById('pricePreview');
     const submitButton = document.querySelector('.payment-submit');
+    const previewNote = document.querySelector('.preview-note');
     const authStatus = document.getElementById('authStatus');
     const propertyPreviewImage = document.getElementById('propertyPreviewImage');
     const propertyPreviewTitle = document.getElementById('propertyPreviewTitle');
@@ -261,9 +263,12 @@
       return true;
     }
 
-    function toggleBookingDetails(show) {
-      if (dateSection) dateSection.hidden = !show;
-      if (pricePreview) pricePreview.hidden = !show;
+    function setAuthenticatedBookingView(isAuthenticated) {
+      if (accountSection) accountSection.hidden = isAuthenticated;
+      if (dateSection) dateSection.hidden = !isAuthenticated;
+      if (pricePreview) pricePreview.hidden = !isAuthenticated;
+      if (submitButton) submitButton.hidden = isAuthenticated;
+      if (previewNote) previewNote.hidden = isAuthenticated;
     }
 
     async function ensureProfileRecord(user, fullName = '', phone = '') {
@@ -364,22 +369,27 @@
 
           if (data?.user) {
             await ensureProfileRecord(data.user, fullName, phone);
-            await loadRenterProfile(data.user);
           }
 
-          showAuthStatus('Register berhasil di Supabase. Silakan lanjutkan ke step berikutnya.', 'success');
+          if (data?.session?.user) {
+            await loadRenterProfile(data.session.user);
+            setAuthenticatedBookingView(true);
+            showAuthStatus('Register berhasil di Supabase. Silakan lanjutkan ke step berikutnya.', 'success');
+          } else {
+            setAuthenticatedBookingView(false);
+            showAuthStatus('Akun berhasil dibuat. Silakan konfirmasi email, lalu masuk untuk melanjutkan booking.', 'success');
+          }
         } else {
           const { data, error } = await bmproSupabase.auth.signInWithPassword({ email, password });
           if (error) throw error;
 
           if (data?.user) {
             await loadRenterProfile(data.user);
+            setAuthenticatedBookingView(true);
           }
 
           showAuthStatus('Login berhasil di Supabase. Silakan lanjutkan.', 'success');
         }
-
-        toggleBookingDetails(true);
       } catch (error) {
         console.error('Supabase auth error:', error);
         showAuthStatus(error?.message || 'Terjadi kesalahan saat memproses akun.', 'error');
@@ -400,7 +410,7 @@
 
       if (user) {
         await loadRenterProfile(user);
-        toggleBookingDetails(true);
+        setAuthenticatedBookingView(true);
       }
     }
 
@@ -413,7 +423,7 @@
     submitButton.addEventListener('click', handleAuthSubmit);
 
     syncAuthMode('register');
-    toggleBookingDetails(false);
+    setAuthenticatedBookingView(false);
     loadSelectedPropertyPreview();
     restoreSessionIfLoggedIn();
   </script>
