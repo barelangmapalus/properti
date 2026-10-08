@@ -87,7 +87,8 @@
           </div>
           <label class="field-group renter-phone">
             <span>Nomor WhatsApp</span>
-            <span class="input-wrap"><i class="fab fa-whatsapp"></i><input id="bookingPhoneInput" type="tel" autocomplete="tel" placeholder="08xx xxxx xxxx"></span>
+            <span class="input-wrap"><i class="fab fa-whatsapp"></i><input id="bookingPhoneInput" type="tel" autocomplete="tel" placeholder="Nomor dari profil akun" readonly aria-readonly="true"></span>
+            <small id="bookingPhoneStatus" class="phone-status" aria-live="polite">Nomor WhatsApp terdaftar pada akunmu.</small>
           </label>
         </section>
 
@@ -117,6 +118,7 @@
     const fullNameInput = document.getElementById('fullName');
     const phoneInput = document.getElementById('phoneInput');
     const bookingPhoneInput = document.getElementById('bookingPhoneInput');
+    const bookingPhoneStatus = document.getElementById('bookingPhoneStatus');
     const emailInput = document.getElementById('emailInput');
     const passwordInput = document.getElementById('passwordInput');
     const accountSection = document.getElementById('accountSection');
@@ -290,7 +292,7 @@
       }
     }
 
-    async function loadRenterProfile(user) {
+    async function loadRenterProfile(user, phoneFallback = '') {
       if (!user || !user.id) return;
 
       const { data: profile, error } = await bmproSupabase
@@ -301,7 +303,8 @@
 
       if (error) throw error;
 
-      const profilePhone = profile?.phone || user.user_metadata?.phone || '';
+      const metadataPhone = user.user_metadata?.phone || '';
+      const profilePhone = profile?.phone?.trim() || metadataPhone.trim() || phoneFallback.trim();
       if (bookingPhoneInput) {
         bookingPhoneInput.value = profilePhone;
       }
@@ -312,6 +315,20 @@
           user.user_metadata?.full_name || '',
           profilePhone
         );
+      } else if (profilePhone && !profile.phone?.trim()) {
+        const { error: updateError } = await bmproSupabase
+          .from('profiles')
+          .update({ phone: profilePhone })
+          .eq('id', user.id);
+
+        if (updateError) throw updateError;
+      }
+
+      if (bookingPhoneStatus) {
+        bookingPhoneStatus.textContent = profilePhone
+          ? 'Nomor WhatsApp terdaftar pada akunmu dan tidak dapat diubah di sini.'
+          : 'Nomor WhatsApp belum tersedia di profil akun. Hubungi admin untuk memperbarui data profil.';
+        bookingPhoneStatus.classList.toggle('is-missing', !profilePhone);
       }
     }
 
@@ -372,7 +389,7 @@
           }
 
           if (data?.session?.user) {
-            await loadRenterProfile(data.session.user);
+            await loadRenterProfile(data.session.user, phone);
             setAuthenticatedBookingView(true);
             showAuthStatus('Register berhasil di Supabase. Silakan lanjutkan ke step berikutnya.', 'success');
           } else {
