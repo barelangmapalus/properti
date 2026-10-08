@@ -25,6 +25,7 @@
 
       <section class="payment-heading">
         <p class="payment-eyebrow">SEWA PROPERTI</p>
+        <p class="booking-development-notice">Halaman Booking masih dalam pengembangan!</p>
         <h1>Mulai booking<br>tempat tinggalmu.</h1>
         <p class="payment-subtitle">Lengkapi akun dan tanggal sewa untuk melanjutkan.</p>
       </section>
@@ -123,6 +124,7 @@
     const checkOutInput = document.getElementById('checkOutInput');
     const emailInput = document.getElementById('emailInput');
     const passwordInput = document.getElementById('passwordInput');
+    const passwordField = passwordInput?.closest('.field-group');
     const accountSection = document.getElementById('accountSection');
     const dateSection = document.getElementById('dateSection');
     const pricePreview = document.getElementById('pricePreview');
@@ -135,6 +137,7 @@
     const bmproSupabase = window.supabaseClient;
     const paymentBackLink = document.querySelector('.payment-back');
     let isBookingAuthenticated = false;
+    let profilePhoneRegistrationUser = null;
 
     function normalizePropertyImage(url) {
       if (!url) return 'https://images.unsplash.com/photo-1600210492486-724fe5c67fb0?auto=format&fit=crop&w=240&q=80';
@@ -229,6 +232,7 @@
 
     function syncAuthMode(mode) {
       const isRegister = mode === 'register';
+      const completingProfilePhone = isRegister && Boolean(profilePhoneRegistrationUser);
 
       authTabs.forEach((item) => {
         const isActive = item.dataset.mode === mode;
@@ -244,6 +248,16 @@
       if (phoneField) {
         phoneField.hidden = !isRegister;
         phoneField.style.display = isRegister ? '' : 'none';
+      }
+
+      if (emailField) {
+        emailField.hidden = completingProfilePhone;
+        emailField.style.display = completingProfilePhone ? 'none' : '';
+      }
+
+      if (passwordField) {
+        passwordField.hidden = completingProfilePhone;
+        passwordField.style.display = completingProfilePhone ? 'none' : '';
       }
 
       if (passwordInput) {
@@ -278,8 +292,28 @@
         submitButton.hidden = false;
         submitButton.innerHTML = isAuthenticated
           ? 'Lanjutkan booking <i class="fas fa-arrow-right"></i>'
-          : 'Lanjutkan <i class="fas fa-arrow-right"></i>';
+          : profilePhoneRegistrationUser
+            ? 'Simpan nomor WhatsApp <i class="fas fa-arrow-right"></i>'
+            : 'Lanjutkan <i class="fas fa-arrow-right"></i>';
       }
+    }
+
+    function requestProfilePhoneRegistration(user, profile) {
+      profilePhoneRegistrationUser = user;
+      syncAuthMode('register');
+      setAuthenticatedBookingView(false);
+
+      if (fullNameInput) {
+        fullNameInput.value = profile?.full_name
+          || user.user_metadata?.full_name
+          || user.email?.split('@')[0]
+          || '';
+      }
+
+      if (phoneInput) phoneInput.value = '';
+      if (emailInput) emailInput.value = user.email || '';
+      showAuthStatus('Nomor WhatsApp belum terdaftar pada profil akun. Lengkapi nomor di bawah ini untuk melanjutkan booking.', 'error');
+      phoneInput?.focus();
     }
 
     async function ensureProfileRecord(user, fullName = '', phone = '') {
@@ -336,9 +370,17 @@
       if (bookingPhoneStatus) {
         bookingPhoneStatus.textContent = profilePhone
           ? 'Nomor WhatsApp terdaftar pada akunmu dan tidak dapat diubah di sini.'
-          : 'Nomor WhatsApp belum tersedia di profil akun. Hubungi admin untuk memperbarui data profil.';
+          : 'Nomor WhatsApp belum terdaftar. Lengkapi data akun untuk melanjutkan.';
         bookingPhoneStatus.classList.toggle('is-missing', !profilePhone);
       }
+
+      if (!profilePhone) {
+        requestProfilePhoneRegistration(user, profile);
+        return false;
+      }
+
+      profilePhoneRegistrationUser = null;
+      return true;
     }
 
 
@@ -349,7 +391,7 @@
       const fullName = fullNameInput?.value.trim() || '';
       const phone = phoneInput?.value.trim() || '';
 
-      if (mode === 'register' && (!email || !password)) {
+      if (mode === 'register' && !profilePhoneRegistrationUser && (!email || !password)) {
         showAuthStatus('Lengkapi email dan kata sandi untuk membuat akun.', 'error');
         return;
       }
@@ -360,12 +402,22 @@
       }
 
       if (mode === 'register' && !fullName) {
-        showAuthStatus('Nama lengkap wajib diisi untuk membuat akun.', 'error');
+        showAuthStatus(
+          profilePhoneRegistrationUser
+            ? 'Nama lengkap wajib diisi untuk melengkapi profil akun.'
+            : 'Nama lengkap wajib diisi untuk membuat akun.',
+          'error'
+        );
         return;
       }
 
       if (mode === 'register' && !phone) {
-        showAuthStatus('Nomor WhatsApp wajib diisi untuk membuat akun.', 'error');
+        showAuthStatus(
+          profilePhoneRegistrationUser
+            ? 'Nomor WhatsApp wajib diisi untuk melengkapi profil akun.'
+            : 'Nomor WhatsApp wajib diisi untuk membuat akun.',
+          'error'
+        );
         return;
       }
 
@@ -379,7 +431,17 @@
       showAuthStatus('Menghubungkan ke Supabase...', 'info');
 
       try {
-        if (mode === 'register') {
+        if (profilePhoneRegistrationUser && mode === 'register') {
+          const user = profilePhoneRegistrationUser;
+          await ensureProfileRecord(user, fullName, phone);
+          const hasRegisteredPhone = await loadRenterProfile(user, phone);
+          if (!hasRegisteredPhone) {
+            throw new Error('Nomor WhatsApp belum berhasil disimpan pada profil.');
+          }
+
+          setAuthenticatedBookingView(true);
+          showAuthStatus('Nomor WhatsApp berhasil disimpan. Silakan lanjutkan booking.', 'success');
+        } else if (mode === 'register') {
           const { data, error } = await bmproSupabase.auth.signUp({
             email,
             password,
@@ -398,9 +460,11 @@
           }
 
           if (data?.session?.user) {
-            setAuthenticatedBookingView(true);
-            await loadRenterProfile(data.session.user, phone);
-            showAuthStatus('Register berhasil di Supabase. Silakan lanjutkan ke step berikutnya.', 'success');
+            const hasRegisteredPhone = await loadRenterProfile(data.session.user, phone);
+            setAuthenticatedBookingView(hasRegisteredPhone);
+            if (hasRegisteredPhone) {
+              showAuthStatus('Register berhasil di Supabase. Silakan lanjutkan ke step berikutnya.', 'success');
+            }
           } else {
             setAuthenticatedBookingView(false);
             showAuthStatus('Akun berhasil dibuat. Silakan konfirmasi email, lalu masuk untuk melanjutkan booking.', 'success');
@@ -410,20 +474,36 @@
           if (error) throw error;
 
           if (data?.user) {
-            setAuthenticatedBookingView(true);
-            await loadRenterProfile(data.user);
+            const hasRegisteredPhone = await loadRenterProfile(data.user);
+            setAuthenticatedBookingView(hasRegisteredPhone);
+            if (hasRegisteredPhone) {
+              showAuthStatus('Login berhasil di Supabase. Silakan lanjutkan.', 'success');
+            }
           }
-
-          showAuthStatus('Login berhasil di Supabase. Silakan lanjutkan.', 'success');
         }
       } catch (error) {
         console.error('Supabase auth error:', error);
-        showAuthStatus(error?.message || 'Terjadi kesalahan saat memproses akun.', 'error');
+        const errorCode = String(error?.code || '').toLowerCase();
+        const errorMessage = String(error?.message || '');
+        const isAlreadyRegistered = errorCode === 'user_already_exists'
+          || /user already registered|already registered|already exists/i.test(errorMessage);
+
+        if (mode === 'register' && isAlreadyRegistered) {
+          syncAuthMode('login');
+          showAuthStatus(
+            'Email ini sudah terdaftar. Silakan masuk dengan email dan kata sandi yang sama. Jika nomor WhatsApp belum ada di profil, formulir untuk melengkapinya akan terbuka setelah login.',
+            'info'
+          );
+        } else {
+          showAuthStatus(errorMessage || 'Terjadi kesalahan saat memproses akun.', 'error');
+        }
       } finally {
         submitButton.disabled = false;
         submitButton.innerHTML = isBookingAuthenticated
           ? 'Lanjutkan booking <i class="fas fa-arrow-right"></i>'
-          : 'Lanjutkan <i class="fas fa-arrow-right"></i>';
+          : profilePhoneRegistrationUser
+            ? 'Simpan nomor WhatsApp <i class="fas fa-arrow-right"></i>'
+            : 'Lanjutkan <i class="fas fa-arrow-right"></i>';
       }
     }
 
@@ -460,13 +540,21 @@
       }
 
       if (user) {
-        await loadRenterProfile(user);
-        setAuthenticatedBookingView(true);
+        const hasRegisteredPhone = await loadRenterProfile(user);
+        setAuthenticatedBookingView(hasRegisteredPhone);
       }
     }
 
     authTabs.forEach((tab) => {
       tab.addEventListener('click', () => {
+        if (tab.dataset.mode !== 'register' && profilePhoneRegistrationUser) {
+          profilePhoneRegistrationUser = null;
+          if (authStatus) authStatus.style.display = 'none';
+          if (submitButton && !isBookingAuthenticated) {
+            submitButton.innerHTML = 'Lanjutkan <i class="fas fa-arrow-right"></i>';
+          }
+        }
+
         syncAuthMode(tab.dataset.mode);
       });
     });
