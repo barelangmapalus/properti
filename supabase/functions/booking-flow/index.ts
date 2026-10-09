@@ -82,7 +82,7 @@ Deno.serve(async (request) => {
   }
 
   if (body.action === 'create_booking'
-      && Deno.env.get('BMPRO_ALLOW_BOOKING_CREATION') === 'false') {
+      && Deno.env.get('BMPRO_ALLOW_BOOKING_CREATION') !== 'true') {
     return jsonResponse({ error: 'Pembuatan booking dinonaktifkan pada environment ini.' }, 403);
   }
 
