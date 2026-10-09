@@ -141,8 +141,6 @@
     const bmproSupabase = window.supabaseClient;
     const paymentBackLink = document.querySelector('.payment-back');
     const bookingPropertyExternalId = new URLSearchParams(window.location.search).get('property_id') || '';
-    const isLocalBookingTest = ['localhost', '127.0.0.1'].includes(window.location.hostname);
-    const localBookingFunctionUrl = 'http://127.0.0.1:54321/functions/v1/booking-flow';
     let isBookingAuthenticated = false;
     let profilePhoneRegistrationUser = null;
     let bookingProperty = null;
@@ -190,45 +188,7 @@
     }
 
     async function invokeBookingFlow(body) {
-      if (!isLocalBookingTest) {
-        return bmproSupabase.functions.invoke('booking-flow', { body });
-      }
-
-      const { data: { session }, error: sessionError } = await bmproSupabase.auth.getSession();
-      if (sessionError) throw sessionError;
-      if (!session?.access_token) {
-        throw new Error('Silakan masuk kembali sebelum melanjutkan booking.');
-      }
-
-      let response;
-      try {
-        response = await fetch(localBookingFunctionUrl, {
-          method: 'POST',
-          headers: {
-            Authorization: `Bearer ${session.access_token}`,
-            apikey: window.SUPABASE_ANON_KEY,
-            'Content-Type': 'application/json',
-          },
-          body: JSON.stringify(body),
-        });
-      } catch (error) {
-        if (error instanceof TypeError) {
-          throw new Error('Edge Function lokal belum berjalan. Jalankan `supabase functions serve booking-flow --no-verify-jwt --env-file supabase/functions/booking-flow/.env.local` di terminal VS Code.');
-        }
-        throw error;
-      }
-      const data = await response.json();
-
-      if (!response.ok) {
-        const error = new Error(data?.error || `Booking function gagal (HTTP ${response.status}).`);
-        error.context = new Response(JSON.stringify(data), {
-          status: response.status,
-          headers: { 'Content-Type': 'application/json' },
-        });
-        throw error;
-      }
-
-      return { data, error: null };
+      return bmproSupabase.functions.invoke('booking-flow', { body });
     }
 
     function calculateNights(checkIn, checkOut) {
