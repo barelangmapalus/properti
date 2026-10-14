@@ -78,13 +78,38 @@
           <div class="date-fields">
             <label class="field-group">
               <span>Check-in</span>
-              <span class="input-wrap"><i class="far fa-calendar"></i><input id="checkInInput" type="date" aria-label="Tanggal check-in"></span>
+              <button class="date-picker-trigger input-wrap" id="checkInButton" type="button" aria-label="Pilih tanggal check-in" aria-expanded="false">
+                <i class="far fa-calendar"></i><span id="checkInValue">Pilih tanggal</span>
+              </button>
+              <input id="checkInInput" type="hidden">
             </label>
             <span class="date-divider" aria-hidden="true"><i class="fas fa-arrow-right"></i></span>
             <label class="field-group">
               <span>Check-out</span>
-              <span class="input-wrap"><i class="far fa-calendar"></i><input id="checkOutInput" type="date" aria-label="Tanggal check-out"></span>
+              <button class="date-picker-trigger input-wrap" id="checkOutButton" type="button" aria-label="Pilih tanggal check-out" aria-expanded="false">
+                <i class="far fa-calendar"></i><span id="checkOutValue">Pilih tanggal</span>
+              </button>
+              <input id="checkOutInput" type="hidden">
             </label>
+          </div>
+          <div class="availability-calendar" id="availabilityCalendar" hidden>
+            <div class="calendar-heading">
+              <button class="calendar-nav" id="calendarPrevious" type="button" aria-label="Bulan sebelumnya"><i class="fas fa-chevron-left"></i></button>
+              <h3 id="calendarMonth" aria-live="polite"></h3>
+              <button class="calendar-nav" id="calendarNext" type="button" aria-label="Bulan berikutnya"><i class="fas fa-chevron-right"></i></button>
+            </div>
+            <p class="calendar-instruction" id="calendarInstruction"></p>
+            <div class="calendar-weekdays" aria-hidden="true">
+              <span>Min</span><span>Sen</span><span>Sel</span><span>Rab</span><span>Kam</span><span>Jum</span><span>Sab</span>
+            </div>
+            <p class="calendar-loading" id="calendarLoading" role="status" aria-live="polite" hidden>
+              <i class="fas fa-spinner" aria-hidden="true"></i><span>Memuat ketersediaan tanggal...</span>
+            </p>
+            <div class="calendar-days" id="calendarDays" role="grid" aria-label="Tanggal ketersediaan"></div>
+            <div class="calendar-legend">
+              <span><i class="legend-dot is-available"></i>Tersedia</span>
+              <span><i class="legend-dot is-unavailable"></i>Tidak tersedia</span>
+            </div>
           </div>
           <label class="field-group renter-phone">
             <span>Nomor WhatsApp</span>
@@ -122,6 +147,17 @@
     const bookingPhoneStatus = document.getElementById('bookingPhoneStatus');
     const checkInInput = document.getElementById('checkInInput');
     const checkOutInput = document.getElementById('checkOutInput');
+    const checkInButton = document.getElementById('checkInButton');
+    const checkOutButton = document.getElementById('checkOutButton');
+    const checkInValue = document.getElementById('checkInValue');
+    const checkOutValue = document.getElementById('checkOutValue');
+    const availabilityCalendar = document.getElementById('availabilityCalendar');
+    const calendarMonth = document.getElementById('calendarMonth');
+    const calendarInstruction = document.getElementById('calendarInstruction');
+    const calendarDays = document.getElementById('calendarDays');
+    const calendarLoading = document.getElementById('calendarLoading');
+    const calendarPrevious = document.getElementById('calendarPrevious');
+    const calendarNext = document.getElementById('calendarNext');
     const emailInput = document.getElementById('emailInput');
     const passwordInput = document.getElementById('passwordInput');
     const passwordField = passwordInput?.closest('.field-group');
@@ -146,6 +182,11 @@
     let bookingProperty = null;
     let bookingAvailabilityReady = false;
     let createdBooking = false;
+    let calendarMode = 'check_in';
+    let calendarVisibleMonth = new Date(`${new Date().toISOString().slice(0, 7)}-01T00:00:00.000Z`);
+    let calendarBookings = [];
+    let calendarRequestId = 0;
+    let calendarHasData = false;
 
     function normalizePropertyImage(url) {
       if (!url) return 'https://images.unsplash.com/photo-1600210492486-724fe5c67fb0?auto=format&fit=crop&w=240&q=80';
@@ -191,11 +232,225 @@
       return bmproSupabase.functions.invoke('booking-flow', { body });
     }
 
+    async function invokeIpaymuPayment(bookingId) {
+      const returnUrl = `${window.location.origin}/payment-success.html?booking_id=${encodeURIComponent(bookingId)}`;
+      const cancelUrl = `${window.location.origin}/payment-cancel.html?booking_id=${encodeURIComponent(bookingId)}`;
+
+      const { data, error } = await bmproSupabase.functions.invoke('ipaymu-payment', {
+        body: {
+          action: 'create_payment',
+          booking_id: bookingId,
+          payment_method: 'va',
+          payment_channel: 'bca',
+          return_url: returnUrl,
+          cancel_url: cancelUrl,
+        },
+      });
+
+      if (error) throw error;
+      return data;
+    }
+
     function calculateNights(checkIn, checkOut) {
       const start = Date.parse(`${checkIn}T00:00:00Z`);
       const end = Date.parse(`${checkOut}T00:00:00Z`);
       if (!Number.isFinite(start) || !Number.isFinite(end) || end <= start) return 0;
       return (end - start) / 86400000;
+    }
+
+    function getTodayDateString() {
+      const parts = new Intl.DateTimeFormat('en-CA', {
+        timeZone: 'Asia/Jakarta',
+        year: 'numeric',
+        month: '2-digit',
+        day: '2-digit',
+      }).formatToParts(new Date());
+      const values = Object.fromEntries(parts.map(({ type, value }) => [type, value]));
+      return `${values.year}-${values.month}-${values.day}`;
+    }
+
+    function formatBookingDate(value) {
+      if (!value) return 'Pilih tanggal';
+      return new Intl.DateTimeFormat('id-ID', {
+        day: 'numeric',
+        month: 'long',
+        year: 'numeric',
+        timeZone: 'UTC',
+      }).format(new Date(`${value}T00:00:00.000Z`));
+    }
+
+    function getCalendarMonthKey(date) {
+      return `${date.getUTCFullYear()}-${String(date.getUTCMonth() + 1).padStart(2, '0')}`;
+    }
+
+    function hasCalendarConflict(checkIn, checkOut) {
+      return calendarBookings.some((booking) =>
+        booking.check_in < checkOut && booking.check_out > checkIn
+      );
+    }
+
+    function closeAvailabilityCalendar() {
+      if (availabilityCalendar) availabilityCalendar.hidden = true;
+      checkInButton?.setAttribute('aria-expanded', 'false');
+      checkOutButton?.setAttribute('aria-expanded', 'false');
+    }
+
+    function renderAvailabilityCalendar() {
+      if (!calendarDays || !calendarMonth || !calendarInstruction) return;
+
+      const year = calendarVisibleMonth.getUTCFullYear();
+      const monthIndex = calendarVisibleMonth.getUTCMonth();
+      const firstDay = new Date(Date.UTC(year, monthIndex, 1)).getUTCDay();
+      const dayCount = new Date(Date.UTC(year, monthIndex + 1, 0)).getUTCDate();
+      const today = getTodayDateString();
+      const isSelectingCheckOut = calendarMode === 'check_out' && Boolean(checkInInput?.value);
+      const monthStart = `${getCalendarMonthKey(calendarVisibleMonth)}-01`;
+      const minimumMonth = isSelectingCheckOut
+        ? `${checkInInput.value.slice(0, 7)}-01`
+        : `${today.slice(0, 7)}-01`;
+
+      calendarMonth.textContent = new Intl.DateTimeFormat('id-ID', {
+        month: 'long',
+        year: 'numeric',
+        timeZone: 'UTC',
+      }).format(calendarVisibleMonth);
+      calendarInstruction.textContent = isSelectingCheckOut
+        ? `Pilih tanggal check-out setelah ${formatBookingDate(checkInInput.value)}.`
+        : 'Pilih tanggal check-in. Tanggal merah sudah dipesan.';
+      if (calendarPrevious) calendarPrevious.disabled = monthStart <= minimumMonth;
+
+      calendarDays.replaceChildren();
+      if (!calendarHasData) return;
+
+      for (let index = 0; index < firstDay; index += 1) {
+        const spacer = document.createElement('span');
+        spacer.className = 'calendar-day-spacer';
+        spacer.setAttribute('aria-hidden', 'true');
+        calendarDays.append(spacer);
+      }
+
+      for (let day = 1; day <= dayCount; day += 1) {
+        const date = `${getCalendarMonthKey(calendarVisibleMonth)}-${String(day).padStart(2, '0')}`;
+        const nextDate = new Date(Date.parse(`${date}T00:00:00.000Z`) + 86400000)
+          .toISOString()
+          .slice(0, 10);
+        const isPast = date < today;
+        const isBeforeCheckIn = isSelectingCheckOut && date <= checkInInput.value;
+        const isUnavailable = isSelectingCheckOut
+          ? hasCalendarConflict(checkInInput.value, date)
+          : hasCalendarConflict(date, nextDate);
+        const isSelected = date === checkInInput?.value || date === checkOutInput?.value;
+        const dayButton = document.createElement('button');
+        dayButton.type = 'button';
+        const dayState = isPast || isBeforeCheckIn
+          ? 'is-past'
+          : isUnavailable
+            ? 'is-unavailable'
+            : 'is-available';
+        dayButton.className = `calendar-day ${dayState}`;
+        dayButton.textContent = String(day);
+        dayButton.setAttribute('role', 'gridcell');
+        const availabilityLabel = isPast
+          ? 'tanggal sudah lewat'
+          : isBeforeCheckIn
+            ? 'harus setelah tanggal check-in'
+            : isUnavailable
+              ? 'tidak tersedia'
+              : 'tersedia';
+        dayButton.setAttribute('aria-label', `${formatBookingDate(date)}, ${availabilityLabel}`);
+        if (isSelected) dayButton.classList.add('is-selected');
+        if (isPast || isBeforeCheckIn || isUnavailable || !calendarHasData) {
+          dayButton.disabled = true;
+        }
+        if (isPast) dayButton.classList.add('is-past');
+        if (isUnavailable) dayButton.setAttribute('aria-disabled', 'true');
+        dayButton.addEventListener('click', () => selectCalendarDate(date));
+        calendarDays.append(dayButton);
+      }
+    }
+
+    async function loadAvailabilityMonth() {
+      const month = getCalendarMonthKey(calendarVisibleMonth);
+      const requestId = ++calendarRequestId;
+      calendarHasData = false;
+      calendarBookings = [];
+      if (calendarLoading) calendarLoading.hidden = false;
+      if (calendarDays) calendarDays.setAttribute('aria-busy', 'true');
+      if (calendarDays) calendarDays.replaceChildren();
+      renderAvailabilityCalendar();
+
+      try {
+        const { data, error } = await invokeBookingFlow({
+          action: 'calendar_availability',
+          property_external_id: bookingProperty.external_id,
+          month,
+          ...(calendarMode === 'check_out' && checkInInput.value
+            ? { check_in: checkInInput.value }
+            : {}),
+        });
+        if (error) throw error;
+        if (!Array.isArray(data?.bookings)) {
+          throw new Error('Server tidak mengembalikan data ketersediaan kalender.');
+        }
+        if (requestId !== calendarRequestId) return;
+        calendarBookings = data.bookings;
+        calendarHasData = true;
+        if (calendarDays) calendarDays.setAttribute('aria-busy', 'false');
+        renderAvailabilityCalendar();
+      } catch (error) {
+        if (requestId !== calendarRequestId) return;
+        console.error('Calendar availability load failed:', error);
+        if (calendarDays) calendarDays.setAttribute('aria-busy', 'false');
+        if (calendarDays) calendarDays.textContent = 'Ketersediaan kalender gagal dimuat.';
+        showAuthStatus(
+          await getBookingFunctionErrorMessage(error, 'Gagal memuat ketersediaan tanggal. Silakan coba lagi.'),
+          'error'
+        );
+      } finally {
+        if (requestId === calendarRequestId) {
+          if (calendarLoading) calendarLoading.hidden = true;
+          if (calendarDays) calendarDays.setAttribute('aria-busy', 'false');
+        }
+      }
+    }
+
+    function selectCalendarDate(date) {
+      if (calendarMode === 'check_out' && checkInInput.value) {
+        checkOutInput.value = date;
+        if (checkOutValue) checkOutValue.textContent = formatBookingDate(date);
+        closeAvailabilityCalendar();
+      } else {
+        checkInInput.value = date;
+        checkOutInput.value = '';
+        if (checkInValue) checkInValue.textContent = formatBookingDate(date);
+        if (checkOutValue) checkOutValue.textContent = 'Pilih tanggal';
+        calendarMode = 'check_out';
+        calendarVisibleMonth = new Date(`${date.slice(0, 7)}-01T00:00:00.000Z`);
+        checkInButton?.setAttribute('aria-expanded', 'false');
+        checkOutButton?.setAttribute('aria-expanded', 'true');
+        loadAvailabilityMonth();
+      }
+      updateBookingQuote();
+    }
+
+    function changeCalendarMonth(offset) {
+      calendarVisibleMonth = new Date(Date.UTC(
+        calendarVisibleMonth.getUTCFullYear(),
+        calendarVisibleMonth.getUTCMonth() + offset,
+        1
+      ));
+      loadAvailabilityMonth();
+    }
+
+    async function openAvailabilityCalendar(mode) {
+      if (createdBooking || !bookingProperty) return;
+      calendarMode = mode === 'check_out' && checkInInput.value ? 'check_out' : 'check_in';
+      const anchorDate = calendarMode === 'check_out' ? checkInInput.value : getTodayDateString();
+      calendarVisibleMonth = new Date(`${anchorDate.slice(0, 7)}-01T00:00:00.000Z`);
+      if (availabilityCalendar) availabilityCalendar.hidden = false;
+      checkInButton?.setAttribute('aria-expanded', String(calendarMode === 'check_in'));
+      checkOutButton?.setAttribute('aria-expanded', String(calendarMode === 'check_out'));
+      await loadAvailabilityMonth();
     }
 
     function updateBookingQuote() {
@@ -467,6 +722,7 @@
     }
 
 
+
     async function handleAuthSubmit() {
       const mode = document.querySelector('.auth-tab.is-active')?.dataset.mode || 'register';
       const email = emailInput?.value.trim() || '';
@@ -681,14 +937,38 @@
         createdBooking = true;
         checkInInput.disabled = true;
         checkOutInput.disabled = true;
+        checkInButton.disabled = true;
+        checkOutButton.disabled = true;
         bookingAvailabilityReady = false;
         if (bookingTotal) bookingTotal.textContent = formatRupiah(Number(data.booking.total_amount));
         if (bookingQuoteStatus) {
           bookingQuoteStatus.textContent = `Booking ${data.booking.id} berstatus menunggu pembayaran hingga ${new Date(data.booking.expires_at).toLocaleString('id-ID')}.`;
         }
+
+        try {
+          const paymentData = await invokeIpaymuPayment(data.booking.id);
+
+          if (paymentData?.payment_url) {
+            showAuthStatus('Booking berhasil dibuat. Redirect ke halaman pembayaran iPaymu...', 'success');
+            window.location.href = paymentData.payment_url;
+            return;
+          }
+
+          if (paymentData?.redirect_url) {
+            showAuthStatus('Booking berhasil dibuat. Redirect ke checkout iPaymu...', 'success');
+            window.location.href = paymentData.redirect_url;
+            return;
+          }
+
+          showAuthStatus('Booking berhasil dibuat. Silakan lanjutkan ke konfirmasi pembayaran dari panel admin atau halaman checkout berikutnya.', 'success');
+        } catch (paymentError) {
+          console.error('Payment creation failed:', paymentError);
+          const paymentMessage = await getBookingFunctionErrorMessage(paymentError, 'Booking berhasil dibuat, tetapi pembayaran iPaymu belum siap. Silakan cek konfigurasi sandbox.');
+          showAuthStatus(paymentMessage, 'error');
+        }
+
         submitButton.disabled = true;
         submitButton.textContent = 'Booking dibuat';
-        showAuthStatus('Booking berhasil dibuat dengan status menunggu pembayaran. Pembayaran online belum terhubung, jadi booking ini belum terkonfirmasi.', 'success');
       } catch (error) {
         console.error('Booking creation failed:', error);
         showAuthStatus(
@@ -739,9 +1019,10 @@
       });
     });
 
-    [checkInInput, checkOutInput].forEach((input) => {
-      input?.addEventListener('change', updateBookingQuote);
-    });
+    checkInButton?.addEventListener('click', () => openAvailabilityCalendar('check_in'));
+    checkOutButton?.addEventListener('click', () => openAvailabilityCalendar('check_out'));
+    calendarPrevious?.addEventListener('click', () => changeCalendarMonth(-1));
+    calendarNext?.addEventListener('click', () => changeCalendarMonth(1));
 
     submitButton.addEventListener('click', handleContinue);
 
