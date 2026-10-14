@@ -70,6 +70,7 @@ Deno.serve(async (request) => {
     property_external_id?: string;
     check_in?: string;
     check_out?: string;
+    month?: string;
   };
   try {
     body = await request.json();
@@ -77,7 +78,7 @@ Deno.serve(async (request) => {
     return jsonResponse({ error: 'Request booking tidak valid.' }, 400);
   }
 
-  if (!['check_availability', 'create_booking'].includes(body.action || '')) {
+  if (!['calendar_availability', 'check_availability', 'create_booking'].includes(body.action || '')) {
     return jsonResponse({ error: 'Aksi booking tidak dikenal.' }, 400);
   }
 
@@ -86,20 +87,30 @@ Deno.serve(async (request) => {
     return jsonResponse({ error: 'Pembuatan booking dinonaktifkan pada environment ini.' }, 403);
   }
 
-  if (!body.property_external_id || !isValidDate(body.check_in) || !isValidDate(body.check_out)) {
+  if (!body.property_external_id) {
+    return jsonResponse({ error: 'Properti booking wajib dipilih.' }, 400);
+  }
+
+  if (body.action === 'calendar_availability'
+      && (typeof body.month !== 'string' || !/^\d{4}-\d{2}$/.test(body.month)
+        || !isValidDate(`${body.month}-01`))) {
+    return jsonResponse({ error: 'Bulan kalender tidak valid.' }, 400);
+  }
+  if (body.action === 'calendar_availability'
+      && body.check_in !== undefined && !isValidDate(body.check_in)) {
+    return jsonResponse({ error: 'Tanggal check-in kalender tidak valid.' }, 400);
+  }
+
+  if (body.action !== 'calendar_availability'
+      && (!isValidDate(body.check_in) || !isValidDate(body.check_out))) {
     return jsonResponse({ error: 'Properti dan tanggal booking wajib diisi dengan benar.' }, 400);
   }
 
-  if (body.check_out <= body.check_in) {
+  if (body.action !== 'calendar_availability' && body.check_out! <= body.check_in!) {
     return jsonResponse({ error: 'Tanggal check-out harus setelah check-in.' }, 400);
   }
-  if (body.check_in < getTodayInJakarta()) {
+  if (body.action !== 'calendar_availability' && body.check_in! < getTodayInJakarta()) {
     return jsonResponse({ error: 'Tanggal check-in tidak boleh sebelum hari ini.' }, 400);
-  }
-
-  const nightCount = getNightCount(body.check_in, body.check_out);
-  if (!Number.isSafeInteger(nightCount) || nightCount < 1) {
-    return jsonResponse({ error: 'Durasi booking tidak valid.' }, 400);
   }
 
   const adminClient = createClient(supabaseUrl, serviceRoleKey, {
@@ -130,6 +141,44 @@ Deno.serve(async (request) => {
   }
   if (!property) return jsonResponse({ error: 'Properti tidak ditemukan atau tidak tersedia.' }, 404);
 
+  if (body.action === 'calendar_availability') {
+    const monthStart = `${body.month}-01`;
+    const [year, month] = body.month!.split('-').map(Number);
+    if (year === 9999 && month === 12) {
+      return jsonResponse({ error: 'Bulan kalender berada di luar rentang yang didukung.' }, 400);
+    }
+    const nextYear = month === 12 ? year + 1 : year;
+    const nextMonth = month === 12 ? 1 : month + 1;
+    const monthEnd = `${String(nextYear).padStart(4, '0')}-${String(nextMonth).padStart(2, '0')}-01`;
+    if (body.check_in && body.check_in >= monthEnd) {
+      return jsonResponse({ error: 'Bulan kalender harus mencakup tanggal check-in.' }, 400);
+    }
+    const availabilityStart = body.check_in || monthStart;
+    const { data: bookings, error: calendarError } = await adminClient
+      .from('bookings')
+      .select('check_in, check_out')
+      .eq('property_id', property.id)
+      .in('status', ['pending', 'paid'])
+      .lt('check_in', monthEnd)
+      .gt('check_out', availabilityStart);
+
+    if (calendarError) {
+      console.error('Calendar availability lookup failed:', calendarError);
+      return jsonResponse({ error: 'Gagal memuat ketersediaan kalender.' }, 500);
+    }
+
+    return jsonResponse({
+      month: body.month,
+      bookings: bookings || [],
+      price_per_night: Number(property.price_per_night),
+    });
+  }
+
+  const nightCount = getNightCount(body.check_in!, body.check_out!);
+  if (!Number.isSafeInteger(nightCount) || nightCount < 1) {
+    return jsonResponse({ error: 'Durasi booking tidak valid.' }, 400);
+  }
+
   const pricePerNight = Number(property.price_per_night);
   const totalAmount = pricePerNight * nightCount;
   if (!Number.isSafeInteger(pricePerNight) || pricePerNight <= 0
@@ -142,8 +191,8 @@ Deno.serve(async (request) => {
     .select('id')
     .eq('property_id', property.id)
     .in('status', ['pending', 'paid'])
-    .lt('check_in', body.check_out)
-    .gt('check_out', body.check_in)
+    .lt('check_in', body.check_out!)
+    .gt('check_out', body.check_in!)
     .limit(1);
 
   if (conflictError) {
@@ -174,8 +223,8 @@ Deno.serve(async (request) => {
     .insert({
       property_id: property.id,
       renter_id: user.id,
-      check_in: body.check_in,
-      check_out: body.check_out,
+      check_in: body.check_in!,
+      check_out: body.check_out!,
       total_amount: totalAmount,
       status: 'pending',
       expires_at: expiresAt,
